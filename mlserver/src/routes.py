@@ -1,0 +1,32 @@
+import os
+import requests
+
+from flask import request, jsonify
+
+from run import app, model
+
+
+@app.route('/')
+def index():
+    return jsonify({
+        "message": "Here is index!"
+    })
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    response = {
+        'success': False,
+        'Content-Type': 'application/json'
+    }
+
+    if request.method == 'POST':
+        if request.get_json().get('texts'):
+            texts = request.get_json().get('texts')
+            response['prediction'] = texts
+            response['success'] = True
+    return jsonify(response)
+
+
+if __name__ == '__main__':
+    app.run()

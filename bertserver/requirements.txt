@@ -1,0 +1,7 @@
+uwsgi==2.0.17
+Flask==1.0.3
+requests==2.24.0
+torch==1.4.0
+numpy==1.17.2
+transformers==3.0.2
+mecab==0.996.2  

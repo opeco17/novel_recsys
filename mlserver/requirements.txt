@@ -1,0 +1,4 @@
+uwsgi==2.0.17
+Flask==1.0.3
+numpy==1.17.2
+lightgbm==2.3.1
