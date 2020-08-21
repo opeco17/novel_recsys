@@ -41,6 +41,19 @@ services:
       - narou_network
 
 
+  dbapi:
+    build: ./dbapi
+    volumes:
+      - ./dbapi:/var/www
+    ports:
+      - 3034:3034
+    environment:
+      TZ: "Asia/Tokyo"
+    tty: true
+    networks:
+      - narou_network
+
+
   elasticsearch:
     build: ./elasticsearch
     volumes:
