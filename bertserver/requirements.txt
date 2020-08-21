@@ -5,3 +5,4 @@ torch==1.4.0
 numpy==1.17.2
 transformers==3.0.2
 mecab==0.996.2  
+python-dotenv==0.14.0

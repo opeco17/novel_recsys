@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 from flask import request, jsonify
 
-from app import app, model, feature_names
+from run import app, model, feature_names
 
 
 @app.route('/')
@@ -31,7 +31,3 @@ def predict():
             response['prediction'] = predict.tolist()
             response['success'] = True
     return jsonify(response)
-
-
-if __name__ == '__main__':
-    app.run()
