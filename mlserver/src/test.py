@@ -8,10 +8,9 @@ import pandas as pd
 
 df = pd.read_csv('../../data_analysis/dataset/csv/detail_text_with_sup.csv')
 
-url = 'http://localhost:5000/predict'
+url = 'http://localhost:3033/predict'
 headers = {'Content-Type': 'application/json'}
 data = {}
 data = {column: list(df[column])[:5] for column in list(df.columns)}
 data = json.dumps(data)
 r_post = requests.post(url, headers=headers, json=data)
-

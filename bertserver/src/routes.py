@@ -27,7 +27,3 @@ def predict():
             response['prediction'] = outputs
             response['success'] = True
     return jsonify(response)
-
-
-if __name__ == '__main__':
-    app.run()
