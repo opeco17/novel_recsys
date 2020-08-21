@@ -11,6 +11,7 @@ RUN apt-get update && \
   apt-get upgrade -y && \
   apt-get install -y git && \
   apt-get install -y vim && \
+  apt-get install -y sqlite3 && \
   pip install -r requirements.txt
 
 WORKDIR /var/www/src

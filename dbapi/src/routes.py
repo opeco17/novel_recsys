@@ -1,9 +1,16 @@
 import os
+import sqlite3
 import requests
 
 from flask import request, jsonify
+from db_connect import create_connection
 
-from run import app, model
+from run import app
+
+
+DB_PATH = app.config['DB_PATH']
+DETAILS_TABLE_NAME = app.config['DETAILS_TABLE_NAME']
+DB_EXTENSION_PATH = app.config['DB_EXTENSION_PATH']
 
 
 @app.route('/')
@@ -13,17 +20,11 @@ def index():
     })
 
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    response = {
-        'success': False,
-        'Content-Type': 'application/json'
-    }
-
-    if request.method == 'POST':
-        if request.get_json().get('texts'):
-            texts = request.get_json().get('texts')
-            outputs = model.extract(texts)
-            response['prediction'] = outputs
-            response['success'] = True
-    return jsonify(response)
+@app.route('/insert_predict_point', methods=['POST'])
+def insert_predict_point():
+    conn, cur = create_connection(DB_PATH, DB_EXTENSION_PATH)
+    conn.commit()
+    conn.close()
+    return jsonify({
+        "message": "Here is prediction!"
+    })
