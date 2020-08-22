@@ -7,12 +7,24 @@ from transformers import BertJapaneseTokenizer, BertModel
 class BERT(nn.Module):
     
     def __init__(self, pretrained_bert_path, h_dim):
+        '''
+        Args:
+            str pretrained_bert_path: path of bert model pretrained by Tohoku univ.
+            int h_dim: number of nodes in last hidden layer
+        '''
         super().__init__()
         self.bert = BertModel.from_pretrained(pretrained_bert_path)
         self.fc = nn.Linear(768, h_dim)
         
     
     def forward(self, ids, mask):
+        '''
+        Args:
+            torch.TensorLong ids: id vectors of text
+            torch.TensorLong mask: mask vectors of text
+        Returns:
+            torch.Tensor output: feature vectors of text
+        '''
         _, output = self.bert(ids, attention_mask=mask)
         output = self.fc(output)
         return output
@@ -22,6 +34,14 @@ class BERT(nn.Module):
 class FeatureExtractor(object):
 
     def __init__(self, h_dim, max_length, parameter_path, pretrained_bert_path, pretrained_tokenizer_path):
+        '''
+        Args:
+            int h_dim : number of nodes in last hidden layer
+            str max_length: length of text used for prediction and training
+            str parameter_path: model parameter path tranined by narou texts
+            str pretrained_bert_path: path of bert model pretrained by Tohoku univ.
+            str pretrained_tokenizer_path: path of bert tokenizer pretrained by Tohoku univ.
+        '''
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.max_length = max_length
         self.bert = BERT(pretrained_bert_path, h_dim).to(self.device)
@@ -31,6 +51,12 @@ class FeatureExtractor(object):
 
     
     def extract(self, texts):
+        '''
+        Args:
+            list<str> texts: texts list of narou novel
+        Returns:
+            list<float> outputs: feature vectors list
+        '''
         if type(texts) != list:
             raise Exception('extract method takes only list of text.')
         

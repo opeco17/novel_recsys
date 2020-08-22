@@ -24,10 +24,14 @@ def predict():
 
     if request.method == 'POST':
         if request.get_json():
+            '''
+            pd.DataFrame fetures: features of narou novel
+            np.ndarray predicted_point: point of narou novel predicted by machine learning
+            '''
             all_features = request.get_json()
             all_features = pd.DataFrame(json.loads(all_features))
             features = all_features[feature_names]
-            predict = model.predict(features)
-            response['prediction'] = predict.tolist()
+            predicted_point = model.predict(features)
+            response['prediction'] = predicted_point.tolist()
             response['success'] = True
     return jsonify(response)
