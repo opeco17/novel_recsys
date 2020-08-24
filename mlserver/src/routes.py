@@ -25,6 +25,7 @@ def predict():
     if request.method == 'POST':
         if request.get_json():
             '''
+            json all_features: pair of columns and value of list
             pd.DataFrame fetures: features of narou novel
             np.ndarray predicted_point: point of narou novel predicted by machine learning
             '''
