@@ -41,12 +41,10 @@ services:
       - narou_network
 
 
-  dbapi:
-    build: ./dbapi
+  crawler:
+    build: ./crawler
     volumes:
-      - ./dbapi:/var/www
-    ports:
-      - 3034:3034
+      - ./crawler:/var/www
     environment:
       TZ: "Asia/Tokyo"
     tty: true
