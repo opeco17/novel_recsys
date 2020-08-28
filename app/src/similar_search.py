@@ -3,10 +3,13 @@ from elasticsearch import Elasticsearch
 
 
 
-ELASTICSEARCH_HOST_NAME = 'localhost:9200'
-# ELASTICSEARCH_HOST_NAME = 'elasticsearch'
-FEATURE_EXTRACTION_URL = 'http://localhost:3032/predict'
-SCRAPING_TEXT_URL = 'http://localhost:3034/scraping_texts'
+ELASTICSEARCH_HOST_NAME = 'elasticsearch'
+FEATURE_EXTRACTION_URL = 'http://bertserver:3032/predict'
+SCRAPING_TEXT_URL = 'http://scraping_api:3034/scraping_texts'
+
+# ELASTICSEARCH_HOST_NAME = 'localhost:9200'
+# FEATURE_EXTRACTION_URL = 'http://localhost:3032/predict'
+# SCRAPING_TEXT_URL = 'http://localhost:3034/scraping_texts'
 
 
 

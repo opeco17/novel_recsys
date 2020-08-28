@@ -15,7 +15,7 @@ def index():
 
 
 @app.route('/scraping_texts', methods=['POST'])
-def scraping_texts():
+def scraping_texts_func():
     response = {
         'success': False,
         'Content-Type': 'application/json'

@@ -3,23 +3,44 @@ import requests
 
 from flask import request, render_template, jsonify
 
-from run import app
+from run import app, similar_text_search
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    url = 'http://mlserver:3032'
-    r_get = requests.get(url)
-    contents = r_get.json()
-    return jsonify(contents)
+    return jsonify('This is app.')
 
 
-@app.route('/predict')
-def predict():
-    url = 'http://mlserver:3032/predict'
-    headers = {'Content-Type': 'application/json'}
-    data = {'text': 'I am a BERT.'}
-    r_post = requests.post(url, headers=headers, json=data)
-    contents = r_post.json()
-    return jsonify(contents)
+@app.route('/search_by_ncode', methods=['POST'])
+def search_by_ncode():
+    response = {
+        'success': False,
+        'Content-Type': 'application/json'
+    }
+
+    if request.method == 'POST':
+        if request.get_json().get('ncode'):
+            ncode = request.get_json().get('ncode')
+            recommend_ncodes = similar_text_search.similar_search_by_ncode(ncode)
+            response['recommend_ncodes'] = recommend_ncodes
+            response['success'] = True
+
+    return jsonify(response)
+
+
+@app.route('/search_by_text', methods=['POST'])
+def search_by_text():
+    response = {
+        'success': False,
+        'Content-Type': 'application/json'
+    }
+
+    if request.method == 'POST':
+        if request.get_json().get('text'):
+            text = request.get_json().get('text')
+            recommend_ncodes = similar_text_search.similar_search_by_text(text)
+            response['recommend_ncodes'] = recommend_ncodes
+            response['success'] = True
+
+    return jsonify(response)
