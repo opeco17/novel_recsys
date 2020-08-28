@@ -54,17 +54,6 @@ services:
       - narou_network
 
 
-  crawler:
-    build: ./crawler
-    volumes:
-      - ./crawler:/var/www
-    environment:
-      TZ: "Asia/Tokyo"
-    tty: true
-    networks:
-      - narou_network
-
-
   elasticsearch:
     build: ./elasticsearch
     volumes:
