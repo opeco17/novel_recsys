@@ -41,6 +41,19 @@ services:
       - narou_network
 
 
+  scraping_api:
+    build: ./scraping_api
+    volumes:
+      - ./scraping_api:/var/www
+    ports:
+      - 3034:3034
+    environment:
+      TZ: "Asia/Tokyo"
+    tty: true
+    networks:
+      - narou_network
+
+
   crawler:
     build: ./crawler
     volumes:
@@ -60,6 +73,24 @@ services:
       - 9200:9200
     environment:
       discovery.type: single-node
+    tty: true
+    networks:
+      - narou_network
+
+
+  database:
+    build: ./database
+    hostname: my-mysql
+    env_file:
+      - ./env_file.env
+    environment:
+      TZ: "Asia/Tokyo"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./database/mysql_init:/docker-entrypoint-initdb.d
+      - ./database/mysql_data:/var/lib/mysql
+      - ./database/conf.d:/etc/mysql/conf.d
     tty: true
     networks:
       - narou_network
