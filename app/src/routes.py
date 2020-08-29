@@ -22,6 +22,8 @@ def search_by_ncode():
     if request.method == 'POST':
         if request.get_json().get('ncode'):
             ncode = request.get_json().get('ncode')
+            if type(ncode) is not str:
+                raise Exception('ncode should be str.')
             recommend_ncodes = similar_text_search.similar_search_by_ncode(ncode)
             response['recommend_ncodes'] = recommend_ncodes
             response['success'] = True
@@ -39,6 +41,10 @@ def search_by_text():
     if request.method == 'POST':
         if request.get_json().get('text'):
             text = request.get_json().get('text')
+            if type(text) is not list and type(text) is not str:
+                raise Exception('text should be list or str.')
+            if type(text) is str:
+                text = [text]
             recommend_ncodes = similar_text_search.similar_search_by_text(text)
             response['recommend_ncodes'] = recommend_ncodes
             response['success'] = True

@@ -1,3 +1,5 @@
+from typing import List
+
 from elasticsearch import Elasticsearch
 import requests
 
@@ -12,19 +14,22 @@ SCRAPING_TEXT_URL = 'http://scraping_api:3034/scraping_texts'
 
 
 class SimilarTextSearch(object):
+    """類似文書検索クラス
+
+    ncodeまたはtextをクエリとして類似文書検索を行うクラス。
+    ncodeで指定した文書がElasticsearchに存在しない場合はScraping API経由で文書を取得する。
+
+    Methods:
+        similar_search_by_ncode: ncodeをクエリとして類似文書検索を行い対象のncodeを返す
+        similar_search_by_text: textをクエリとして類似文書検索を行い対象のncodeを返す
+        _extract_feature: 引数のtextの特徴量を抽出し返す
+    """
     
     def __init__(self):
         self.client = Elasticsearch(ELASTICSEARCH_HOST_NAME)
         self.feature_prediction_url = FEATURE_EXTRACTION_URL
     
-    def similar_search_by_ncode(self, query_ncode):
-        '''
-        Args:
-            str query_ncode: ncode query for similar search
-        '''    
-        if type(query_ncode) is not str:
-            raise Exception('Argument query_ncode should be str.')
-
+    def similar_search_by_ncode(self, query_ncode: str) -> List[str]:
         query_to_search_query_ncode = {
             "query": {
                 "term": {
@@ -44,22 +49,12 @@ class SimilarTextSearch(object):
         
         return recommend_ncodes
     
-    def similar_search_by_text(self, query_text):
-        '''
-        Args:
-            str query_text: text query for similar search
-        '''
-        if type(query_text) is not list and type(query_text) is not str:
-            raise Exception('Argument query_text should be list or str.')
-        if type(query_text) is str:
-            query_text = [query_text]
-            
+    def similar_search_by_text(self, query_text: List[str]) -> List[str]:
         query_feature = self._extract_feature(query_text)[0]
-        
         recommend_ncodes = self._similar_search_by_feature(query_feature)
         return recommend_ncodes    
         
-    def _scraping_text_by_ncode(self, ncode):
+    def _scraping_text_by_ncode(self, ncode: str) -> str:
         if type(ncode) is str:
             ncode = [ncode]
         headers = {'Content-Type': 'application/json'}
@@ -68,7 +63,7 @@ class SimilarTextSearch(object):
         text = r_post.json()['texts']
         return text
         
-    def _similar_search_by_feature(self, query_feature, recommend_num=10):
+    def _similar_search_by_feature(self, query_feature: List[float], recommend_num: int=10) -> List[str]:
         query_for_similar_search = {
             "query": {
                 "script_score": {
@@ -92,13 +87,7 @@ class SimilarTextSearch(object):
             recommend_ncodes.append(ncode)
         return recommend_ncodes
         
-    def _extract_feature(self, text):
-        '''
-        Args:
-            list<str> texts: texts of narou novel
-        Return:
-            list<float> features: feature vectors of item
-        '''   
+    def _extract_feature(self, text: str) -> List[float]:
         headers = {'Content-Type': 'application/json'}
         data = {'texts': text}
         r_post = requests.post(FEATURE_EXTRACTION_URL, headers=headers, json=data)
