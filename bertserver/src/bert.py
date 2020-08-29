@@ -1,3 +1,5 @@
+from typing import List
+
 import torch
 import torch.nn as nn
 from transformers import BertJapaneseTokenizer, BertModel
@@ -5,24 +7,21 @@ from transformers import BertJapaneseTokenizer, BertModel
 
 class BERT(nn.Module):
     
-    def __init__(self, pretrained_bert_path, h_dim):
-        '''
-        Args:
-            str pretrained_bert_path: path of bert model pretrained by Tohoku univ.
-            int h_dim: number of nodes in last hidden layer
-        '''
+    def __init__(self, pretrained_bert_path: str, h_dim: int):
+        """学習済みBERTモデルのアーキテクチャと特徴量抽出のための全結合層を定義"""
         super().__init__()
         self.bert = BertModel.from_pretrained(pretrained_bert_path)
         self.fc = nn.Linear(768, h_dim)
     
     def forward(self, ids, mask):
-        '''
+        """ネットワークの処理フローを定義
+
         Args:
-            torch.TensorLong ids: id vectors of text
-            torch.TensorLong mask: mask vectors of text
+            torch.TensorLong ids: 文書のidベクトル (Tokenizerに文書を入力することで取得)
+            torch.TensorLong mask: 文書のmaskベクトル (Tokenizerに文書を入力することで取得)
         Returns:
-            torch.Tensor output: feature vectors of text
-        '''
+            torch.Tensor output: 文書の特徴量ベクトル
+        """
         _, output = self.bert(ids, attention_mask=mask)
         output = self.fc(output)
         return output
@@ -30,15 +29,16 @@ class BERT(nn.Module):
 
 class FeatureExtractor(object):
 
-    def __init__(self, h_dim, max_length, parameter_path, pretrained_bert_path, pretrained_tokenizer_path):
-        '''
+    def __init__(self, h_dim: int, max_length: int, parameter_path: str, pretrained_bert_path: str, pretrained_tokenizer_path: str):
+        """特徴量抽出に関係するフィールドの定義
+
         Args:
-            int h_dim : number of nodes in last hidden layer
-            str max_length: length of text used for prediction and training
-            str parameter_path: model parameter path tranined by narou texts
-            str pretrained_bert_path: path of bert model pretrained by Tohoku univ.
-            str pretrained_tokenizer_path: path of bert tokenizer pretrained by Tohoku univ.
-        '''
+            h_dim: 特徴量の次元数
+            max_length: BERTで処理する文書の最大の長さ
+            parameter_path: ArcFaceで学習を行った学習済みモデルのパラメータのパス
+            pretrained_bert_path: 東北大学の学習済みBERTモデルのパラメータのパス
+            pretrained_tokenizer_path: 東北大学によって作成されたBERTを使用するためのTokenizerのパス
+        """
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.max_length = max_length
         self.bert = BERT(pretrained_bert_path, h_dim).to(self.device)
@@ -46,13 +46,12 @@ class FeatureExtractor(object):
 
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(pretrained_tokenizer_path)
     
-    def extract(self, texts):
-        '''
-        Args:
-            list<str> texts: texts list of narou novel
-        Returns:
-            list<float> outputs: feature vectors list
-        '''
+    def extract(self, texts: List[str]) -> List[float]:
+        """文書から特徴量の抽出を行うメソッド
+
+        入力文書をTokenizerで変換してidsベクトルとmaskベクトルを得る。
+        2つのベクトルをBERTで処理し特徴量抽出を行う。
+        """
         if type(texts) != list:
             raise Exception('extract method takes only list of text.')
         
