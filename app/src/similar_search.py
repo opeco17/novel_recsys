@@ -1,6 +1,5 @@
-import requests
 from elasticsearch import Elasticsearch
-
+import requests
 
 
 ELASTICSEARCH_HOST_NAME = 'elasticsearch'
@@ -12,13 +11,11 @@ SCRAPING_TEXT_URL = 'http://scraping_api:3034/scraping_texts'
 # SCRAPING_TEXT_URL = 'http://localhost:3034/scraping_texts'
 
 
-
 class SimilarTextSearch(object):
     
     def __init__(self):
         self.client = Elasticsearch(ELASTICSEARCH_HOST_NAME)
         self.feature_prediction_url = FEATURE_EXTRACTION_URL
-    
     
     def similar_search_by_ncode(self, query_ncode):
         '''
@@ -47,7 +44,6 @@ class SimilarTextSearch(object):
         
         return recommend_ncodes
     
-    
     def similar_search_by_text(self, query_text):
         '''
         Args:
@@ -61,8 +57,7 @@ class SimilarTextSearch(object):
         query_feature = self._extract_feature(query_text)[0]
         
         recommend_ncodes = self._similar_search_by_feature(query_feature)
-        return recommend_ncodes
-            
+        return recommend_ncodes    
         
     def _scraping_text_by_ncode(self, ncode):
         if type(ncode) is str:
@@ -73,7 +68,6 @@ class SimilarTextSearch(object):
         text = r_post.json()['texts']
         return text
         
-    
     def _similar_search_by_feature(self, query_feature, recommend_num=10):
         query_for_similar_search = {
             "query": {
@@ -97,7 +91,6 @@ class SimilarTextSearch(object):
             ncode = response['hits']['hits'][i]['_source']['ncode']
             recommend_ncodes.append(ncode)
         return recommend_ncodes
-        
         
     def _extract_feature(self, text):
         '''

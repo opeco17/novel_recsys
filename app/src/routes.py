@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import request, render_template, jsonify
+from flask import jsonify, request, render_template
 
 from run import app, similar_text_search
 

@@ -1,11 +1,11 @@
-import os
 import json
+import os
+
+from flask import jsonify, request
 import requests
-
 import pandas as pd
-from flask import request, jsonify
 
-from run import app, model, feature_names
+from run import app, feature_names, model
 
 
 @app.route('/')

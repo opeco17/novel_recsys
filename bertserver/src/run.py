@@ -1,9 +1,10 @@
-import os
 import json
+import os
+
 from flask import Flask
 
-from config import Config
 from bert import load_model
+from config import Config
 
 
 app = Flask(__name__)

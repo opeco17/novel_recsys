@@ -3,7 +3,6 @@ import torch.nn as nn
 from transformers import BertJapaneseTokenizer, BertModel
 
 
-
 class BERT(nn.Module):
     
     def __init__(self, pretrained_bert_path, h_dim):
@@ -15,7 +14,6 @@ class BERT(nn.Module):
         super().__init__()
         self.bert = BertModel.from_pretrained(pretrained_bert_path)
         self.fc = nn.Linear(768, h_dim)
-        
     
     def forward(self, ids, mask):
         '''
@@ -28,7 +26,6 @@ class BERT(nn.Module):
         _, output = self.bert(ids, attention_mask=mask)
         output = self.fc(output)
         return output
-
 
 
 class FeatureExtractor(object):
@@ -48,7 +45,6 @@ class FeatureExtractor(object):
         self.bert.load_state_dict(torch.load(parameter_path, map_location=self.device))
 
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(pretrained_tokenizer_path)
-
     
     def extract(self, texts):
         '''
@@ -79,7 +75,6 @@ class FeatureExtractor(object):
             outputs = outputs.tolist()
         
         return outputs
-
 
 
 def load_model(h_dim, max_length, parameter_path, pretrained_bert_path, pretrained_tokenizer_path):

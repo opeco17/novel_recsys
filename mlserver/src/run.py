@@ -1,7 +1,7 @@
-import os
 import json
-import pickle
 from logging.handlers import RotatingFileHandler
+import os
+import pickle
 
 from flask import Flask
 
