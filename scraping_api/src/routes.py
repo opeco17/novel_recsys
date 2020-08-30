@@ -3,8 +3,7 @@ import requests
 
 from flask import jsonify, request
 
-from run import app
-from scraping import scraping_texts
+from run import app, text_scraper
 
 
 @app.route('/')
@@ -24,7 +23,7 @@ def scraping_texts_func():
     if request.method == 'POST':
         if request.get_json().get('ncodes'):
             ncodes = request.get_json().get('ncodes')
-            processed_ncodes, texts = scraping_texts(ncodes, test=False)
+            processed_ncodes, texts = text_scraper.scraping_texts(ncodes)
             response['ncodes'] = processed_ncodes
             response['texts'] = texts
             response['success'] = True

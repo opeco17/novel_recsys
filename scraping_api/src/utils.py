@@ -1,15 +1,18 @@
 import json
+from typing import List, Tuple, Any
 
 from bs4 import BeautifulSoup
+import elasticsearch
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import MeCab
 import MySQLdb
+import pandas as pd
 import requests
 
 
 # DB utils
-def get_connector_and_cursor(host_name):
+def get_connector_and_cursor(host_name: str) -> Tuple[Any, Any]:
     conn = MySQLdb.connect(
         host = host_name,
         port = 3306,
@@ -24,10 +27,9 @@ def get_connector_and_cursor(host_name):
 
 
 # Point prediction utils
-def _count_noun_number(mecab, text):
-    text = str(text)
+def count_noun_number(mecab: MeCab.Tagger, text: str) -> int:
     count = []
-    for line in mecab.parse(text).splitlines():
+    for line in mecab.parse(str(text)).splitlines():
         try:
             if "名詞" in line.split()[-1]:
                 count.append(line)
@@ -36,31 +38,29 @@ def _count_noun_number(mecab, text):
     return len(set(count))
 
 
-def _preprocessing(detail_df):
-    '''
-    New features: 
-        title_length: length of title
-        story_length: length of story
-        text_length: length of text
-        keyword_number: number of keywords
-        noun_proportion_in_text: number of nouns in text per text length
+def preprocessing(detail_df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
+    '''ポイント予測のために新しい特徴量を作成する。
+    
+    Fields:
+        title_length: タイトルの文字数
+        story_length: あらすじの文字数
+        text_length: 本文の文字数
+        keyword_number: キーワードの数
+        noun_proportion_in_text: 本文中における文字数当たりの名詞数
     '''
     mecab = MeCab.Tagger("-Ochasen")
     
     for column in ['title', 'story', 'text']:
         detail_df[column + '_length'] = detail_df[column].apply(lambda x: len(str(x)))
     detail_df['keyword_number'] = detail_df['keyword'].apply(lambda x: len(str(x).split(' ')))
-    detail_df['noun_proportion_in_text'] = detail_df.text.apply(lambda x: _count_noun_number(mecab, str(x)) / len(str(x)))
+    detail_df['noun_proportion_in_text'] = detail_df.text.apply(
+            lambda x: count_noun_number(mecab, str(x)) / len(str(x))
+    )
     return detail_df
 
 
-def point_prediction(url, detail_df):
-    '''
-    Args:
-        str url: url of point prediction api
-        pandas.DataFrame detail_df: dataframe containing all features of item
-    '''
-    detail_df = _preprocessing(detail_df)
+def point_prediction(url: str, detail_df: pd.core.frame.DataFrame) -> List[int]:
+    detail_df = preprocessing(detail_df)
     
     headers = {'Content-Type': 'application/json'}
     data = {}
@@ -73,7 +73,7 @@ def point_prediction(url, detail_df):
 
 
 # Feature extraction utils
-def _generate_data(ncodes, features):
+def _generate_data(ncodes: List[str], features: List[float]) -> dict:
     for ncode, feature in zip(ncodes, features):
         yield {
             '_index': 'features',
@@ -82,14 +82,7 @@ def _generate_data(ncodes, features):
         }
 
 
-def extract_features(url, texts):
-    '''
-    Args:
-        str url: url of feature extraction api
-        list<str> texts: texts of narou novel
-    Return:
-        list<float> features: feature vectors of item
-    '''   
+def extract_features(url: str, texts: List[str]) -> List[float]:
     headers = {'Content-Type': 'application/json'}
     data = {'texts': texts}
     r_post = requests.post(url, headers=headers, json=data)
@@ -97,28 +90,16 @@ def extract_features(url, texts):
     return features
 
 
-def register_features_to_elasticsearch(host, url, ncodes, texts, h_dim=64):
-    '''
-    Args: 
-        str host: host name of elasticsearch
-        str url: url of feature extraction api
-        list<str> ncodes: ncodes to register
-        texts<str> texts: texts to extract features
-        h_dim: size of feature vector
-    '''    
-
+def add_features_to_elasticsearch(client: elasticsearch.client.Elasticsearch, url: str, ncodes: List[str], texts: List[str], h_dim: int=64):
     features = extract_features(url, texts)
     
-    client = Elasticsearch(host)
-    
-    mappings = {
-        'properties': {
-            'ncode': {'type': 'keyword'},
-            'feature': {'type': 'dense_vector', 'dims': h_dim}
-        }
-    }
-    
     if not client.indices.exists(index='features'):
-        client.indices.create(index='features', body={ 'mappings': mappings })
+        mappings = {
+            'properties': {
+                'ncode': {'type': 'keyword'},
+                'feature': {'type': 'dense_vector', 'dims': h_dim}
+            }
+        }
+        client.indices.create(index='features', body={'mappings': mappings })
     
     bulk(client, _generate_data(ncodes, features))
