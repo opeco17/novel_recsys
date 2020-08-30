@@ -1,13 +1,13 @@
-import json
-import time
 import datetime
 import gzip
+import json
+import time
 from urllib.request import urlopen
 
-import requests
+from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
-from bs4 import BeautifulSoup
+import requests
 
 from utils import *
 
@@ -26,7 +26,6 @@ DB_HOST_NAME = 'database'
 
 
 # Scraping detail of items
-
 def _details_preprocessing(df):
     df = df.drop(['allcount', 'gensaku'], axis=1, errors='ignore')
     df = df.dropna(how='all')
@@ -103,13 +102,10 @@ def scraping_details(conn, cursor, narou_api_url, mode='middle', test=True):
     return details_df
 
 
-
 # Scraping text of items
-
 def _make_bs_obj(url):
     html = urlopen(url)
     return BeautifulSoup(html,"html.parser")
-
 
 
 def _get_main_text(bs_obj):
@@ -120,7 +116,6 @@ def _get_main_text(bs_obj):
         text = text + text_html.get_text() + "\n\n"
 
     return text
-
 
 
 def scraping_texts(ncodes, test=True):
@@ -162,7 +157,6 @@ def scraping_texts(ncodes, test=True):
     return processed_ncodes, texts
 
 
-
 def register_scraped_data():
     conn, cursor = get_connector_and_cursor(DB_HOST_NAME)
     # Scraping details and texts
@@ -194,7 +188,6 @@ def register_scraped_data():
     print('{} data is inserted to Elasticsearch.'.format(len(target_detail_df)))
     conn.commit()
     conn.close()
-
 
 
 if __name__ == '__main__':

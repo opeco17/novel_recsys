@@ -1,16 +1,14 @@
 import json
 
-import requests
 from bs4 import BeautifulSoup
-import MySQLdb
-import MeCab
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-
+import MeCab
+import MySQLdb
+import requests
 
 
 # DB utils
-
 def get_connector_and_cursor(host_name):
     conn = MySQLdb.connect(
         host = host_name,
@@ -26,7 +24,6 @@ def get_connector_and_cursor(host_name):
 
 
 # Point prediction utils
-
 def _count_noun_number(mecab, text):
     text = str(text)
     count = []
@@ -76,7 +73,6 @@ def point_prediction(url, detail_df):
 
 
 # Feature extraction utils
-
 def _generate_data(ncodes, features):
     for ncode, feature in zip(ncodes, features):
         yield {

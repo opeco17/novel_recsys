@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import request, jsonify
+from flask import jsonify, request
 
 from run import app
 from scraping import scraping_texts

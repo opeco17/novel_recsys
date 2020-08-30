@@ -1,5 +1,6 @@
 import MySQLdb
 
+
 def get_connector_and_cursor():
     conn = MySQLdb.connect(
         host = 'database',

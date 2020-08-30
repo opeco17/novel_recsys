@@ -13,7 +13,7 @@ class BERT(nn.Module):
         self.bert = BertModel.from_pretrained(pretrained_bert_path)
         self.fc = nn.Linear(768, h_dim)
     
-    def forward(self, ids, mask):
+    def forward(self, ids: torch.LongTensor, mask: torch.LongTensor) -> torch.FloatTensor:
         """ネットワークの処理フローを定義
 
         Args:
