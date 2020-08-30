@@ -17,10 +17,10 @@ class BERT(nn.Module):
         """ネットワークの処理フローを定義
 
         Args:
-            torch.TensorLong ids: 文書のidベクトル (Tokenizerに文書を入力することで取得)
-            torch.TensorLong mask: 文書のmaskベクトル (Tokenizerに文書を入力することで取得)
+            ids: 文書のidベクトル (Tokenizerに文書を入力することで取得)
+            mask: 文書のmaskベクトル (Tokenizerに文書を入力することで取得)
         Returns:
-            torch.Tensor output: 文書の特徴量ベクトル
+            output: 文書の特徴量ベクトル
         """
         _, output = self.bert(ids, attention_mask=mask)
         output = self.fc(output)
@@ -52,9 +52,6 @@ class FeatureExtractor(object):
         入力文書をTokenizerで変換してidsベクトルとmaskベクトルを得る。
         2つのベクトルをBERTで処理し特徴量抽出を行う。
         """
-        if type(texts) != list:
-            raise Exception('extract method takes only list of text.')
-        
         ids, masks = [], []
         for text in texts:
             input = self.tokenizer.encode_plus(
