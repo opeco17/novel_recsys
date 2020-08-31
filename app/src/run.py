@@ -5,13 +5,13 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 
 from config import Config
-from similar_search import SimilarTextSearch
+from similar_search import SimilarItemSearch
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
 bootstrap = Bootstrap(app)
 
-similar_text_search = SimilarTextSearch()
+similar_item_search = SimilarItemSearch()
 
 from routes import *

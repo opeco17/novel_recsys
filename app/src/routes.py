@@ -3,7 +3,7 @@ import requests
 
 from flask import jsonify, request, render_template
 
-from run import app, similar_text_search
+from run import app, similar_item_search
 
 
 @app.route('/')
@@ -25,8 +25,8 @@ def search_by_ncode():
         if request.get_json():
             if ncode := request.get_json().get('ncode'):
                 if (ncode_type := type(ncode)) is str:
-                    recommend_ncodes = similar_text_search.similar_search_by_ncode(ncode)
-                    response['recommend_ncodes'] = recommend_ncodes
+                    recommend_list = similar_item_search.similar_search_by_ncode(ncode)
+                    response['recommend_list'] = recommend_list
                     response['success'] = True
                 else:
                     response['message'] = f'Parameter ncode should be str but you throw {ncode_type}.'
@@ -53,8 +53,8 @@ def search_by_text():
             if text := request.get_json().get('text'):
                 if (text_type := type(text)) is str:
                     text = [text]
-                    recommend_ncodes = similar_text_search.similar_search_by_text(text)
-                    response['recommend_ncodes'] = recommend_ncodes
+                    recommend_list = similar_item_search.similar_search_by_text(text)
+                    response['recommend_list'] = recommend_list
                     response['success'] = True
                 else:
                     response['message'] = f'Parameter text should be str but you throw {ncode_type}.'    

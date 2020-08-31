@@ -73,12 +73,15 @@ def point_prediction(url: str, detail_df: pd.core.frame.DataFrame) -> List[int]:
 
 
 # Feature extraction utils
-def _generate_data(ncodes: List[str], features: List[float]) -> dict:
-    for ncode, feature in zip(ncodes, features):
+def _generate_data(ncodes: List[str], writers: List[str], keywords: List[str], stories: List[str], features: List[float]) -> dict:
+    for ncode, writer, keyword, story, feature in zip(ncodes, writers, keywords, stories, features):
         yield {
             '_index': 'features',
             'ncode': ncode,
-            'feature': feature
+            'writer': writer,
+            'keyword': keyword,
+            'story': story,
+            'feature': feature,
         }
 
 
@@ -90,16 +93,20 @@ def extract_features(url: str, texts: List[str]) -> List[float]:
     return features
 
 
-def add_features_to_elasticsearch(client: elasticsearch.client.Elasticsearch, url: str, ncodes: List[str], texts: List[str], h_dim: int=64):
+def add_features_to_elasticsearch(client: elasticsearch.client.Elasticsearch, url: str, df: pd.core.frame.DataFrame, h_dim: int=64):
+    ncodes, texts, stories, keywords, writers = list(df.ncode), list(df.text), list(df.story), list(df.keyword), list(df.writer)
     features = extract_features(url, texts)
     
     if not client.indices.exists(index='features'):
         mappings = {
             'properties': {
                 'ncode': {'type': 'keyword'},
-                'feature': {'type': 'dense_vector', 'dims': h_dim}
+                'writer': {'type': 'text'},
+                'keyword': {'type': 'text'}, 
+                'story': {'type': 'text'},
+                'feature': {'type': 'dense_vector', 'dims': h_dim},
             }
         }
-        client.indices.create(index='features', body={'mappings': mappings })
+        client.indices.create(index='features', body={'mappings': mappings})
     
-    bulk(client, _generate_data(ncodes, features))
+    bulk(client, _generate_data(ncodes, writers, keywords, stories, features))

@@ -1,4 +1,4 @@
-from similar_search import SimilarTextSearch
+from similar_search import SimilarItemSearch
 
 class ResponseMakerForNcodeAndText(object):
     """Responseを生成するクラス
@@ -12,7 +12,7 @@ class ResponseMakerForNcodeAndText(object):
 
     def __init__(self, query_is):
         self.query_is = query_is
-        self.similar_text_search = SimilarTextSearch()
+        self.similar_item_search = SimilarItemSearch()
 
     def make_response(self, request):
 
@@ -39,10 +39,10 @@ class ResponseMakerForNcodeAndText(object):
 
     def _main_process(self, query, response):
         if self.query_is == 'ncode':
-            recommend_ncodes = self.similar_text_search.similar_search_by_ncode(query)
+            recommend_ncodes = self.similar_item_search.similar_search_by_ncode(query)
         elif self.query_is == 'text':
             query = [query]
-            recommend_ncodes = self.similar_text_search.similar_search_by_text(query)
+            recommend_ncodes = self.similar_item_search.similar_search_by_text(query)
         
         response['recommend_ncodes'] = recommend_ncodes
         response['success'] = True

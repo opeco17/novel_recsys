@@ -244,15 +244,13 @@ class Scraper(object):
     def __add_to_elasticsearch(self, details_df):
         recommendable_df = details_df[(details_df['predict_point'] == 1) & (details_df['global_point'] == 0)]
         if len(recommendable_df) != 0:
-            ncodes, texts = list(recommendable_df.ncode), list(recommendable_df.text)
-            
-            for i in range(len(ncodes) // self.batch_size_of_es + 1):
+            for i in range(len(recommendable_df) // self.batch_size_of_es + 1):
                 start, end = i * self.batch_size_of_es, (i + 1) * self.batch_size_of_es
                 add_features_to_elasticsearch(
-                    self.client, 
-                    FEATURE_EXTRACTION_URL, 
-                    ncodes[start:end], 
-                    texts[start:end]
+                    client=self.client, 
+                    url=FEATURE_EXTRACTION_URL, 
+                    df=recommendable_df.iloc[start:end],
+                    h_dim=64,
                 )
         print('{} data is inserted to Elasticsearch.'.format(len(recommendable_df)))
         

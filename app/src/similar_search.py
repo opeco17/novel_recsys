@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Dict
 
 from elasticsearch import Elasticsearch
 import requests
@@ -13,7 +13,7 @@ SCRAPING_TEXT_URL = 'http://scraping_api:3034/scraping_texts'
 # SCRAPING_TEXT_URL = 'http://localhost:3034/scraping_texts'
 
 
-class SimilarTextSearch(object):
+class SimilarItemSearch(object):
     """類似文書検索クラス
 
     ncodeまたはtextをクエリとして類似文書検索を行う。
@@ -31,8 +31,7 @@ class SimilarTextSearch(object):
         self.scraping_text_url = SCRAPING_TEXT_URL
         self.client = Elasticsearch(self.elasticsearch_host_name)
 
-    
-    def similar_search_by_ncode(self, query_ncode: str) -> List[str]:
+    def similar_search_by_ncode(self, query_ncode: str) -> List[Dict]:
 
         query_to_pull_query_feature_from_es = {
             "query": {
@@ -50,13 +49,13 @@ class SimilarTextSearch(object):
             query_text = self.__scraping_text_by_ncode(query_ncode)
             query_feature = self.__extract_feature(query_text)
         
-        recommend_ncodes = self.__similar_search_by_feature(query_feature)
-        return recommend_ncodes
+        recommend_list = self.__similar_search_by_feature(query_feature)
+        return recommend_list
     
-    def similar_search_by_text(self, query_text: List[str]) -> List[str]:
+    def similar_search_by_text(self, query_text: List[str]) -> List[Dict]:
         query_feature = self.__extract_feature(query_text)
-        recommend_ncodes = self.__similar_search_by_feature(query_feature)
-        return recommend_ncodes    
+        recommend_list = self.__similar_search_by_feature(query_feature)
+        return recommend_list
         
     def __scraping_text_by_ncode(self, ncode: str) -> str:
         ncode = [ncode]
@@ -66,7 +65,7 @@ class SimilarTextSearch(object):
         text = r_post.json()['texts']
         return text
         
-    def __similar_search_by_feature(self, query_feature: List[float], recommend_num: int=10) -> List[str]:
+    def __similar_search_by_feature(self, query_feature: List[float], recommend_num: int=10) -> List[Dict]:
 
         query_for_similar_search = {
             "query": {
@@ -85,11 +84,12 @@ class SimilarTextSearch(object):
         }
         
         response = self.client.search(index='features', body=query_for_similar_search)['hits']['hits']
-        recommend_ncodes = []
+        recommend_list = []
         for i in range(min(recommend_num, len(response))):
-            ncode = response[i]['_source']['ncode']
-            recommend_ncodes.append(ncode)
-        return recommend_ncodes
+            recommend_data = response[i]['_source']
+            recommend_data.pop('feature')
+            recommend_list.append(recommend_data)
+        return recommend_list
         
     def __extract_feature(self, text: str) -> List[float]:
         headers = {'Content-Type': 'application/json'}

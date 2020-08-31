@@ -7,9 +7,11 @@ from config import Config
 from scraping import TextScraper
 
 
+NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
-text_scraper = TextScraper(test=False)
+text_scraper = TextScraper(NAROU_API_URL)
 
 from routes import *
