@@ -4,7 +4,7 @@ import os
 from flask import Flask
 
 from config import Config
-from scraping import TextScraper
+from scraper import TextScraper
 
 
 NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
