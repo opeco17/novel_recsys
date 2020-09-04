@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 # Get Request

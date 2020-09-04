@@ -12,18 +12,14 @@ import pandas as pd
 import requests
 
 from scraper_utils import *
+from config import Config
 
 
-TEST = True
-NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
-ELASTICSEARCH_HOST_NAME = 'elasticsearch'
-FEATURE_EXTRACTION_URL = 'http://bertserver:3032/predict'
-POINT_PREDICTION_URL = 'http://mlserver:3033/predict'
-DB_HOST_NAME = 'database'
-# ELASTICSEARCH_HOST_NAME = 'localhost:9200'
-# FEATURE_EXTRACTION_URL = 'http://localhost:3032/predict'
-# POINT_PREDICTION_URL = 'http://localhost:3033/predict'
-# DB_HOST_NAME = '0.0.0.0'
+NAROU_API_URL = Config.NAROU_API_URL
+ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
+FEATURE_EXTRACTION_URL = Config.FEATURE_EXTRACTION_URL
+POINT_PREDICTION_URL = Config.POINT_PREDICTION_URL
+DB_HOST_NAME = Config.DB_HOST_NAME
 
 
 class DetailsScraper(object):

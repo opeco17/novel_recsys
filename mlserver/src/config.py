@@ -8,6 +8,6 @@ load_dotenv(os.path.join(basedir, 'config.env'))
 
 class Config(object):
     JSON_AS_ASCII = False
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    LIGHTGBM_MODEL_PATH = os.environ.get('LIGHTGBM_MODEL_PATH')
-    FEATURE_NAMES_PATH = os.environ.get('FEATURE_NAMES_PATH')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
+    LIGHTGBM_MODEL_PATH = 'model/lightgbm_model.pkl'
+    FEATURE_NAMES_PATH = 'model/feature_names.json'
