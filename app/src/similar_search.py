@@ -3,14 +3,12 @@ from typing import List, Tuple, Dict
 from elasticsearch import Elasticsearch
 import requests
 
+from config import Config
 
-ELASTICSEARCH_HOST_NAME = 'elasticsearch'
-FEATURE_EXTRACTION_URL = 'http://bertserver:3032/predict'
-SCRAPING_TEXT_URL = 'http://scraping_api:3034/scraping_texts'
 
-# ELASTICSEARCH_HOST_NAME = 'localhost:9200'
-# FEATURE_EXTRACTION_URL = 'http://localhost:3032/predict'
-# SCRAPING_TEXT_URL = 'http://localhost:3034/scraping_texts'
+ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
+FEATURE_EXTRACTION_URL = Config.FEATURE_EXTRACTION_URL 
+SCRAPING_TEXT_URL = Config.SCRAPING_TEXT_URL
 
 
 class SimilarItemSearch(object):

@@ -1,5 +1,6 @@
 from similar_search import SimilarItemSearch
 
+
 class ResponseMakerForNcodeAndText(object):
     """Responseを生成するクラス
 
