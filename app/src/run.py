@@ -5,13 +5,14 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 
 from config import Config
-from similar_search import SimilarItemSearch
+from response_maker import ResponseMakerForNcodeAndText
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
 bootstrap = Bootstrap(app)
 
-similar_item_search = SimilarItemSearch()
+ncode_response_maker = ResponseMakerForNcodeAndText('ncode')
+text_response_maker = ResponseMakerForNcodeAndText('text')
 
 from routes import *
