@@ -49,7 +49,7 @@ class RoutesTestCase(TestCase):
 
     def test_predict_by_lack_feature(self):
         details_data = {
-            column: list(self.details_df[column]) for column in list(self.details_df.columns)[:3]
+            column: list(self.details_df[column])[:USE_RECORD_NUMBER] for column in list(self.details_df.columns)[:3]
         }   
         response = self.__get_response(details_data)
         self.assertIsInstance(json_data:=response.json, dict)
