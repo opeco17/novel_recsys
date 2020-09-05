@@ -19,17 +19,17 @@ class ResponseMakerForNcodeAndText(object):
 
         response = {
             'success': False,
-            'recommend_ncodes': [],
+            'recommend_items': [],
             'Content-Type': 'application/json',
         }
 
         if request.method == 'POST':
             if request.get_json():
                 if query := request.get_json().get(self.query_is):
-                    if (query_type := type(query)) is str:
+                    if isinstance(query, str):
                         self._main_process(query, response)
                     else:
-                        response['message'] = f'Parameter {self.query_is} should be str but you throw {query_type}.'
+                        response['message'] = f'Parameter {self.query_is} should be str but you throw {type(query)}.'
                 else:
                     keys = list(request.get_json().keys())
                     response['message'] = f'Parameter should be {self.query_is} but you throw {keys}.'
@@ -40,10 +40,10 @@ class ResponseMakerForNcodeAndText(object):
 
     def _main_process(self, query, response):
         if self.query_is == 'ncode':
-            recommend_ncodes = self.similar_item_search.similar_search_by_ncode(query)
+            recommend_items = self.similar_item_search.similar_search_by_ncode(query)
         elif self.query_is == 'text':
             query = [query]
-            recommend_ncodes = self.similar_item_search.similar_search_by_text(query)
+            recommend_items = self.similar_item_search.similar_search_by_text(query)
         
-        response['recommend_ncodes'] = recommend_ncodes
+        response['recommend_items'] = recommend_items
         response['success'] = True
