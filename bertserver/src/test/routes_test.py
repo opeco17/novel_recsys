@@ -16,33 +16,33 @@ class RoutesTestCase(TestCase):
     def test_index1(self):
         response = self.client.get('/')
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertTrue(text:=json_data.get('message'))
+        self.assertTrue(text:=json_data.get('text'))
         self.assertIsInstance(text, str)
 
     def test_index2(self):
         response = self.client.get('/index')
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertTrue(text:=json_data.get('message'))
+        self.assertTrue(text:=json_data.get('text'))
         self.assertIsInstance(text, str)
 
     def test_predict_single_str_good(self):
         data = {'texts': 'これはテストのためのテキストです。'}
-        response = self.__get_response(data)
+        response = self.__make_response(data)
         self.__test_predict_good(response)
 
     def test_predict_single_list_good(self):
         data = {'texts': ['これはテストのためのテキストです。']}
-        response = self.__get_response(data)
+        response = self.__make_response(data)
         self.__test_predict_good(response)
 
     def test_predict_multiple_list_good(self):
         data = {'texts': ['これはテストのためのテキストです。', 'これもテストのためのテキストです。']}
-        response = self.__get_response(data)
+        response = self.__make_response(data)
         self.__test_predict_good(response)
 
     def test_predict_bad(self):
         data = {'texts': 10}
-        response = self.__get_response(data)
+        response = self.__make_response(data)
 
         self.assertIsInstance(json_data:=response.json, dict)
         self.assertFalse(success:=json_data.get('success'))
@@ -58,7 +58,7 @@ class RoutesTestCase(TestCase):
         self.assertIsInstance(prediction[0], float)
         self.assertEqual(len(prediction), app.config.get('H_DIM'))
 
-    def __get_response(self, data):
+    def __make_response(self, data):
         response = self.client.post(
             '/predict',
             data=json.dumps(data),

@@ -16,13 +16,13 @@ class RoutesTestCase(TestCase):
     def test_index1(self):
         response = self.client.get('/')
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertTrue(text:=json_data.get('message'))
+        self.assertTrue(text:=json_data.get('text'))
         self.assertIsInstance(text, str)
 
     def test_index2(self):
         response = self.client.get('/index')
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertTrue(text:=json_data.get('message'))
+        self.assertTrue(text:=json_data.get('text'))
         self.assertIsInstance(text, str)
 
     def test_search_by_ncode(self):

@@ -28,13 +28,9 @@ def predict():
         'Content-Type': 'application/json'
     }
     if request.method == 'POST':
-        if all_features:=request.get_json():
-            all_features_df = pd.DataFrame(all_features)
-            columns = list(all_features_df.columns)
-            for feature_name in feature_names:
-                if feature_name not in columns:
-                    response['message'] = 'Lack of necessary feature.'
-                    return jsonify(response)
+        if request.get_json():
+            all_features = request.get_json()
+            all_features_df = pd.DataFrame(json.loads(all_features))
             features_df = all_features_df[feature_names]
             predicted_point = model.predict(features_df)
             response['prediction'] = predicted_point.tolist()

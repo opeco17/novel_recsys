@@ -9,7 +9,7 @@ from run import app, ncode_response_maker, text_response_maker
 @app.route('/')
 @app.route('/index')
 def index():
-    return jsonify({'message': 'This is application!'})
+    return jsonify({'text': 'This is application!'})
 
 
 @app.route('/search_by_ncode', methods=['POST'])
