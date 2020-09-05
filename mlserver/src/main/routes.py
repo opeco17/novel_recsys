@@ -9,10 +9,9 @@ from run import app, feature_names, model
 
 
 @app.route('/')
+@app.route('/index')
 def index():
-    return jsonify({
-        "message": "Here is index!"
-    })
+    return jsonify({"message": "Here is MLServer!"})
 
 
 @app.route('/predict', methods=['POST'])
@@ -24,16 +23,18 @@ def predict():
         features_df: ポイント予測に使用する特徴量を保持したDataFrame
         predicted_point: 作品のポイント予測結果 (0: 評価されない 1: 評価される)
     """
-
     response = {
         'success': False,
         'Content-Type': 'application/json'
     }
-
     if request.method == 'POST':
-        if request.get_json():
-            all_features = request.get_json()
-            all_features_df = pd.DataFrame(json.loads(all_features))
+        if all_features:=request.get_json():
+            all_features_df = pd.DataFrame(all_features)
+            columns = list(all_features_df.columns)
+            for feature_name in feature_names:
+                if feature_name not in columns:
+                    response['message'] = 'Lack of necessary feature.'
+                    return jsonify(response)
             features_df = all_features_df[feature_names]
             predicted_point = model.predict(features_df)
             response['prediction'] = predicted_point.tolist()

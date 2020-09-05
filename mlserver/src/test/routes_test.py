@@ -3,7 +3,13 @@ import sys
 from unittest import TestCase, main
 sys.path.append('../main')
 
+import pandas as pd
+
 from run import app
+
+
+DETAILS_CSV_PATH = './test_data.csv'
+USE_RECORD_NUMBER = 5
 
 
 class RoutesTestCase(TestCase):
@@ -12,6 +18,7 @@ class RoutesTestCase(TestCase):
         super(RoutesTestCase, self).__init__(*args, **kwargs)
         app.config['TESTING'] = True
         self.client = app.test_client()
+        self.details_df = pd.read_csv(DETAILS_CSV_PATH).iloc[:USE_RECORD_NUMBER]
 
     def test_index1(self):
         response = self.client.get('/')
@@ -25,38 +32,30 @@ class RoutesTestCase(TestCase):
         self.assertTrue(text:=json_data.get('message'))
         self.assertIsInstance(text, str)
 
-    def test_predict_single_str_good(self):
-        data = {'texts': 'これはテストのためのテキストです。'}
-        response = self.__get_response(data)
-        self.__test_predict_good(response)
-
-    def test_predict_single_list_good(self):
-        data = {'texts': ['これはテストのためのテキストです。']}
-        response = self.__get_response(data)
-        self.__test_predict_good(response)
-
-    def test_predict_multiple_list_good(self):
-        data = {'texts': ['これはテストのためのテキストです。', 'これもテストのためのテキストです。']}
-        response = self.__get_response(data)
-        self.__test_predict_good(response)
-
-    def test_predict_bad(self):
-        data = {'texts': 10}
-        response = self.__get_response(data)
-
+    def test_predict_good(self):
+        details_data = {
+            column: list(self.details_df[column]) for column in list(self.details_df.columns)
+        }
+        response = self.__get_response(details_data)
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertFalse(success:=json_data.get('success'))
 
-    def __test_predict_good(self, response):
-        self.assertIsInstance(json_data:=response.json, dict)
         self.assertTrue(success:=json_data.get('success'))
         self.assertIsInstance(success, bool)
         self.assertEqual(success, True)
 
         self.assertTrue(predictions:=json_data.get('prediction'))
-        self.assertIsInstance(prediction:=predictions[0], list)
-        self.assertIsInstance(prediction[0], float)
-        self.assertEqual(len(prediction), app.config.get('H_DIM'))
+        self.assertIsInstance(predictions, list)
+        self.assertIsInstance(predictions[0], int)
+
+    def test_predict_by_lack_feature(self):
+        details_data = {
+            column: list(self.details_df[column]) for column in list(self.details_df.columns)[:3]
+        }   
+        response = self.__get_response(details_data)
+        self.assertIsInstance(json_data:=response.json, dict)
+        self.assertFalse(json_data.get('success'))
+        self.assertTrue(message:=json_data.get('message'))
+        self.assertIsInstance(message, str)
 
     def __get_response(self, data):
         response = self.client.post(

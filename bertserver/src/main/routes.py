@@ -9,9 +9,7 @@ from run import app, model
 @app.route('/')
 @app.route('/index')
 def index():
-    return jsonify({
-        "text": "Here is BERTServer!"
-    })
+    return jsonify({"message": "Here is BERTServer!"})
 
 
 @app.route('/predict', methods=['POST'])
