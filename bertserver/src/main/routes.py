@@ -7,9 +7,10 @@ from run import app, model
 
 
 @app.route('/')
+@app.route('/index')
 def index():
     return jsonify({
-        "message": "Here is index!"
+        "text": "Here is BERTServer!"
     })
 
 
@@ -19,11 +20,18 @@ def predict():
         'success': False,
         'Content-Type': 'application/json'
     }
-
     if request.method == 'POST':
-        if request.get_json().get('texts'):
-            texts = request.get_json().get('texts')
+        if texts := request.get_json().get('texts'):
+            if isinstance(texts, str):
+                texts = [texts]
+            elif isinstance(texts, list) and isinstance(texts[0], str):
+                pass
+            else:
+                print('Key texts should be str or List[str].')
+                return jsonify(response)
+
             outputs = model.extract(texts)
             response['prediction'] = outputs
             response['success'] = True
+
     return jsonify(response)

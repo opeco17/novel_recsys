@@ -16,10 +16,6 @@ RUN apt-get update && \
   apt-get install -y mecab-ipadic-utf8 && \
   pip install -r requirements.txt
 
-WORKDIR /var/www/src
-
-#ENV FLASK_APP /var/www/src/app.py
-
-#CMD ["flask", "run", "--host", "0.0.0.0", "--port", "3032"]
+WORKDIR /var/www/src/main
 
 CMD ["uwsgi","--ini","/var/www/uwsgi.ini"]
