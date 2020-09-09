@@ -186,6 +186,8 @@ class Scraper(object):
         self.client = Elasticsearch(ELASTICSEARCH_HOST_NAME)
         self.details_scraper = DetailsScraper(NAROU_API_URL, batch_size_of_scraper, mode='first')
         self.text_scraper = TextScraper(NAROU_API_URL)
+
+        self.data_count = 0
         
     def scraping_and_add(self):
         scraping_details_iterator = self.details_scraper.scraping_details()
@@ -205,7 +207,7 @@ class Scraper(object):
         
         self.conn.close()
         self.client.close()
-        
+
     def add_existing_data(self, chunksize=32):
         if self.test:
             details_df_iterator = pd.read_sql_query("SELECT * FROM details LIMIT 64", self.conn, chunksize=chunksize)
@@ -231,18 +233,21 @@ class Scraper(object):
         details_data = [tuple(details_df_tmp.iloc[i]) for i in range(len(details_df_tmp))]
         self.cursor.executemany("INSERT IGNORE INTO details VALUES ({})".format(("%s, "*len(columns_of_details))[:-2]), details_data)
         self.conn.commit()
+
+        self.data_count += len(details_data)
         
     def __update_database(self, ncodes, predict_points):
         data = [(ncode, predict_point) for ncode, predict_point in zip(ncodes, predict_points)]
         self.cursor.executemany("UPDATE details SET predict_point=%s WHERE ncode=%s", data)
         self.conn.commit()
+
+        self.data_count += len(data)
         
     def __add_to_elasticsearch(self, details_df):
         recommendable_df = details_df[(details_df['predict_point'] == 1) & (details_df['global_point'] == 0)]
         if len(recommendable_df) != 0:
             for i in range(len(recommendable_df) // self.batch_size_of_es + 1):
-                start = i * self.batch_size_of_es
-                end = (i + 1) * self.batch_size_of_es
+                start, end = i * self.batch_size_of_es, (i + 1) * self.batch_size_of_es
                 add_features_to_elasticsearch(
                     client=self.client, 
                     url=FEATURE_EXTRACTION_URL, 
