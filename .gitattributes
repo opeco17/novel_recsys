@@ -1,5 +1,2 @@
 extension-functions.c linguist-detectable=false
 libsqlitefunctions.so linguist-detectable=false
-elasticsearch/es_test.ipynb linguist-detectable=false
-mlserver/src/test/Untitled.ipynb linguist-detectable=false
-data_analysis/Untitled.ipynb linguist-detectable=false
