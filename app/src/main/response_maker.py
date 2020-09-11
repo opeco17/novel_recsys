@@ -1,4 +1,4 @@
-from similar_search import SimilarItemSearch
+from models.similar_search import SimilarItemSearch
 
 
 class ResponseMakerForNcodeAndText(object):

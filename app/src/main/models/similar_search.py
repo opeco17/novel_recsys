@@ -1,9 +1,13 @@
+import sys
 from typing import List, Tuple, Dict
+sys.path.append('..')
 
 from elasticsearch import Elasticsearch
 import requests
 
 from config import Config
+from models.scraping_text import scraping_text
+from models.elasticsearch_service import *
 
 
 ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
@@ -30,23 +34,10 @@ class SimilarItemSearch(object):
         self.client = Elasticsearch(self.elasticsearch_host_name)
 
     def similar_search_by_ncode(self, query_ncode: str) -> List[Dict]:
-
-        query_to_pull_query_feature_from_es = {
-            "query": {
-                "term": {
-                    "ncode": query_ncode
-                }
-            }
-        }
-        response = self.client.search(index='features', body=query_to_pull_query_feature_from_es)['hits']['hits']
-        query_feature_is_in_es = len(response) != 0
-
-        if query_feature_is_in_es:
-            query_feature = response[0]['_source']['feature']     
-        else:
+        query_feature = get_feature_by_ncode(self.client, query_ncode)
+        if query_feature == None:
             query_text = self.__scraping_text_by_ncode(query_ncode)
             query_feature = self.__extract_feature(query_text)
-        
         recommend_list = self.__similar_search_by_feature(query_feature)
         return recommend_list
     
@@ -56,39 +47,13 @@ class SimilarItemSearch(object):
         return recommend_list
         
     def __scraping_text_by_ncode(self, ncode: str) -> str:
-        ncode = [ncode]
-        headers = {'Content-Type': 'application/json'}
-        data = {'ncodes': ncode}
-        r_post = requests.post(self.scraping_text_url, headers=headers, json=data)
-        text = r_post.json()['texts']
+        text = scraping_text(ncode)
         return text
         
-    def __similar_search_by_feature(self, query_feature: List[float], recommend_num: int=10) -> List[Dict]:
-
-        query_for_similar_search = {
-            "query": {
-                "script_score": {
-                    "query": {
-                        "match_all": {}
-                    },
-                    "script": {
-                        "source": "cosineSimilarity(params.query_vec, doc['feature']) + 1.0", # Elasticsearch does not allow negative scores
-                        "params": {
-                            "query_vec": query_feature
-                        }
-                    }
-                }
-            }
-        }
-        
-        response = self.client.search(index='features', body=query_for_similar_search)['hits']['hits']
-        recommend_list = []
-        for i in range(min(recommend_num, len(response))):
-            recommend_data = response[i]['_source']
-            recommend_data.pop('feature')
-            recommend_list.append(recommend_data)
+    def __similar_search_by_feature(self, query_feature: List[float], recommend_num: int=10) -> List[Dict]:        
+        recommend_list = get_recommends_by_feature(self.client, query_feature, recommend_num)
         return recommend_list
-        
+
     def __extract_feature(self, text: str) -> List[float]:
         headers = {'Content-Type': 'application/json'}
         data = {'texts': text}
