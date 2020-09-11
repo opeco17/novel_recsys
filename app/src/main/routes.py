@@ -1,24 +1,41 @@
+import json
 import os
 import requests
 
-from flask import jsonify, request, render_template
+from flask import jsonify, request, render_template, Response
 
 from run import app, ncode_response_maker, text_response_maker
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET'])
 def index():
-    return jsonify({'text': 'This is application!'})
+    response_body = {'text': 'This is application!'}
+    response = Response(
+        response=json.dumps(response_body), 
+        mimetype='application/json',
+        status= 200
+    )
+    return response
 
 
-@app.route('/search_by_ncode', methods=['POST'])
+@app.route('/search_by_ncode', methods=['GET'])
 def search_by_ncode():
-    response = ncode_response_maker.make_response(request)
-    return jsonify(response)
+    response_body = ncode_response_maker.make_response(request)
+    response = Response(
+        response=json.dumps(response_body), 
+        mimetype='application/json',
+        status= 200
+    )
+    return response
 
 
-@app.route('/search_by_text', methods=['POST'])
+@app.route('/search_by_text', methods=['GET'])
 def search_by_text():
-    response = text_response_maker.make_response(request)
-    return jsonify(response)
+    response_body = text_response_maker.make_response(request)
+    response = Response(
+        response=json.dumps(response_body), 
+        mimetype='application/json',
+        status= 200
+    )
+    return response
