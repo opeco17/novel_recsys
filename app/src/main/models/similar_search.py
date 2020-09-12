@@ -6,13 +6,13 @@ from elasticsearch import Elasticsearch
 import requests
 
 from config import Config
-from models.scraping_text import scraping_text
-from models.elasticsearch_service import *
+from models.utils import TextScraper, ElasticsearchConnector
 
 
 ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
 FEATURE_EXTRACTION_URL = Config.FEATURE_EXTRACTION_URL 
 SCRAPING_TEXT_URL = Config.SCRAPING_TEXT_URL
+RECOMMEND_NUM = Config.RECOMMEND_NUM
 
 
 class SimilarItemSearch(object):
@@ -31,10 +31,11 @@ class SimilarItemSearch(object):
         self.elasticsearch_host_name = ELASTICSEARCH_HOST_NAME
         self.feature_prediction_url = FEATURE_EXTRACTION_URL
         self.scraping_text_url = SCRAPING_TEXT_URL
+        self.recommend_num = RECOMMEND_NUM
         self.client = Elasticsearch(self.elasticsearch_host_name)
 
     def similar_search_by_ncode(self, query_ncode: str) -> List[Dict]:
-        query_feature = get_feature_by_ncode(self.client, query_ncode)
+        query_feature = self.__get_feature_by_ncode(query_ncode)
         if query_feature == None:
             query_text = self.__scraping_text_by_ncode(query_ncode)
             query_feature = self.__extract_feature(query_text)
@@ -45,13 +46,17 @@ class SimilarItemSearch(object):
         query_feature = self.__extract_feature(query_text)
         recommend_list = self.__similar_search_by_feature(query_feature)
         return recommend_list
+
+    def __get_feature_by_ncode(self, query_ncode):
+        query_feature = ElasticsearchConnector.get_feature_by_ncode(self.client, query_ncode)
+        return query_feature
         
-    def __scraping_text_by_ncode(self, ncode: str) -> str:
-        text = scraping_text(ncode)
-        return text
+    def __scraping_text_by_ncode(self, query_ncode: str) -> str:
+        query_text = TextScraper.scraping_text(query_ncode)
+        return query_text
         
-    def __similar_search_by_feature(self, query_feature: List[float], recommend_num: int=10) -> List[Dict]:        
-        recommend_list = get_recommends_by_feature(self.client, query_feature, recommend_num)
+    def __similar_search_by_feature(self, query_feature: List[float]) -> List[Dict]:        
+        recommend_list = ElasticsearchConnector.get_recommends_by_feature(self.client, query_feature, self.recommend_num)
         return recommend_list
 
     def __extract_feature(self, text: str) -> List[float]:

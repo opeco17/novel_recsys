@@ -1,3 +1,6 @@
+import sys
+sys.path.append('..')
+
 from models.similar_search import SimilarItemSearch
 
 

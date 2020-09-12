@@ -44,8 +44,8 @@ services:
       - narou_network
 
 
-  scraping_api:
-    build: ./scraping_api
+  batch:
+    build: ./batch
     volumes:
       - ./scraping_api:/var/www
     ports:
