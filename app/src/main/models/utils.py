@@ -122,6 +122,6 @@ class BERTServerConnector(object):
     def extract_feature(cls, text: str) -> List[float]:
         headers = {'Content-Type': 'application/json'}
         data = {'texts': text}
-        r_post = requests.post(cls.feature_extraction_url, headers=headers, json=data)
-        feature = r_post.json()['prediction'][0]
+        response = requests.get(cls.feature_extraction_url, headers=headers, json=data)
+        feature = response.json()['prediction'][0]
         return feature

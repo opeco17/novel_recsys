@@ -23,21 +23,20 @@ def index():
     return response
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET'])
 def predict():
     response_body = {"success": False,}
     status_code = 500
-    if request.method == 'POST':
-        if texts := request.get_json().get('texts'):
-            if (flag:=isinstance(texts, str)) or (isinstance(texts, list) and isinstance(texts[0], str)):
-                texts = [texts] if flag else texts
-                outputs = model.extract(texts)
-                response_body['prediction'] = outputs
-                response_body['success'] = True
-                status_code = 200
-            else:
-                app.logger.info('Key texts should be str or List[str].')
-                status_code = 500
+    if texts := request.get_json().get('texts'):
+        if (flag:=isinstance(texts, str)) or (isinstance(texts, list) and isinstance(texts[0], str)):
+            texts = [texts] if flag else texts
+            outputs = model.extract(texts)
+            response_body['prediction'] = outputs
+            response_body['success'] = True
+            status_code = 200
+        else:
+            app.logger.info('Key texts should be str or List[str].')
+            status_code = 500
 
     response = Response(
         response=json.dumps(response_body), 

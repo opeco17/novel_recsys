@@ -59,7 +59,7 @@ class ControllerTestCase(TestCase):
         self.assertEqual(len(prediction), app.config.get('H_DIM'))
 
     def __make_response(self, data):
-        response = self.client.post(
+        response = self.client.get(
             '/predict',
             data=json.dumps(data),
             content_type='application/json',
