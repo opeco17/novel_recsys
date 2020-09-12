@@ -1,4 +1,5 @@
 import os
+import logging
 
 from dotenv import load_dotenv
 
@@ -8,10 +9,27 @@ load_dotenv(os.path.join(basedir, 'config.env'))
 
 
 class Config(object):
+    # Basic
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
+
+    # Log
+    LOG_FILE = 'log/batch.log'
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
+
+    # Parameter
+    H_DIM = 64
+    SCRAPING_DETAILS_BATCH_SIZE = 32
+    ELASTICSEARCH_BATCH_SIZE = 16
+    DB_BATCH_SIZE = 32
+    DB_PORT = 3306
+    INTERVAL = 0.1
+
+    # Narou
+    NAROU_URL = 'https://ncode.syosetu.com/'
     NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
 
+    # External server
     host = os.environ.get('HOST', 'local')
     if host == 'local':
         ELASTICSEARCH_HOST_NAME = 'localhost:9200'

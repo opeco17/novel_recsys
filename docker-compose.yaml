@@ -47,7 +47,7 @@ services:
   batch:
     build: ./batch
     volumes:
-      - ./scraping_api:/var/www
+      - ./batch:/var/www
     ports:
       - 3034:3034
     environment:
