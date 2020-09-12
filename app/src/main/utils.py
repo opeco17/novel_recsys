@@ -1,7 +1,12 @@
+import json
 import sys
+from typing import Tuple
 sys.path.append('..')
 
 from models.similar_search import SimilarItemSearch
+from werkzeug.local import LocalProxy
+
+from run import app
 
 
 class ResponseMakerForNcodeAndText(object):
@@ -14,38 +19,40 @@ class ResponseMakerForNcodeAndText(object):
         similar_search: クエリを元に類似文書検索を行いレコメンドリストを返す。
     """
 
-    def __init__(self, query_is):
+    def __init__(self, query_is: str):
         self.query_is = query_is
         self.similar_item_search = SimilarItemSearch()
 
-    def make_response(self, request):
+    def make_response_body(self, request: LocalProxy) -> Tuple[dict, int]:
 
-        response = {
+        response_body = {
             'success': False,
             'recommend_items': [],
             'Content-Type': 'application/json',
         }
+        status_code = 500
 
         if request.get_json():
             if query := request.get_json().get(self.query_is):
                 if isinstance(query, str):
-                    self._main_process(query, response)
+                    self.__main_process(query, response_body)
+                    status_code = 200
                 else:
-                    response['message'] = f'Parameter {self.query_is} should be str but you throw {type(query)}.'
+                    response_body['message'] = f'Parameter {self.query_is} should be str but you throw {type(query)}.'
             else:
                 keys = list(request.get_json().keys())
-                response['message'] = f'Parameter should be {self.query_is} but you throw {keys}.'
+                response_body['message'] = f'Parameter should be {self.query_is} but you throw {keys}.'
         else:
-            response['message'] = f'Parameter should be {self.query_is} but you throw none.'
+            response_body['message'] = f'Parameter should be {self.query_is} but you throw none.'
 
-        return response
+        return response_body, status_code
 
-    def _main_process(self, query, response):
+    def __main_process(self, query: str, response_body: dict):
         if self.query_is == 'ncode':
             recommend_items = self.similar_item_search.similar_search_by_ncode(query)
         elif self.query_is == 'text':
             query = [query]
             recommend_items = self.similar_item_search.similar_search_by_text(query)
         
-        response['recommend_items'] = recommend_items
-        response['success'] = True
+        response_body['recommend_items'] = recommend_items
+        response_body['success'] = True

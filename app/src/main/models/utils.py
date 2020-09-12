@@ -1,18 +1,32 @@
 import sys
+from typing import List, Dict
 from urllib.request import urlopen
 sys.path.append('..')
 
 from bs4 import BeautifulSoup
+from elasticsearch import Elasticsearch
+import requests
+
+from config import Config
+from run import app
+
+
+ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
+FEATURE_EXTRACTION_URL = Config.FEATURE_EXTRACTION_URL
+NAROU_URL = Config.NAROU_URL
+RECOMMEND_NUM = Config.RECOMMEND_NUM
 
 
 class TextScraper(object):
     """小説家になろうAPIから本文をスクレイピングするためのクラス"""
 
+    narou_url = NAROU_URL
+
     @classmethod
     def scraping_text(cls, ncode: str) -> str:
         """ncodeをクエリとして本文のスクレイピングを実行する"""
 
-        base_url = 'https://ncode.syosetu.com/' + ncode
+        base_url = cls.narou_url + ncode
         text = None
         c = 0
         while c < 5:
@@ -23,7 +37,7 @@ class TextScraper(object):
                 text = cls.__get_text(bs_obj)  
                 break
             except Exception as e:
-                print(e)
+                app.logger.error(e)
                 c += 1 
         return text
 
@@ -45,6 +59,14 @@ class TextScraper(object):
 class ElasticsearchConnector(object):
     """Elasticsearchへの接続を行うためのクラス"""
 
+    host_name = ELASTICSEARCH_HOST_NAME
+    recommend_num = RECOMMEND_NUM
+
+    @classmethod
+    def get_client(cls):
+        client = Elasticsearch(cls.host_name)
+        return client
+
     @classmethod
     def get_feature_by_ncode(cls, client, ncode):
         """ncodeをクエリとしてElasticsearchから特徴量を抽出"""
@@ -64,7 +86,7 @@ class ElasticsearchConnector(object):
 
 
     @classmethod
-    def get_recommends_by_feature(cls, client, feature, recommend_num):
+    def get_recommends_by_feature(cls, client: Elasticsearch, feature: List[float]) -> List[Dict]:
         """特徴量をクエリとしてElasticsearchから類似作品のレコメンドリストを抽出"""
         
         query_for_similar_search = {
@@ -84,8 +106,22 @@ class ElasticsearchConnector(object):
         }
         response = client.search(index='features', body=query_for_similar_search)['hits']['hits']
         recommend_list = []
-        for i in range(min(recommend_num, len(response))):
+        for i in range(min(cls.recommend_num, len(response))):
             recommend_data = response[i]['_source']
             recommend_data.pop('feature')
             recommend_list.append(recommend_data)
         return recommend_list
+
+
+class BERTServerConnector(object):
+    """BERTServerへの接続を行うためのクラス"""
+
+    feature_extraction_url = FEATURE_EXTRACTION_URL
+
+    @classmethod
+    def extract_feature(cls, text: str) -> List[float]:
+        headers = {'Content-Type': 'application/json'}
+        data = {'texts': text}
+        r_post = requests.post(cls.feature_extraction_url, headers=headers, json=data)
+        feature = r_post.json()['prediction'][0]
+        return feature
