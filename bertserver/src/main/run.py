@@ -1,21 +1,19 @@
 import json
+import logging
+import logging.handlers
 import os
 
 from flask import Flask
 
-from bert import load_model
 from config import Config
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-model = load_model(
-    app.config['H_DIM'],
-    app.config['MAX_LENGTH'],
-    app.config['PARAMETER_PATH'],
-    app.config['PRETRAINED_BERT_PATH'],
-    app.config['PRETRAINED_TOKENIZER_PATH']
-)
+handler = logging.handlers.RotatingFileHandler(app.config['LOG_FILE'], "a+", maxBytes=3000, backupCount=5)
+handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')) 
+app.logger.addHandler(handler)
+app.logger.setLevel(app.config['LOG_LEVEL'])
 
-from routes import *
+from controller import *

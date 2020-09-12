@@ -1,6 +1,9 @@
 import logging
 import os
 
+base_path = os.path.dirname(os.path.abspath(__file__))
+abs_path_of = lambda path: os.path.normpath(os.path.join(base_path, path))
+
 
 class Config(object):
     # Basic
@@ -11,7 +14,7 @@ class Config(object):
     RECOMMEND_NUM = 10
 
     # Log
-    LOG_FILE = 'log/batch.log'
+    LOG_FILE = abs_path_of('log/batch.log')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # Narou

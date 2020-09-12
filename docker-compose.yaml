@@ -1,6 +1,5 @@
 version: "3.1"
 
-
 services:
   app:
     build: ./app
@@ -15,7 +14,6 @@ services:
     networks:
       - narou_network
 
-
   bertserver:
     build: ./bertserver
     volumes:
@@ -28,7 +26,6 @@ services:
     tty: true
     networks:
       - narou_network
-
 
   mlserver:
     build: ./mlserver
@@ -43,7 +40,6 @@ services:
     networks:
       - narou_network
 
-
   scraping_batch:
     build: ./scraping_batch
     volumes:
@@ -57,7 +53,6 @@ services:
     networks:
       - narou_network
 
-
   elasticsearch:
     build: ./elasticsearch
     volumes:
@@ -69,7 +64,6 @@ services:
     tty: true
     networks:
       - narou_network
-
 
   database:
     build: ./database
@@ -88,7 +82,6 @@ services:
     networks:
       - narou_network
 
-
   nginx:
     build: ./nginx
     volumes:
@@ -101,7 +94,6 @@ services:
     tty: true
     networks:
       - narou_network
-
 
 networks:
     narou_network:
