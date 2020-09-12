@@ -4,6 +4,7 @@ import os
 class Config(object):
     DEBUG = False 
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
+    RECOMMEND_NUM = 10
 
     host = os.environ.get('HOST', 'local')
     if host == 'local':

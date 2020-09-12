@@ -5,7 +5,7 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 
 from config import Config
-from response_maker import ResponseMakerForNcodeAndText
+from utils import ResponseMakerForNcodeAndText
 
 
 app = Flask(__name__)
@@ -15,4 +15,4 @@ bootstrap = Bootstrap(app)
 ncode_response_maker = ResponseMakerForNcodeAndText('ncode')
 text_response_maker = ResponseMakerForNcodeAndText('text')
 
-from routes import *
+from controller import *

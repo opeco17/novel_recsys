@@ -1,4 +1,7 @@
-from similar_search import SimilarItemSearch
+import sys
+sys.path.append('..')
+
+from models.similar_search import SimilarItemSearch
 
 
 class ResponseMakerForNcodeAndText(object):
@@ -23,18 +26,17 @@ class ResponseMakerForNcodeAndText(object):
             'Content-Type': 'application/json',
         }
 
-        if request.method == 'POST':
-            if request.get_json():
-                if query := request.get_json().get(self.query_is):
-                    if isinstance(query, str):
-                        self._main_process(query, response)
-                    else:
-                        response['message'] = f'Parameter {self.query_is} should be str but you throw {type(query)}.'
+        if request.get_json():
+            if query := request.get_json().get(self.query_is):
+                if isinstance(query, str):
+                    self._main_process(query, response)
                 else:
-                    keys = list(request.get_json().keys())
-                    response['message'] = f'Parameter should be {self.query_is} but you throw {keys}.'
+                    response['message'] = f'Parameter {self.query_is} should be str but you throw {type(query)}.'
             else:
-                response['message'] = f'Parameter should be {self.query_is} but you throw none.'
+                keys = list(request.get_json().keys())
+                response['message'] = f'Parameter should be {self.query_is} but you throw {keys}.'
+        else:
+            response['message'] = f'Parameter should be {self.query_is} but you throw none.'
 
         return response
 

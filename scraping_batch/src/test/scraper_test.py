@@ -3,7 +3,7 @@ import sys
 from unittest import TestCase, main
 sys.path.append('../main')
 
-from scraper import Scraper
+from models.scraper import Scraper
 
 
 class ScraperTestCase(TestCase):

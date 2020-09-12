@@ -44,10 +44,10 @@ services:
       - narou_network
 
 
-  scraping_api:
-    build: ./scraping_api
+  scraping_batch:
+    build: ./scraping_batch
     volumes:
-      - ./scraping_api:/var/www
+      - ./scraping_batch:/var/www
     ports:
       - 3034:3034
     environment:
