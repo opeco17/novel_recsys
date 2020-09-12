@@ -6,13 +6,8 @@ from elasticsearch import Elasticsearch
 import requests
 
 from config import Config
-from models.utils import TextScraper, ElasticsearchConnector
-
-
-ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
-FEATURE_EXTRACTION_URL = Config.FEATURE_EXTRACTION_URL 
-SCRAPING_TEXT_URL = Config.SCRAPING_TEXT_URL
-RECOMMEND_NUM = Config.RECOMMEND_NUM
+from models.utils import TextScraper, ElasticsearchConnector, BERTServerConnector
+from run import app
 
 
 class SimilarItemSearch(object):
@@ -28,11 +23,7 @@ class SimilarItemSearch(object):
     """
     
     def __init__(self):
-        self.elasticsearch_host_name = ELASTICSEARCH_HOST_NAME
-        self.feature_prediction_url = FEATURE_EXTRACTION_URL
-        self.scraping_text_url = SCRAPING_TEXT_URL
-        self.recommend_num = RECOMMEND_NUM
-        self.client = Elasticsearch(self.elasticsearch_host_name)
+        self.client = ElasticsearchConnector.get_client()
 
     def similar_search_by_ncode(self, query_ncode: str) -> List[Dict]:
         query_feature = self.__get_feature_by_ncode(query_ncode)
@@ -47,7 +38,7 @@ class SimilarItemSearch(object):
         recommend_list = self.__similar_search_by_feature(query_feature)
         return recommend_list
 
-    def __get_feature_by_ncode(self, query_ncode):
+    def __get_feature_by_ncode(self, query_ncode: str) -> List[float]:
         query_feature = ElasticsearchConnector.get_feature_by_ncode(self.client, query_ncode)
         return query_feature
         
@@ -56,12 +47,12 @@ class SimilarItemSearch(object):
         return query_text
         
     def __similar_search_by_feature(self, query_feature: List[float]) -> List[Dict]:        
-        recommend_list = ElasticsearchConnector.get_recommends_by_feature(self.client, query_feature, self.recommend_num)
+        recommend_list = ElasticsearchConnector.get_recommends_by_feature(self.client, query_feature)
         return recommend_list
 
     def __extract_feature(self, text: str) -> List[float]:
-        headers = {'Content-Type': 'application/json'}
-        data = {'texts': text}
-        r_post = requests.post(self.feature_prediction_url, headers=headers, json=data)
-        feature = r_post.json()['prediction'][0]
+        feature = BERTServerConnector.extract_feature(text)
         return feature
+
+    def __del__(self):
+        self.client.close()

@@ -6,10 +6,10 @@ sys.path.append('../main')
 from run import app
 
 
-class RoutesTestCase(TestCase):
+class ControllerTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(RoutesTestCase, self).__init__(*args, **kwargs)
+        super(ControllerTestCase, self).__init__(*args, **kwargs)
         app.config['TESTING'] = True
         self.client = app.test_client()
 
@@ -59,7 +59,7 @@ class RoutesTestCase(TestCase):
         self.assertEqual(len(prediction), app.config.get('H_DIM'))
 
     def __make_response(self, data):
-        response = self.client.post(
+        response = self.client.get(
             '/predict',
             data=json.dumps(data),
             content_type='application/json',

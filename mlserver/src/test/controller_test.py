@@ -7,15 +7,14 @@ import pandas as pd
 
 from run import app
 
-
 DETAILS_CSV_PATH = './test_data.csv'
 USE_RECORD_NUMBER = 5
 
 
-class RoutesTestCase(TestCase):
+class ControllerTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(RoutesTestCase, self).__init__(*args, **kwargs)
+        super(ControllerTestCase, self).__init__(*args, **kwargs)
         app.config['TESTING'] = True
         self.client = app.test_client()
         self.details_df = pd.read_csv(DETAILS_CSV_PATH).iloc[:USE_RECORD_NUMBER]
@@ -58,7 +57,7 @@ class RoutesTestCase(TestCase):
         self.assertIsInstance(message, str)
 
     def __get_response(self, data):
-        response = self.client.post(
+        response = self.client.get(
             '/predict',
             data=json.dumps(data),
             content_type='application/json',

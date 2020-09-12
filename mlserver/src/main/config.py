@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -9,7 +10,14 @@ load_dotenv(abs_path_of('config.env'))
 
 
 class Config(object):
+    # Basic
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
-    LIGHTGBM_MODEL_PATH = abs_path_of('model/lightgbm_model.pkl')
-    FEATURE_NAMES_PATH = abs_path_of('model/feature_names.json')
+
+    # Log
+    LOG_FILE = abs_path_of('log/batch.log')
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
+
+    # Path
+    LIGHTGBM_MODEL_PATH = abs_path_of('models/ml_model/lightgbm_model.pkl')
+    FEATURE_NAMES_PATH = abs_path_of('models/ml_model/feature_names.json')

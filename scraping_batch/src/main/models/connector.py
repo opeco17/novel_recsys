@@ -146,8 +146,8 @@ class BERTServerConnector(object):
     def extract_features(cls, texts: List[str]) -> List[float]:
         headers = {'Content-Type': 'application/json'}
         data = {'texts': texts}
-        r_post = requests.post(cls.feature_extraction_url, headers=headers, json=data)
-        features = r_post.json()['prediction']
+        response = requests.get(cls.feature_extraction_url, headers=headers, json=data)
+        features = response.json()['prediction']
         return features
 
 
@@ -164,9 +164,9 @@ class MLServerConnector(object):
         data = {}
         data = {column: list(details_df[column]) for column in list(details_df.columns)}
         data = json.dumps(data)
-        r_post = requests.post(cls.point_prediction_url, headers=headers, json=data)
+        response = requests.get(cls.point_prediction_url, headers=headers, json=data)
 
-        predicted_points = r_post.json()['prediction']
+        predicted_points = response.json()['prediction']
         return predicted_points
 
     @classmethod

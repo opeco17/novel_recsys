@@ -12,6 +12,7 @@ import pandas as pd
 from pandas.core.frame import DataFrame
 import requests
 
+from run import app
 from config import Config
 
 
@@ -59,8 +60,8 @@ class DetailsScraper(object):
                 try:
                     res = requests.get(cls.narou_api_url, params=payload, timeout=30).content
                     break
-                except:
-                    print('Connection Error')
+                except Exception as e:
+                    app.logger.error(e)
                     c += 1       
 
             r = gzip.decompress(res).decode('utf-8')
@@ -152,7 +153,7 @@ class TextScraper(object):
                     text = cls.__get_main_text(bs_obj)  
                     break
                 except Exception as e:
-                    print(e)
+                    app.logger.error(e)
                     c += 1
 
             processed_ncodes.append(ncode)

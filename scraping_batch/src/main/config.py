@@ -4,8 +4,9 @@ import logging
 from dotenv import load_dotenv
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, 'config.env'))
+base_path = os.path.dirname(os.path.abspath(__file__))
+abs_path_of = lambda path: os.path.normpath(os.path.join(base_path, path))
+load_dotenv(abs_path_of('config.env'))
 
 
 class Config(object):
@@ -14,7 +15,7 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
 
     # Log
-    LOG_FILE = 'log/batch.log'
+    LOG_FILE = abs_path_of('log/batch.log')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # Parameter
