@@ -5,6 +5,7 @@ import requests
 from flask import request, Response
 
 from models.bert import FeatureExtractor
+from train.trainer import Trainer
 from run import app
 
 
@@ -47,9 +48,10 @@ def predict():
     return response
 
 
-@app.route('/train')
-def index():
-    response_body = {"text": "Here is BERTServer!"}
+@app.route('/train', methods=['GET'])
+def train():
+    response_body = {"text": "Training completed!"}
+    Trainer.train()
     response = Response(
         response=json.dumps(response_body), 
         mimetype='application/json',

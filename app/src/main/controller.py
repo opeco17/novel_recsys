@@ -5,7 +5,7 @@ import requests
 from flask import request, Response
 
 from run import app
-from utils import ResponseMakerForNcodeAndText
+from response_utils import ResponseMakerForNcodeAndText
 
 ncode_response_maker = ResponseMakerForNcodeAndText('ncode')
 text_response_maker = ResponseMakerForNcodeAndText('text')
