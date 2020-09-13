@@ -45,3 +45,14 @@ def predict():
     )
     app.logger.info(f'Response body: {response_body}')
     return response
+
+
+@app.route('/train')
+def index():
+    response_body = {"text": "Here is BERTServer!"}
+    response = Response(
+        response=json.dumps(response_body), 
+        mimetype='application/json',
+        status= 200
+    )
+    return response
