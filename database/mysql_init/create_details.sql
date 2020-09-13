@@ -3,8 +3,8 @@ CREATE DATABASE maindb;
 USE maindb;
 
 CREATE TABLE details(
-	title TEXT,
 	ncode TEXT not null,
+    title TEXT,
 	userid TEXT,
 	writer TEXT,
 	story TEXT,
@@ -43,7 +43,9 @@ CREATE TABLE details(
 	updated_at INTEGER,
 	weekly_unique INTEGER,
 	text TEXT,
-	predict_point TEXT
+	predict_point TEXT,
+    bert_train BOOLEAN,
+    ml_train BOOLEAN
 ) ENGINE=INNODB;
 
 CREATE INDEX ncodeindex ON details(ncode(10));

@@ -6,7 +6,7 @@ from elasticsearch import Elasticsearch
 import requests
 
 from config import Config
-from models.utils import TextScraper, ElasticsearchConnector, BERTServerConnector
+from models.similar_search_utils import TextScraper, ElasticsearchConnector, BERTServerConnector
 from run import app
 
 

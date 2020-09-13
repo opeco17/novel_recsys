@@ -157,9 +157,7 @@ class MLServerConnector(object):
     point_prediction_url = POINT_PREDICTION_URL
 
     @classmethod
-    def predict_point(cls, details_df: DataFrame) -> List[int]:
-        details_df = cls.preprocessing(details_df)
-        
+    def predict_point(cls, details_df: DataFrame) -> List[int]:        
         headers = {'Content-Type': 'application/json'}
         data = {}
         data = {column: list(details_df[column]) for column in list(details_df.columns)}
@@ -168,35 +166,3 @@ class MLServerConnector(object):
 
         predicted_points = response.json()['prediction']
         return predicted_points
-
-    @classmethod
-    def preprocessing(cls, details_df: DataFrame) -> DataFrame:
-        '''ポイント予測のために新しい特徴量を作成する。
-        
-        Variables:
-            title_length: タイトルの文字数
-            story_length: あらすじの文字数
-            text_length: 本文の文字数
-            keyword_number: キーワードの数
-            noun_proportion_in_text: 本文中における文字数当たりの名詞数
-        '''
-        mecab = MeCab.Tagger("-Ochasen")
-        
-        for column in ['title', 'story', 'text']:
-            details_df[column + '_length'] = details_df[column].apply(lambda x: len(str(x)))
-        details_df['keyword_number'] = details_df['keyword'].apply(lambda x: len(str(x).split(' ')))
-        details_df['noun_proportion_in_text'] = details_df.text.apply(
-                lambda x: cls.count_noun_number(mecab, str(x)) / len(str(x))
-        )
-        return details_df
-
-    @classmethod
-    def count_noun_number(cls, mecab: MeCab.Tagger, text: str) -> int:
-        count = []
-        for line in mecab.parse(str(text)).splitlines():
-            try:
-                if "名詞" in line.split()[-1]:
-                    count.append(line)
-            except:
-                pass
-        return len(set(count))

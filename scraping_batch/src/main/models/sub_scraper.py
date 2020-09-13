@@ -67,9 +67,11 @@ class DetailsScraper(object):
             r = gzip.decompress(res).decode('utf-8')
 
             details_df = pd.read_json(r).drop(0)
-            details_df = cls.__details_preprocessing(details_df)
+            # details_df = cls.__details_preprocessing(details_df)
 
+            # lastup = details_df.iloc[-1]["general_lastup"]
             lastup = details_df.iloc[-1]["general_lastup"]
+            lastup = int(datetime.datetime.strptime(lastup, "%Y-%m-%d %H:%M:%S").timestamp())
 
             time.sleep(cls.interval)
             yield details_df

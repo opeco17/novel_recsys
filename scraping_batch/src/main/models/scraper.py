@@ -5,6 +5,7 @@ sys.path.append('..')
 from run import app
 from config import Config
 from models.connector import ElasticsearchConnector, DBConnector, MLServerConnector
+from models.preprocesser import Preprocesser
 from models.sub_scraper import DetailsScraper, TextScraper
 
 
@@ -25,6 +26,8 @@ class Scraper(object):
             ncodes, texts = TextScraper.scraping_texts(sub_details_df.ncode)
             for ncode, text in zip(ncodes, texts):
                 sub_details_df.loc[sub_details_df['ncode']==ncode, 'text'] = text[:1024]
+            sub_details_df = Preprocesser.preprocess_details(sub_details_df)
+            sub_details_df = Preprocesser.preprocess_ml_details(sub_details_df)
             predicted_point = MLServerConnector.predict_point(sub_details_df)
             sub_details_df['predict_point'] = predicted_point
 
