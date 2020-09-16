@@ -27,18 +27,19 @@ def scraping_and_add():
 
     if (host := os.environ.get('HOST')) == None:
         host = 'local'
-    
-    if (test:=request.get_json().get('test')) and (mode:=request.get_json().get('mode')):
-        if isinstance(test, bool) and mode in ['first', 'middle']:
-            scraper = Scraper(test=test)
-            scraper.scraping_and_add(mode=mode)
+
+    if isinstance(test:=request.get_json().get('test'), bool) and (mode:=request.get_json().get('mode')) in ['first', 'middle']:
+        if (test==True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0) or (test==False):
+            app.logger.info(f'test: {test}  mode: {mode}  epoch: {epoch}')
+            scraper = Scraper()
+            scraper.scraping_and_add(test=test, mode=mode, epoch=epoch)
             response_body['success'] = True
-            response_body["message"] = f"{scraper.data_count} data were scraped and registered."
+            response_body["message"] = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
             status_code = 200
         else:
-            response_body["message"] = "test should be boolean and mode should be str."
+            response_body["message"] = "When test is True, epoch should be a natural number."
     else:
-        response_body["message"] = "Please specify test(true or false) and mode(first or middle)."
+        response_body["message"] = "Please specify test(bool) and mode(first or middle)."
 
     response = Response(
         response=json.dumps(response_body),
@@ -57,17 +58,18 @@ def add_existing_data():
     if (host := os.environ.get('HOST')) == None:
         host = 'local'
     
-    if test := request.get_json().get('test'):
-        if isinstance(test, bool):
-            scraper = Scraper(test=test)
-            scraper.add_existing_data()
+    if isinstance(test:=request.get_json().get('test'), bool):
+        if (test==True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0) or (test==False):
+            app.logger.info(f'test: {test}  epoch: {epoch}')
+            scraper = Scraper()
+            scraper.add_existing_data(test=test, epoch=epoch)
             response_body['success'] = True
-            response_body["message"] = f"{scraper.data_count} data were registered."
+            response_body["message"] = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
             status_code = 200
         else:
-            response_body["message"] = "test should be boolean."
+            response_body["message"] = "When test is True, epoch should be a natural number."
     else:
-        response_body["message"] = "Please specify test using boolean."
+        response_body["message"] = "Please specify test(bool)."
 
     response = Response(
         response=json.dumps(response_body),

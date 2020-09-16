@@ -13,6 +13,7 @@ import pandas as pd
 from pandas.core.frame import DataFrame
 import requests
 
+from run import app
 from config import Config
 
 
@@ -66,9 +67,9 @@ class DBConnector(object):
         conn.commit()
 
     @classmethod
-    def get_details_df_iterator(cls, conn, test):
+    def get_details_df_iterator(cls, conn, test, epoch):
         if test:
-            details_df_iterator = pd.read_sql_query("SELECT * FROM details LIMIT 64", conn, chunksize=cls.chunksize)
+            details_df_iterator = pd.read_sql_query(f"SELECT * FROM details LIMIT {epoch * 64}", conn, chunksize=cls.chunksize)
         else:
             details_df_iterator = pd.read_sql_query("SELECT * FROM details WHERE predict_point='Nan'", conn, chunksize=chunksize)
         return details_df_iterator
@@ -95,6 +96,8 @@ class ElasticsearchConnector(object):
                 'writer': {'type': 'text'},
                 'keyword': {'type': 'text'}, 
                 'story': {'type': 'text'},
+                'genre': {'type': 'integer'},
+                'biggenre': {'type': 'integer'},
                 'feature': {'type': 'dense_vector', 'dims': cls.h_dim},
             }
         }
@@ -105,11 +108,10 @@ class ElasticsearchConnector(object):
         """作品の詳細情報の一部と特徴量を追加"""
         sub_df_iterator = cls.__generate_sub_df(details_df)
         for sub_df in sub_df_iterator:
-            ncodes, texts, stories, keywords, writers = \
-                list(sub_df.ncode), list(sub_df.text), list(sub_df.story), list(sub_df.keyword), list(sub_df.writer)
-            
+            ncodes, texts, stories, keywords, writers, genres, biggenres = \
+                list(sub_df.ncode), list(sub_df.text), list(sub_df.story), list(sub_df.keyword), list(sub_df.writer), list(sub_df.genre), list(sub_df.biggenre)
             features = BERTServerConnector.extract_features(texts)
-            bulk(client, cls.__generate_es_data(ncodes, writers, keywords, stories, features))
+            bulk(client, cls.__generate_es_data(ncodes, writers, keywords, stories, genres, biggenres, features))
 
     @classmethod
     def __generate_sub_df(cls, details_df):
@@ -123,16 +125,18 @@ class ElasticsearchConnector(object):
 
     @classmethod
     def __generate_es_data(
-        cls, ncodes: List[str], writers: List[str], keywords: List[str], stories: List[str],  \
+        cls, ncodes: List[str], writers: List[str], keywords: List[str], stories: List[str], genres: List[int], biggenres: List[int], \
         features: List[float]) -> dict:
         """Elasticsearchへバルクインサートするための前処理"""
-        for ncode, writer, keyword, story, feature in zip(ncodes, writers, keywords, stories, features):
+        for ncode, writer, keyword, story, genre, biggenre, feature in zip(ncodes, writers, keywords, stories, genres, biggenres, features):
             yield {
                 '_index': 'features',
                 'ncode': ncode,
                 'writer': writer,
                 'keyword': keyword,
                 'story': story,
+                'genre': genre, 
+                'biggenres': biggenre,
                 'feature': feature,
             }
 
@@ -163,6 +167,6 @@ class MLServerConnector(object):
         data = {column: list(details_df[column]) for column in list(details_df.columns)}
         data = json.dumps(data)
         response = requests.get(cls.point_prediction_url, headers=headers, json=data)
-
+        app.logger.info(response)
         predicted_points = response.json()['prediction']
         return predicted_points

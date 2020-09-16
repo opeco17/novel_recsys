@@ -67,9 +67,7 @@ class DetailsScraper(object):
             r = gzip.decompress(res).decode('utf-8')
 
             details_df = pd.read_json(r).drop(0)
-            # details_df = cls.__details_preprocessing(details_df)
-
-            # lastup = details_df.iloc[-1]["general_lastup"]
+  
             lastup = details_df.iloc[-1]["general_lastup"]
             lastup = int(datetime.datetime.strptime(lastup, "%Y-%m-%d %H:%M:%S").timestamp())
 
@@ -86,6 +84,8 @@ class DetailsScraper(object):
             latest_registered_datetime = str(sql_result[0]) if sql_result is not None else '1073779200'
         else:
             raise Exception('Argument mode should be middle or first.')
+
+        app.logger.info(f'Latest registered datetime: {latest_registered_datetime}')
         return latest_registered_datetime
 
     @classmethod

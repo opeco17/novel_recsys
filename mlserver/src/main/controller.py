@@ -38,7 +38,7 @@ def predict():
         for feature_name in feature_names:
             if feature_name not in list(all_features_df.columns):
                 flag = False
-                response_body['message'] = 'Lack of necessary feature.'
+                response_body['message'] = f'Lack of necessary feature: {feature_name}.'
                 break
         if flag:
             features_df = all_features_df[feature_names]
