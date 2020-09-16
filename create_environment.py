@@ -1,23 +1,25 @@
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 
 def main(args):
 
     # Elasticsearchのデータディレクトリ処理
-    if not os.path.exists(es_data_dir:='elasticsearch/es_data'):
-        if os.path.exists(es_data_old_dir:='elasticsearch/es_data_old'):
-            os.remove(es_data_old_dir)
-        os.rename(es_data_dir, es_data_dir)
-        os.mkdir(es_data_dir)
+    if os.path.exists(es_data_old_dir:='elasticsearch/es_data_old'):
+        shutil.rmtree(es_data_old_dir)
+    if os.path.exists(es_data_dir:='elasticsearch/es_data'):
+        os.rename(es_data_dir, es_data_old_dir)
+    os.mkdir(es_data_dir)
 
     # Databaseのデータディレクトリ処理
-    if not os.path.exists(mysql_data_dir:='database/mysql_data'):
-        if os.path.exists(mysql_data_old_dir:='database/mysql_data_old'):
-            os.remove(mysql_data_old_dir)
+    if os.path.exists(mysql_data_old_dir:='database/mysql_data_old'):
+        shutil.rmtree(mysql_data_old_dir)
+    if os.path.exists(mysql_data_dir:='database/mysql_data'):
         os.rename(mysql_data_dir, mysql_data_old_dir)
-        os.mkdir(mysql_data_dir)
+    os.mkdir(mysql_data_dir)
+
 
     # Dockerコマンドの実行
     run_cmd = lambda cmd: subprocess.run(cmd, shell=True, stdout=sys.stdout, stderr=sys.stdout, text=True)
