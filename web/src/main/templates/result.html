@@ -5,6 +5,7 @@
 <br>
 {% for recommend_item in recommend_items %}
 <div class="card card-body bg-light" style="clear:both;">
+    <h5><a href={{ recommend_item.url }}>タイトル: {{ recommend_item.title }}</a></h5>
     <h5>作者: {{ recommend_item.writer }}</h5>
     <h5>キーワード: {{ recommend_item.keyword }}</h5>
     <h5>あらすじ: {{ recommend_item.story }}</h5>

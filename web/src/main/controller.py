@@ -27,6 +27,8 @@ def search_by_text():
             response = requests.get(Config.TEXT_SEARCH_URL, headers=headers, json=data)
             if response.json().get('success'):
                 recommend_items = response.json().get('recommend_items')
+                for recommend_item in recommend_items:
+                    recommend_item['url'] = f"https://ncode.syosetu.com/{recommend_item['ncode']}/"
                 return render_template('result.html', recommend_items=recommend_items)
             else:
                 return render_template('error.html')
@@ -49,6 +51,8 @@ def search_by_url():
             response = requests.get(Config.NCODE_SEARCH_URL, headers=headers, json=data)
             if response.json().get('success'):
                 recommend_items = response.json().get('recommend_items')
+                for recommend_item in recommend_items:
+                    recommend_item['url'] = f"https://ncode.syosetu.com/{recommend_item['ncode']}/"
                 return render_template('result.html', recommend_items=recommend_items)
             else:
                 return render_template('error.html')

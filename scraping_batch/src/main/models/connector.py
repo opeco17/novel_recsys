@@ -93,6 +93,7 @@ class ElasticsearchConnector(object):
         mappings = {
             'properties': {
                 'ncode': {'type': 'keyword'},
+                'title': {'type': 'text'},
                 'writer': {'type': 'text'},
                 'keyword': {'type': 'text'}, 
                 'story': {'type': 'text'},
@@ -108,10 +109,11 @@ class ElasticsearchConnector(object):
         """作品の詳細情報の一部と特徴量を追加"""
         sub_df_iterator = cls.__generate_sub_df(details_df)
         for sub_df in sub_df_iterator:
-            ncodes, texts, stories, keywords, writers, genres, biggenres = \
-                list(sub_df.ncode), list(sub_df.text), list(sub_df.story), list(sub_df.keyword), list(sub_df.writer), list(sub_df.genre), list(sub_df.biggenre)
+            ncodes, titles, texts, stories, keywords, writers, genres, biggenres = \
+                list(sub_df.ncode), list(sub_df.title), list(sub_df.text), list(sub_df.story), \
+                list(sub_df.keyword), list(sub_df.writer), list(sub_df.genre), list(sub_df.biggenre)
             features = BERTServerConnector.extract_features(texts)
-            bulk(client, cls.__generate_es_data(ncodes, writers, keywords, stories, genres, biggenres, features))
+            bulk(client, cls.__generate_es_data(ncodes, titles, writers, keywords, stories, genres, biggenres, features))
 
     @classmethod
     def __generate_sub_df(cls, details_df):
@@ -125,13 +127,14 @@ class ElasticsearchConnector(object):
 
     @classmethod
     def __generate_es_data(
-        cls, ncodes: List[str], writers: List[str], keywords: List[str], stories: List[str], genres: List[int], biggenres: List[int], \
+        cls, ncodes: List[str], titles: List[str], writers: List[str], keywords: List[str], stories: List[str], genres: List[int], biggenres: List[int], \
         features: List[float]) -> dict:
         """Elasticsearchへバルクインサートするための前処理"""
-        for ncode, writer, keyword, story, genre, biggenre, feature in zip(ncodes, writers, keywords, stories, genres, biggenres, features):
+        for ncode, title, writer, keyword, story, genre, biggenre, feature in zip(ncodes, titles, writers, keywords, stories, genres, biggenres, features):
             yield {
                 '_index': 'features',
                 'ncode': ncode,
+                'title': title,
                 'writer': writer,
                 'keyword': keyword,
                 'story': story,
