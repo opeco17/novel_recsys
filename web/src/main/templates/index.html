@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h4>あなた好みの小説をレコメンドします。</h4>
+<h4>あなたの好みの小説を教えて下さい。</h4>
+<br>
+<div style="float:left; padding: 10px; ">
+    <a href="{{ url_for('search_by_text')}}" class="btn btn-outline-primary btn-lg">小説を直接入力する</a>
+</div>
+<div style="float:left; padding: 10px;">
+    <a href="{{ url_for('search_by_url')}}" class="btn btn-outline-primary btn-lg">小説家になろうのURLを入力する</a>
+</div>
+<br><br><br><br>
+{% endblock %}

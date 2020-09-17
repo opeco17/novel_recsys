@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -9,6 +10,15 @@ class Config(object):
     # Basic
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
+
+    # Mail
+    with open('mail_info.json', 'r') as f:
+        mail_info = json.load(f)
+    MAIL_SERVER = mail_info['mail_server']
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = mail_info['mail_username']
+    MAIL_PASSWORD = mail_info['mail_password']
 
     # Log
     LOG_FILE = abs_path_of('log/batch.log')
@@ -23,6 +33,6 @@ class Config(object):
 
     elif host == 'container':
         print('Host is set to container.')
-        ELASTICSEARCH_HOST_NAME = 'elasticsearch'
-        NCODE_SEARCH_URL = 'http://app:3032/search_by_ncode'
-        TEXT_SEARCH_URL = 'http://app:3032/search_by_text'
+        NCODE_SEARCH_URL = 'http://app:3031/search_by_ncode'
+        TEXT_SEARCH_URL = 'http://app:3031/search_by_text'
+        

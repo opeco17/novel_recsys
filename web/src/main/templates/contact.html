@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block content %}
+<br>
+{% if success %}
+<div class="container">
+    <div class="page-header">
+        <h1>Thank you for your message!</h1>
+    </div>
+    <br>
+    <h4>We'll get back to you shortly.</h4>
+    <br>
+    <a href="{{ url_for('index')}}">Back to initial page.</a>
+</div>
+{% else %}
+<div class="container">
+	<div class="page-header">
+		<h1>Contact</h1>
+    </div>
+    <div>
+        {% for message in get_flashed_messages() %}
+        <div class="flash" style="background-color: #FBB0B0; padding: 10px; width: 400px;">
+        {% endfor %}
+            {% for message in form.name.errors %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            
+            {% for message in form.email.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            
+            {% for message in form.subject.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            
+            {% for message in form.message.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        </div>
+        <div class="form">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,8 +1,10 @@
+import json
 import logging
 import logging.handlers
 
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
+from flask_mail import Mail
 
 from config import Config
 
@@ -15,5 +17,8 @@ handler = logging.handlers.RotatingFileHandler(app.config['LOG_FILE'], "a+", max
 handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')) 
 app.logger.addHandler(handler)
 app.logger.setLevel(app.config['LOG_LEVEL'])
+
+mail = Mail()
+mail.init_app(app)
 
 from controller import *
