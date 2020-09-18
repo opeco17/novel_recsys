@@ -1,3 +1,3 @@
-# narou_bert_recommender
+# Architecture
 
-<img width="837" alt="スクリーンショット 2020-09-01 8 28 56" src="https://user-images.githubusercontent.com/46510874/91778377-3c71dd00-ec2d-11ea-9b1b-92dc5f393ead.png">
+<img width="962" alt="architecture" src="https://user-images.githubusercontent.com/46510874/93614112-b0bdc600-fa0c-11ea-9f26-ebd188c648d1.png">
