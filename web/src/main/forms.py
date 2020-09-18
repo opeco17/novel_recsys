@@ -3,12 +3,12 @@ from wtforms import validators, SubmitField, TextField, TextAreaField
 
 
 class TextUploadForm(FlaskForm):
-    text = TextAreaField('Text', [validators.Required('小説の本文を入力して下さい。')])
+    text = TextAreaField('小説の本文を入力して下さい。', [validators.Required('小説の本文を入力して下さい。')])
     submit = SubmitField('送信する')
 
 
 class URLUploadForm(FlaskForm):
-    url = TextField('URL', [validators.Required('小説家になろうの小説URLを入力して下さい。')])
+    url = TextField('小説家になろうの小説URLを入力して下さい。', [validators.Required('小説家になろうの小説URLを入力して下さい。')])
     submit = SubmitField('送信する')
 
 

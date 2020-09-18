@@ -7,6 +7,7 @@ import requests
 
 from config import Config
 from forms import ContactForm, TextUploadForm, URLUploadForm
+from model import RecommendItemsGetter
 from run import app, mail
 
 
@@ -22,13 +23,8 @@ def search_by_text():
     if request.method == 'POST':
         if text_upload_form.validate():
             text = text_upload_form.text.data
-            headers = {'Content-Type': 'application/json'}
-            data = {'text': text}
-            response = requests.get(Config.TEXT_SEARCH_URL, headers=headers, json=data)
-            if response.json().get('success'):
-                recommend_items = response.json().get('recommend_items')
-                for recommend_item in recommend_items:
-                    recommend_item['url'] = f"https://ncode.syosetu.com/{recommend_item['ncode']}/"
+            recommend_items = RecommendItemsGetter.get_recommend_items_by_text(text)
+            if recommend_items:
                 return render_template('result.html', recommend_items=recommend_items)
             else:
                 return render_template('error.html')
@@ -46,13 +42,8 @@ def search_by_url():
         if url_upload_form.validate() and \
             re.fullmatch(r'https://ncode.syosetu.com/[nN].{6}/?', url:=url_upload_form.url.data):
             ncode = url[26:33].upper()
-            headers = {'Content-Type': 'application/json'}
-            data = {'ncode': ncode}
-            response = requests.get(Config.NCODE_SEARCH_URL, headers=headers, json=data)
-            if response.json().get('success'):
-                recommend_items = response.json().get('recommend_items')
-                for recommend_item in recommend_items:
-                    recommend_item['url'] = f"https://ncode.syosetu.com/{recommend_item['ncode']}/"
+            recommend_items = RecommendItemsGetter.get_recommend_items_by_ncode(ncode)
+            if recommend_items:
                 return render_template('result.html', recommend_items=recommend_items)
             else:
                 return render_template('error.html')

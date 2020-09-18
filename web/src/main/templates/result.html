@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h4>レコメンド結果がこちらになります。</h4>
+<h5>レコメンド結果がこちらになります。</h5>
 <br>
 {% for recommend_item in recommend_items %}
 <div class="card card-body bg-light" style="clear:both;">
-    <h5><a href={{ recommend_item.url }}>タイトル: {{ recommend_item.title }}</a></h5>
-    <h5>作者: {{ recommend_item.writer }}</h5>
-    <h5>キーワード: {{ recommend_item.keyword }}</h5>
-    <h5>あらすじ: {{ recommend_item.story }}</h5>
+    <h5><a href={{ recommend_item.url }}>{{ recommend_item.title }}</a></h5>
+    <br>
+    <p align="right">作者: {{ recommend_item.writer }}</p>
+    <p>{{ recommend_item.keyword }}</p>
+    <hr size="40" noshade>
+    <p>あらすじ: {{ recommend_item.story }}</p>
 </div>
 <br><br>
 {% endfor %}
-<a href="{{ url_for('index')}}">前のページへ戻る</a>
+<a href="{{ url_for('index')}}">はじめのページへ戻る</a>
 {% endblock %}
