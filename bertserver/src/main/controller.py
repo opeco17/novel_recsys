@@ -50,11 +50,16 @@ def predict():
 
 @app.route('/train', methods=['GET'])
 def train():
-    response_body = {"text": "Training completed!"}
-    Trainer.train()
+    success = Trainer.train()
+    if success:
+        status_code = 200
+        response_body = {"message": "Training completed!"}
+    else:
+        status_code = 500
+        response_body = {"message": "Training Failed."}
     response = Response(
         response=json.dumps(response_body), 
         mimetype='application/json',
-        status= 200
+        status= status_code
     )
     return response

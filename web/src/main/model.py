@@ -1,11 +1,12 @@
 import requests
+from typing import List, Dict
 
 from config import Config
 
 class RecommendItemsGetter(object):
 
     @classmethod
-    def get_recommend_items_by_ncode(cls, ncode):
+    def get_recommend_items_by_ncode(cls, ncode: str) -> List[Dict]:
         headers = {'Content-Type': 'application/json'}
         data = {'ncode': ncode}
         response = requests.get(Config.NCODE_SEARCH_URL, headers=headers, json=data)
@@ -18,7 +19,7 @@ class RecommendItemsGetter(object):
 
     
     @classmethod
-    def get_recommend_items_by_text(cls, text):
+    def get_recommend_items_by_text(cls, text: str) -> List[Dict]:
         headers = {'Content-Type': 'application/json'}
         data = {'text': text}
         response = requests.get(Config.TEXT_SEARCH_URL, headers=headers, json=data)

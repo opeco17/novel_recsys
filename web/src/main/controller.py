@@ -17,6 +17,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/about')
+def about():
+	return render_template('about.html')
+
+
 @app.route('/search_by_text', methods=['GET', 'POST'])
 def search_by_text():
     text_upload_form = TextUploadForm()
@@ -53,13 +58,6 @@ def search_by_url():
     else:
         return render_template('search_by_url.html', form=url_upload_form, success=False)
             
-    return render_template('search_by_url.html', form=url_upload_form, success=False)
-
-
-@app.route('/about')
-def about():
-	return render_template('about.html')
-
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():

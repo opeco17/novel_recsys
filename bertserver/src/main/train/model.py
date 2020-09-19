@@ -24,7 +24,7 @@ class BERT(nn.Module):
         self.bert = BertModel.from_pretrained(self.pretrained_bert_path)
         self.fc = nn.Linear(768, self.h_dim)  
     
-    def forward(self, ids, mask):
+    def forward(self, ids: torch.LongTensor, mask: torch.LongTensor) -> torch.Tensor:
         _, output = self.bert(ids, attention_mask=mask)
         output = self.fc(output)
         return output
@@ -32,7 +32,7 @@ class BERT(nn.Module):
 
 class ArcMarginProduct(nn.Module):
 
-    def __init__(self, s=30.0, m=0.50, device='cpu'):
+    def __init__(self, s: float=30.0, m: float=0.50, device: str='cpu'):
         super(ArcMarginProduct, self).__init__()
         self.in_features = H_DIM
         self.out_features = NUM_CLASSES
@@ -48,7 +48,7 @@ class ArcMarginProduct(nn.Module):
         self.th = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
         
-    def forward(self, input, label):
+    def forward(self, input: torch.Tensor, label: torch.Tensor) -> torch.Tensor:
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         sine = torch.sqrt((1.0 - torch.pow(cosine, 2)).clamp(0, 1))
         phi = cosine * self.cos_m - sine * self.sin_m
@@ -65,7 +65,7 @@ class OptimizerCreater(object):
     lr = LEARNING_RATE
 
     @classmethod
-    def create_optimizer(cls, bert, metric_fc):
+    def create_optimizer(cls, bert: BERT, metric_fc: ArcMarginProduct) -> AdamW:
         optimizer = AdamW([
             {'params': bert.parameters(), 'lr': cls.lr},
             {'params': metric_fc.parameters(), 'lr': cls.lr},

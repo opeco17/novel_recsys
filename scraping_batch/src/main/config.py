@@ -23,7 +23,6 @@ class Config(object):
     SCRAPING_DETAILS_BATCH_SIZE = 32
     ELASTICSEARCH_BATCH_SIZE = 16
     DB_BATCH_SIZE = 32
-    DB_PORT = 3306
     INTERVAL = 0.1
 
     # Narou
@@ -31,6 +30,8 @@ class Config(object):
     NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
 
     # External server
+    DB_PORT = 3306
+    
     host = os.environ.get('HOST', 'local')
     if host == 'local':
         ELASTICSEARCH_HOST_NAME = 'localhost:9200'

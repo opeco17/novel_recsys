@@ -1,6 +1,6 @@
 import json
 import sys
-from typing import List, Tuple, Any
+from typing import Dict, Generator, List, Tuple, Any
 sys.path.append('..')
 
 from bs4 import BeautifulSoup
@@ -9,6 +9,8 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import MeCab
 import MySQLdb
+from  MySQLdb.connections import Connection 
+from MySQLdb.cursors import Cursor
 import pandas as pd
 from pandas.core.frame import DataFrame
 import requests
@@ -35,7 +37,7 @@ class DBConnector(object):
     port = DB_PORT
 
     @classmethod
-    def get_conn_and_cursor(cls) -> Tuple[Any, Any]:
+    def get_conn_and_cursor(cls) -> Tuple[Connection, Cursor]:
         """DBへ接続するメソッド"""
         conn = MySQLdb.connect(
             host = cls.host_name,
@@ -50,7 +52,7 @@ class DBConnector(object):
         return conn, cursor
 
     @classmethod
-    def add_details(cls, conn, cursor, details_df):
+    def add_details(cls, conn: Connection, cursor: Cursor, details_df: DataFrame):
         """作品の詳細情報全てを追加"""
         cursor.execute("SHOW columns FROM details")
         columns_of_details = [column[0] for column in cursor.fetchall()]
@@ -60,14 +62,14 @@ class DBConnector(object):
         conn.commit()
 
     @classmethod
-    def update_predict_points(cls, conn, cursor, ncodes, predict_points):
+    def update_predict_points(cls, conn: Connection, cursor: Cursor, ncodes: List[str], predict_points: List[int]):
         """作品の予測ポイントを更新"""
         data = [(ncode, predict_point) for ncode, predict_point in zip(ncodes, predict_points)]
         cursor.executemany("UPDATE details SET predict_point=%s WHERE ncode=%s", data)
         conn.commit()
 
     @classmethod
-    def get_details_df_iterator(cls, conn, test, epoch):
+    def get_details_df_iterator(cls, conn: Connection, test: bool, epoch: int) -> Generator:
         if test:
             details_df_iterator = pd.read_sql_query(f"SELECT * FROM details LIMIT {epoch * 64}", conn, chunksize=cls.chunksize)
         else:
@@ -84,11 +86,11 @@ class ElasticsearchConnector(object):
     h_dim = H_DIM
 
     @classmethod
-    def get_client(cls):
+    def get_client(cls) -> Elasticsearch:
         return Elasticsearch(cls.host_name)
 
     @classmethod
-    def create_indices(cls, client):
+    def create_indices(cls, client: Elasticsearch):
         """indexの新規作成"""
         mappings = {
             'properties': {
@@ -105,7 +107,7 @@ class ElasticsearchConnector(object):
         client.indices.create(index='features', body={'mappings': mappings})
 
     @classmethod
-    def add_details(cls, client, details_df):
+    def add_details(cls, client: Elasticsearch, details_df: DataFrame):
         """作品の詳細情報の一部と特徴量を追加"""
         sub_df_iterator = cls.__generate_sub_df(details_df)
         for sub_df in sub_df_iterator:
@@ -116,7 +118,7 @@ class ElasticsearchConnector(object):
             bulk(client, cls.__generate_es_data(ncodes, titles, writers, keywords, stories, genres, biggenres, features))
 
     @classmethod
-    def __generate_sub_df(cls, details_df):
+    def __generate_sub_df(cls, details_df: DataFrame) -> DataFrame:
         """DataFrameをミニバッチに分割するサブロジック"""
         recommendable_df = details_df[(details_df['predict_point'] == 1) & (details_df['global_point'] == 0)]
         if len(recommendable_df) != 0:
@@ -126,9 +128,8 @@ class ElasticsearchConnector(object):
                 yield sub_recommendable_df
 
     @classmethod
-    def __generate_es_data(
-        cls, ncodes: List[str], titles: List[str], writers: List[str], keywords: List[str], stories: List[str], genres: List[int], biggenres: List[int], \
-        features: List[float]) -> dict:
+    def __generate_es_data(cls, ncodes: List[str], titles: List[str], writers: List[str], keywords: List[str], stories: List[str], \
+                            genres: List[int], biggenres: List[int], features: List[float]) -> Dict:
         """Elasticsearchへバルクインサートするための前処理"""
         for ncode, title, writer, keyword, story, genre, biggenre, feature in zip(ncodes, titles, writers, keywords, stories, genres, biggenres, features):
             yield {

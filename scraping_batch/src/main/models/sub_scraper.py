@@ -8,6 +8,8 @@ from urllib.request import urlopen
 sys.path.append('..')
 
 from bs4 import BeautifulSoup
+from  MySQLdb.connections import Connection 
+from MySQLdb.cursors import Cursor
 import pandas as pd
 from pandas.core.frame import DataFrame
 import requests
@@ -38,7 +40,7 @@ class DetailsScraper(object):
     batch_size = SCRAPING_DETAILS_BATCH_SIZE
 
     @classmethod
-    def get_scraped_df_iterator(cls, mode, conn=None, cursor=None):
+    def get_scraped_df_iterator(cls, mode: str, conn: Connection=None, cursor: Cursor=None) -> DataFrame:
         latest_registered_datetime = cls.__get_latest_registered_datetime(mode, cursor)
         now = str(int(datetime.datetime.now().timestamp()))
 
@@ -75,7 +77,7 @@ class DetailsScraper(object):
             yield details_df
     
     @classmethod
-    def __get_latest_registered_datetime(cls, mode, cursor=None):
+    def __get_latest_registered_datetime(cls, mode: str, cursor: Cursor=None) -> str:
         if mode == 'first':
             latest_registered_datetime = '1073779200'
         elif mode == 'middle' and cursor:

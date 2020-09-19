@@ -1,13 +1,16 @@
 import json
 import os
 import re
+from typing import Tuple
 import sys
 sys.path.append('..')
 
 import numpy as np
 import pandas as pd
+from pandas.core.frame import DataFrame
 
 import torch
+from torch.utils.data import DataLoader
 from transformers import BertJapaneseTokenizer
 
 from config import Config
@@ -22,7 +25,7 @@ PRETRAINED_TOKENIZER_PATH = Config.PRETRAINED_TOKENIZER_PATH
 
 class MyDataset(torch.utils.data.Dataset):
     
-    def __init__(self, df):
+    def __init__(self, df: DataFrame):
         self.max_length = MAX_LENGTH
         self.pretrained_tokenizer_path = PRETRAINED_TOKENIZER_PATH
         self.x = np.array(df['title_text'])
@@ -30,10 +33,10 @@ class MyDataset(torch.utils.data.Dataset):
         
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(self.pretrained_tokenizer_path)
         
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.x)
     
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> Tuple[torch.LongTensor, torch.LongTensor, torch.Tensor]:
         text = self.x[index]
         label = self.y[index]
         inputs = self.tokenizer.encode_plus(
@@ -55,14 +58,14 @@ class DataLoaderCreater(object):
     dataset_dir = DATASET_DIR
     
     @classmethod
-    def create_dataloader(cls, train=True):
+    def create_dataloader(cls, train: bool=True) -> DataLoader:
         df = cls.__get_df(train)
         dataset = MyDataset(df)
-        dataloader = torch.utils.data.DataLoader(dataset, cls.batch_size, shuffle=True)
+        dataloader = DataLoader(dataset, cls.batch_size, shuffle=True)
         return dataloader
 
     @classmethod
-    def __get_df(cls, train):
+    def __get_df(cls, train: bool) -> DataFrame:
         conn, _ = DBConnector.get_conn_and_cursor()
         csv_file_name = 'train.csv' if train else 'test.csv'
         if os.path.exists(path:=os.path.join(cls.dataset_dir, csv_file_name)):
@@ -78,7 +81,7 @@ class DataLoaderCreater(object):
         return df
 
     @classmethod
-    def __preprocess_df(cls, df):
+    def __preprocess_df(cls, df: DataFrame) -> DataFrame:
         with open(os.path.join(cls.dataset_dir, 'class.json')) as f:
             genre_class_mapper = json.load(f)
         genre_class_mapper = {int(key): int(value) for key, value in genre_class_mapper.items()}
@@ -94,7 +97,7 @@ class DataLoaderCreater(object):
         return df[['ncode', 'genre_category', 'title_text']]
 
     @classmethod
-    def __text_preprocess(cls, text):
+    def __text_preprocess(cls, text: str) -> str:
         text = re.sub(' ', '', text)
         text = re.sub('　', '', text)
         text = re.sub('(\n)+', '\n', text)

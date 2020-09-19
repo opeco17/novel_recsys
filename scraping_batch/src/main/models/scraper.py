@@ -1,4 +1,5 @@
 import sys
+from pandas.core.frame import DataFrame
 from typing import List, Tuple, Any
 sys.path.append('..')
 
@@ -60,19 +61,19 @@ class Scraper(object):
         self.conn.close()
         self.client.close()
         
-    def __add_to_database(self, details_df):
+    def __add_to_database(self, details_df: DataFrame):
         """作品の詳細情報全てをDatabaseへ追加"""
         DBConnector.add_details(self.conn, self.cursor, details_df)
         self.db_count += len(details_df)
         app.logger.info(f'{len(details_df)} data was inserted to database.')
         
-    def __update_database(self, ncodes, predict_points):
+    def __update_database(self, ncodes: List[str], predict_points: List[int]):
         """Databaseの予測ポイントを更新"""
         DBConnector.update_predict_points(self.conn, self.cursor, ncodes, predict_points)
         self.db_count += len(ncodes)
         app.logger.info(f'{len(ncodes)} data was updated in database.')
         
-    def __add_to_elasticsearch(self, details_df):
+    def __add_to_elasticsearch(self, details_df: DataFrame):
         """小説の詳細情報の一部と特徴量をElasticsearchへ追加(indexが存在しない場合は新規作成)"""
         if not self.client.indices.exists(index='features'):
             ElasticsearchConnector.create_indices(self.client)

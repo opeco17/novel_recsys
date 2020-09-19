@@ -10,7 +10,7 @@ class Preprocesser(object):
     """データの前処理を行うクラス"""
 
     @classmethod
-    def preprocess_details(cls, details_df):
+    def preprocess_details(cls, details_df: DataFrame) -> DataFrame:
         """DBへ追加するデータの前処理"""
         details_df = details_df.drop(['allcount', 'gensaku'], axis=1, errors='ignore')
         details_df = details_df.dropna(how='all')
@@ -51,7 +51,7 @@ class Preprocesser(object):
         return details_df
 
     @classmethod
-    def __date_to_timestamp(cls, date):
+    def __date_to_timestamp(cls, date: str) -> int:
         return int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").timestamp())
 
     @classmethod

@@ -1,6 +1,6 @@
 import json
 import sys
-from typing import Tuple
+from typing import Dict, Tuple
 sys.path.append('..')
 
 from models.similar_search import SimilarItemSearch
@@ -23,7 +23,7 @@ class ResponseMakerForNcodeAndText(object):
         self.query_is = query_is
         self.similar_item_search = SimilarItemSearch()
 
-    def make_response_body(self, request: LocalProxy) -> Tuple[dict, int]:
+    def make_response_body(self, request: LocalProxy) -> Tuple[Dict, int]:
 
         response_body = {
             'success': False,
@@ -47,7 +47,7 @@ class ResponseMakerForNcodeAndText(object):
 
         return response_body, status_code
 
-    def __main_process(self, query: str, response_body: dict):
+    def __main_process(self, query: str, response_body: Dict):
         if self.query_is == 'ncode':
             recommend_items = self.similar_item_search.similar_search_by_ncode(query)
         elif self.query_is == 'text':
