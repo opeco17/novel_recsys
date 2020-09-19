@@ -1,3 +1,3 @@
-# narou_bert_recommender
+# Recommener system architecture
 
-<img width="837" alt="スクリーンショット 2020-09-01 8 28 56" src="https://user-images.githubusercontent.com/46510874/91778377-3c71dd00-ec2d-11ea-9b1b-92dc5f393ead.png">
+<img width="1132" alt="スクリーンショット 2020-09-19 9 28 56" src="https://user-images.githubusercontent.com/46510874/93654809-96aad480-fa5a-11ea-9605-d58fcb8ec687.png">
