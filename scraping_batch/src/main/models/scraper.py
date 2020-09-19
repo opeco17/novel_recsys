@@ -36,6 +36,7 @@ class Scraper(object):
             self.__add_to_elasticsearch(sub_details_df)
 
             if test and i + 1 == epoch:
+                app.logger.info('Process broken.')
                 break
         
         app.logger.info('[scraping and add] processes are completed!')

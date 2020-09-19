@@ -29,7 +29,9 @@ def scraping_and_add():
         host = 'local'
 
     if isinstance(test:=request.get_json().get('test'), bool) and (mode:=request.get_json().get('mode')) in ['first', 'middle']:
-        if (test==True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0) or (test==False):
+        if test==False or (test==True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
+            if test == False:
+                epoch = None
             app.logger.info(f'test: {test}  mode: {mode}  epoch: {epoch}')
             scraper = Scraper()
             scraper.scraping_and_add(test=test, mode=mode, epoch=epoch)
@@ -59,7 +61,9 @@ def add_existing_data():
         host = 'local'
     
     if isinstance(test:=request.get_json().get('test'), bool):
-        if (test==True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0) or (test==False):
+        if test==False or (test==True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
+            if test == False:
+                epoch = None
             app.logger.info(f'test: {test}  epoch: {epoch}')
             scraper = Scraper()
             scraper.add_existing_data(test=test, epoch=epoch)

@@ -73,7 +73,7 @@ class DBConnector(object):
         if test:
             details_df_iterator = pd.read_sql_query(f"SELECT * FROM details LIMIT {epoch * 64}", conn, chunksize=cls.chunksize)
         else:
-            details_df_iterator = pd.read_sql_query("SELECT * FROM details WHERE predict_point='Nan'", conn, chunksize=chunksize)
+            details_df_iterator = pd.read_sql_query("SELECT * FROM details WHERE predict_point='Nan'", conn, chunksize=cls.chunksize)
         return details_df_iterator
 
 
@@ -171,6 +171,6 @@ class MLServerConnector(object):
         data = {column: list(details_df[column]) for column in list(details_df.columns)}
         data = json.dumps(data)
         response = requests.get(cls.point_prediction_url, headers=headers, json=data)
-        app.logger.info(response)
+        app.logger.info(f"Point predicted: {response}")
         predicted_points = response.json()['prediction']
         return predicted_points
