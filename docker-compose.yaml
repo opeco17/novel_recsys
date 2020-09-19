@@ -66,6 +66,19 @@ services:
     networks:
       - narou_network
 
+  data_analysis:
+    build: ./data_analysis
+    user: root
+    volumes:
+      - ./data_analysis:/home/jovyan/work
+    ports:
+      - 10000:8888
+    environment:
+      TZ: "Asia/Tokyo"
+    tty: true
+    networks:
+      - narou_network
+
   elasticsearch:
     build: ./elasticsearch
     volumes:
@@ -80,7 +93,7 @@ services:
 
   database:
     build: ./database
-    hostname: my-mysql
+    hostname: database
     env_file:
       - ./env_file.env
     environment:

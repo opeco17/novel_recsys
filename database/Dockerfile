@@ -1,4 +1,3 @@
 FROM mysql:latest
 
-WORKDIR /
-
+COPY ./mysql_init_data/maindb.sql /var/lib/
