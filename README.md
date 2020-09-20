@@ -1,5 +1,5 @@
 # Demonstration
-<img align="right" src="https://user-images.githubusercontent.com/46510874/93711993-6c0d6880-fb8d-11ea-9cec-5ca034341a35.gif" alt="Web Application Demo" width="550">
+<img align="right" src="https://user-images.githubusercontent.com/46510874/93712341-4170df00-fb90-11ea-8e63-733d432b6817.gif" width="550">
 
 
 # Recommener system architecture
