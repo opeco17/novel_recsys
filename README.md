@@ -9,4 +9,4 @@
 
 # Logging architecture
 
-<img width="600" alt="スクリーンショット 2020-09-20 18 11 36" src="https://user-images.githubusercontent.com/46510874/93707843-ca761f00-fb6c-11ea-9c66-651a944dac6b.png">
+<img width="500" alt="スクリーンショット 2020-09-20 18 11 36" src="https://user-images.githubusercontent.com/46510874/93707843-ca761f00-fb6c-11ea-9c66-651a944dac6b.png">
