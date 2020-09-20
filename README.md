@@ -1,5 +1,6 @@
 # Demonstration
-<img align="right" src="https://user-images.githubusercontent.com/46510874/93712341-4170df00-fb90-11ea-8e63-733d432b6817.gif" width="550">
+
+<img src="https://user-images.githubusercontent.com/46510874/93712341-4170df00-fb90-11ea-8e63-733d432b6817.gif" width="550">
 
 
 # Recommener system architecture
