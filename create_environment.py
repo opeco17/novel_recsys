@@ -20,7 +20,6 @@ def main(args):
         os.rename(mysql_data_dir, mysql_data_old_dir)
     os.mkdir(mysql_data_dir)
 
-
     # Dockerコマンドの実行
     run_cmd = lambda cmd: subprocess.run(cmd, shell=True, stdout=sys.stdout, stderr=sys.stdout, text=True)
 
@@ -37,6 +36,6 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--build', action='store_true', help='Dockerのbuildを0から行うか指定')
+    parser.add_argument('--build', action='store_true', help='Dockerのbuildを行うか指定')
     args = parser.parse_args()
     main(args)

@@ -15,6 +15,7 @@ model = FeatureExtractor()
 @app.route('/')
 @app.route('/index')
 def index():
+    app.logger.info('index is called.')
     response_body = {"text": "Here is BERTServer!"}
     response = Response(
         response=json.dumps(response_body), 
@@ -26,6 +27,7 @@ def index():
 
 @app.route('/predict', methods=['GET'])
 def predict():
+    app.logger.info('predict is called.')
     response_body = {"success": False,}
     status_code = 500
     if texts := request.get_json().get('texts'):
@@ -50,6 +52,7 @@ def predict():
 
 @app.route('/train', methods=['GET'])
 def train():
+    app.logger.info('train is called.')
     success = Trainer.train()
     if success:
         status_code = 200

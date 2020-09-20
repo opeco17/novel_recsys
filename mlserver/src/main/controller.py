@@ -10,6 +10,7 @@ from run import app, feature_names, model
 @app.route('/')
 @app.route('/index')
 def index():
+    app.logger.info('index is called.')
     response_body = {"message": "Here is MLServer!"}
     response = Response(
         response=json.dumps(response_body), 
@@ -28,6 +29,7 @@ def predict():
         features_df: ポイント予測に使用する特徴量を保持したDataFrame
         predicted_point: 作品のポイント予測結果 (0: 評価されない 1: 評価される)
     """
+    app.logger.info('predict is called.')
     response_body = {"success": False}
     status_code = 500
     if all_features:=request.get_json():

@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3"
 
 services:
   web:
@@ -6,11 +6,18 @@ services:
     volumes:
       - ./web:/var/www
     ports:
-      - 3030:3030
+      - "3030:3030"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     environment:
       TZ: "Asia/Tokyo"
       HOST: "container"
-    tty: true
+    tty: "true"
     networks:
       - narou_network
 
@@ -19,11 +26,18 @@ services:
     volumes:
       - ./app:/var/www/
     ports:
-      - 3031:3031
+      - "3031:3031"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     environment:
       TZ: "Asia/Tokyo"
       HOST: "container"
-    tty: true
+    tty: "true"
     networks:
       - narou_network
 
@@ -32,11 +46,18 @@ services:
     volumes:
       - ./bertserver:/var/www/
     ports:
-      - 3032:3032
+      - "3032:3032"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     environment:
       TZ: "Asia/Tokyo"
       HOST: "container"
-    tty: true
+    tty: "true"
     networks:
       - narou_network
 
@@ -45,11 +66,18 @@ services:
     volumes:
       - ./mlserver:/var/www/
     ports:
-      - 3033:3033
+      - "3033:3033"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     environment:
       TZ: "Asia/Tokyo"
       HOST: "container"
-    tty: true
+    tty: "true"
     networks:
       - narou_network
 
@@ -58,7 +86,14 @@ services:
     volumes:
       - ./scraping_batch:/var/www
     ports:
-      - 3034:3034
+      - "3034:3034"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     environment:
       TZ: "Asia/Tokyo"
       HOST: "container"
@@ -66,28 +101,36 @@ services:
     networks:
       - narou_network
 
-  data_analysis:
-    build: ./data_analysis
-    user: root
+  # data_analysis:
+  #   build: ./data_analysis
+  #   user: root
+  #   volumes:
+  #     - ./data_analysis:/home/jovyan/work
+  #   ports:
+  #     - "10000:8888"
+  #   environment:
+  #     TZ: "Asia/Tokyo"
+  #   tty: "true"
+  #   networks:
+  #     - narou_network
+
+  nginx:
+    build: ./nginx
     volumes:
-      - ./data_analysis:/home/jovyan/work
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/log:/var/log/nginx
     ports:
-      - 10000:8888
+      - "80:80"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     environment:
       TZ: "Asia/Tokyo"
-    tty: true
-    networks:
-      - narou_network
-
-  elasticsearch:
-    build: ./elasticsearch
-    volumes:
-      - ./elasticsearch/es_data:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    environment:
-      discovery.type: single-node
-    tty: true
+    tty: "true"
     networks:
       - narou_network
 
@@ -99,28 +142,56 @@ services:
     environment:
       TZ: "Asia/Tokyo"
     ports:
-      - 3306:3306
+      - "3306:3306"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
     volumes:
       - ./database/mysql_init:/docker-entrypoint-initdb.d
       - ./database/mysql_data:/var/lib/mysql
       - ./database/conf.d:/etc/mysql/conf.d
-    tty: true
+    tty: "true"
     networks:
       - narou_network
 
-  nginx:
-    build: ./nginx
+  fluentd:
+    build: ./fluentd
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/log:/var/log/nginx
+      - ./fluentd/conf:/fluentd/etc
+    links:
+      - "elasticsearch"
     ports:
-      - 80:80
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - narou_network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    volumes:
+      - ./elasticsearch/es_data:/usr/share/elasticsearch/data
     environment:
-      TZ: "Asia/Tokyo"
-    tty: true
+      - "discovery.type=single-node"
+    expose:
+      - "9200"
+    ports:
+      - "9200:9200"
+    networks:
+      - narou_network
+
+  kibana:
+    image: kibana:7.3.0
+    links:
+      - "elasticsearch"
+    ports:
+      - "5601:5601"
     networks:
       - narou_network
 
 networks:
     narou_network:
-        external: true
+        external: "true"

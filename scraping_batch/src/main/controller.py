@@ -10,6 +10,7 @@ from models.scraper import Scraper
 
 @app.route('/')
 def index():
+    app.logger.info('index is called.')
     response_body = {"message": "ScrapingApi!"}
     response = Response(
         response=json.dumps(response_body), 
@@ -22,6 +23,7 @@ def index():
 @app.route('/scraping_and_add', methods=['POST'])
 def scraping_and_add():
     """スクレイピングを行い、得られたデータを処理してDBとElasticsearchへ登録するバッチ処理"""
+    app.logger.info('scraping_and_add is called.')
     response_body = {"success": False}
     status_code = 500
 
@@ -54,6 +56,7 @@ def scraping_and_add():
 @app.route('/add_existing_data', methods=['POST'])
 def add_existing_data():
     """既存のデータを処理してDBとElasticsearchへ登録するバッチ処理"""
+    app.logger.info('add_existing_data is called.')
     response_body = {"success": False}
     status_code = 500
 

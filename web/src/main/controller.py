@@ -14,6 +14,7 @@ from run import app, mail
 @app.route('/')
 @app.route('/index', methods=['GET'])
 def index():
+    app.logger.info('index is called.')
     return render_template('index.html')
 
 
@@ -24,6 +25,7 @@ def about():
 
 @app.route('/search_by_text', methods=['GET', 'POST'])
 def search_by_text():
+    app.logger.info('search_by_text is called.')
     text_upload_form = TextUploadForm()
     if request.method == 'POST':
         if text_upload_form.validate():
@@ -42,6 +44,7 @@ def search_by_text():
     
 @app.route('/search_by_url', methods=['GET', 'POST'])
 def search_by_url():
+    app.logger.info('search_by_url is called.')
     url_upload_form = URLUploadForm()
     if request.method == 'POST':
         if url_upload_form.validate() and \
