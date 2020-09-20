@@ -8,7 +8,7 @@ class TextUploadForm(FlaskForm):
 
 
 class URLUploadForm(FlaskForm):
-    url = TextField('小説家になろうの小説URLを入力して下さい。', [validators.Required('小説家になろうの小説URLを入力して下さい。')])
+    url = TextField('小説家になろうの作品URLを入力して下さい。', [validators.Required('小説家になろうの小説URLを入力して下さい。')])
     submit = SubmitField('送信する')
 
 

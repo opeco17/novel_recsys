@@ -59,6 +59,7 @@ class DBConnector(object):
         useable_details_df = details_df[columns_of_details]
         details_data = [tuple(useable_details_df.iloc[i]) for i in range(len(useable_details_df))]
         cursor.executemany("INSERT IGNORE INTO details VALUES ({})".format(("%s, "*len(columns_of_details))[:-2]), details_data)
+        app.logger.info(f"Inserted ncodes: {list(useable_details_df.ncode)}")
         conn.commit()
 
     @classmethod

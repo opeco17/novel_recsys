@@ -162,6 +162,7 @@ services:
     build: ./fluentd
     volumes:
       - ./fluentd/conf:/fluentd/etc
+      - ./fluentd/log:/fluentd/log/docker_app
     links:
       - "elasticsearch"
     ports:
@@ -172,8 +173,8 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
-    volumes:
-      - ./elasticsearch/es_data:/usr/share/elasticsearch/data
+    # volumes:
+    #   - ./elasticsearch/es_data:/usr/share/elasticsearch/data
     environment:
       - "discovery.type=single-node"
     expose:
