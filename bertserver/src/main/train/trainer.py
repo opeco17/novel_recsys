@@ -7,7 +7,7 @@ import torch
 
 from config import Config
 from run import app
-from train.model import ArcMarginProduct, BERT, OptimizerCreater
+from train.model import ArcFace, BERT, OptimizerCreater
 from train.dataloader import DataLoaderCreater
 
 
@@ -26,7 +26,7 @@ class Trainer(object):
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
             bert = BERT().to(device).train()
-            metric_fc = ArcMarginProduct(device=device).to(device).train()
+            metric_fc = ArcFace(device=device).to(device).train()
             criterion = torch.nn.CrossEntropyLoss()
             optimizer = OptimizerCreater.create_optimizer(bert, metric_fc)
             train_dataloader = DataLoaderCreater.create_dataloader(train=True)

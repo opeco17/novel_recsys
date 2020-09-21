@@ -31,10 +31,10 @@ class BERT(nn.Module):
         return output
 
 
-class ArcMarginProduct(nn.Module):
+class ArcFace(nn.Module):
 
     def __init__(self, s: float=30.0, m: float=0.50, device: str='cpu'):
-        super(ArcMarginProduct, self).__init__()
+        super(ArcFace, self).__init__()
         self.in_features = H_DIM
         self.out_features = NUM_CLASSES
         self.s = s
@@ -66,7 +66,7 @@ class OptimizerCreater(object):
     lr = LEARNING_RATE
 
     @classmethod
-    def create_optimizer(cls, bert: BERT, metric_fc: ArcMarginProduct) -> AdamW:
+    def create_optimizer(cls, bert: BERT, metric_fc: ArcFace) -> AdamW:
         optimizer = AdamW([
             {'params': bert.parameters(), 'lr': cls.lr},
             {'params': metric_fc.parameters(), 'lr': cls.lr},
