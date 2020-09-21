@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     machine:
-      image: circleci/python:3.6.2-stretch-browsers
+      image: circleci/classic:edge
     steps:
       - checkout
       - run:
