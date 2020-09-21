@@ -6,11 +6,17 @@ jobs:
     steps:
       - checkout
       - run:
+          name: docker-compose down
+          command: docker-compose down
+      - run:
           name: docker-compose up
-          command: docker-compose up -d
+          command: python create_environment.py --build
       - run:
           name: wait to run
-          command: sleep 10
+          command: sleep 30
+      - run:
+          name: web test
+          command: docker-compose run web python ../test/*test.py
       - run:
           name: app test
           command: docker-compose run app python ../test/*test.py
@@ -33,7 +39,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-        -run: ssh ${USER_NAME}@${HOST_NAME} 'git pull && docker-compose restart'
+        -run: ssh ${USER_NAME}@${HOST_NAME} 'git pull && python create_environment.py --build'
 
 workflows:
   version: 2
