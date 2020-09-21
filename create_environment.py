@@ -27,7 +27,7 @@ def main(args):
     os.makedirs(mysql_data_dir)
 
     # Dockerコマンドの実行
-    run_cmd = lambda cmd: subprocess.call(cmd, shell=True, stdout=sys.stdout, stderr=sys.stdout, text=True)
+    run_cmd = lambda cmd: subprocess.call(cmd, shell=True, stdout=sys.stdout, stderr=sys.stdout)
 
     run_cmd('docker network create narou_network')
 
