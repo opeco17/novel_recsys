@@ -16,19 +16,19 @@ jobs:
           command: sleep 30
       - run:
           name: web test
-          command: docker-compose run web python ../test/*test.py
+          command: docker-compose exec web "python /var/www/src/test/*.py"
       - run:
           name: app test
-          command: docker-compose run app python ../test/*test.py
+          command: docker-compose exec app "python /var/www/src/test/*.py"
       - run:
           name: bertserver test
-          command: docker-compose run bertserver python ../test/*test.py
+          command: docker-compose exec bertserver "python /var/www/src/test/*.py"
       - run:
           name: mlserver test
-          command: docker-compose run mlserver python ../test/*test.py
+          command: docker-compose exec mlserver "python /var/www/src/test/*.py"
       - run:
           name: scraping batch test
-          command: docker-compose run scraping_batch python ../test/*test.py
+          command: docker-compose exec scraping_batch "python /var/www/src/test/*.py"
       - run:
           name: docker-compose down
           command: docker-compose down
