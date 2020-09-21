@@ -141,7 +141,7 @@ class ElasticsearchConnector(object):
                 'keyword': keyword,
                 'story': story,
                 'genre': genre, 
-                'biggenres': biggenre,
+                'biggenre': biggenre,
                 'feature': feature,
             }
 
@@ -172,6 +172,5 @@ class MLServerConnector(object):
         data = {column: list(details_df[column]) for column in list(details_df.columns)}
         data = json.dumps(data)
         response = requests.get(cls.point_prediction_url, headers=headers, json=data)
-        app.logger.info(f"Point predicted: {response}")
         predicted_points = response.json()['prediction']
         return predicted_points

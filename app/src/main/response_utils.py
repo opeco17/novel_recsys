@@ -36,15 +36,17 @@ class ResponseMakerForNcodeAndText(object):
             if query := request.get_json().get(self.query_is):
                 if isinstance(query, str):
                     self.__main_process(query, response_body)
+                    message = f"search_by_{self.query_is} succeeded!"
                     status_code = 200
                 else:
-                    response_body['message'] = f'Parameter {self.query_is} should be str but you throw {type(query)}.'
+                    message = f"Parameter {self.query_is} should be str but you throw {type(query)}."
             else:
-                keys = list(request.get_json().keys())
-                response_body['message'] = f'Parameter should be {self.query_is} but you throw {keys}.'
+                message = f"Parameter should be {self.query_is} but you throw {list(request.get_json().keys())}."
         else:
-            response_body['message'] = f'Parameter should be {self.query_is} but you throw none.'
+            message = f"Parameter should be {self.query_is} but you throw none."
 
+        response_body['message'] = message
+        app.logger.info(message)
         return response_body, status_code
 
     def __main_process(self, query: str, response_body: Dict):

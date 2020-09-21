@@ -36,7 +36,7 @@ class Scraper(object):
             self.__add_to_elasticsearch(sub_details_df)
 
             if test and i + 1 == epoch:
-                app.logger.info('Process broken.')
+                app.logger.info('Process broken due to test mode.')
                 break
         
         app.logger.info('[scraping and add] processes are completed!')
@@ -47,7 +47,6 @@ class Scraper(object):
         """Database内の既存データに対してポイント予測とElasticsearchへの追加を行う"""
         details_df_iterator = DBConnector.get_details_df_iterator(self.conn, test, epoch)
         for i, sub_details_df in enumerate(details_df_iterator):
-            app.logger.info(sub_details_df)
             sub_details_df = Preprocesser.preprocess_ml_details(sub_details_df)
             predicted_point = MLServerConnector.predict_point(sub_details_df)
             sub_details_df['predict_point'] = predicted_point

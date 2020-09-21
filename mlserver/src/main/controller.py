@@ -10,7 +10,7 @@ from run import app, feature_names, model
 @app.route('/')
 @app.route('/index')
 def index():
-    app.logger.info('index is called.')
+    app.logger.info('MLServer: index called.')
     response_body = {"message": "Here is MLServer!"}
     response = Response(
         response=json.dumps(response_body), 
@@ -29,9 +29,8 @@ def predict():
         features_df: ポイント予測に使用する特徴量を保持したDataFrame
         predicted_point: 作品のポイント予測結果 (0: 評価されない 1: 評価される)
     """
-    app.logger.info('predict is called.')
-    response_body = {"success": False}
-    status_code = 500
+    app.logger.info('MLServer: predict called.')
+    response_body = {}
     if all_features:=request.get_json():
         if not isinstance(all_features, dict):
             all_features = json.loads(all_features)
@@ -40,7 +39,8 @@ def predict():
         for feature_name in feature_names:
             if feature_name not in list(all_features_df.columns):
                 flag = False
-                response_body['message'] = f'Lack of necessary feature: {feature_name}.'
+                response_body['message'] = f"Lack of necessary feature: {feature_name}."
+                app.logger.info(f"Lack of necessary feature: {feature_name}.")
                 break
         if flag:
             features_df = all_features_df[feature_names]
@@ -48,11 +48,15 @@ def predict():
             response_body['prediction'] = predicted_point.tolist()
             response_body['success'] = True
             status_code = 200
+            app.logger.info('Prediction succeeded!')
+        else:
+            response_body['success'] = False
+            status_code = 500
+            app.logger.info('Prediction failed.')
 
     response = Response(
         response=json.dumps(response_body), 
         mimetype='application/json',
         status= status_code
     )
-    app.logger.info('Response body: ' + str(response_body))
     return response

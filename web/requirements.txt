@@ -2,7 +2,8 @@ uwsgi==2.0.17
 Flask==1.0.3
 Flask-Bootstrap4==4.0.2
 Flask-WTF==0.14.3
-Flask-Mail==0.9.1 
+Flask-Mail==0.9.1
+Flask-Testing==0.8.0 
 WTForms==2.2.1 
 requests==2.24.0
 numpy==1.18.4

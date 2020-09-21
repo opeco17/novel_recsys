@@ -14,22 +14,24 @@ from run import app, mail
 @app.route('/')
 @app.route('/index', methods=['GET'])
 def index():
-    app.logger.info('index is called.')
+    app.logger.info('Web: index called.')
     return render_template('index.html')
 
 
 @app.route('/about')
 def about():
-	return render_template('about.html')
+    app.logger.info('Web: about called.')
+    return render_template('about.html')
 
 
 @app.route('/search_by_text', methods=['GET', 'POST'])
 def search_by_text():
-    app.logger.info('search_by_text is called.')
+    app.logger.info('Web: search_by_text called.')
     text_upload_form = TextUploadForm()
     if request.method == 'POST':
         if text_upload_form.validate():
             text = text_upload_form.text.data
+            app.logger.info(f"Uploaded text: {text}")
             recommend_items = RecommendItemsGetter.get_recommend_items_by_text(text)
             if recommend_items:
                 return render_template('result.html', recommend_items=recommend_items)
@@ -44,12 +46,13 @@ def search_by_text():
     
 @app.route('/search_by_url', methods=['GET', 'POST'])
 def search_by_url():
-    app.logger.info('search_by_url is called.')
+    app.logger.info('Web: search_by_url called.')
     url_upload_form = URLUploadForm()
     if request.method == 'POST':
         if url_upload_form.validate() and \
             re.fullmatch(r'https://ncode.syosetu.com/[nN].{6}/?', url:=url_upload_form.url.data):
             ncode = url[26:33].upper()
+            app.logger.info(f"Uploaded ncode: {ncode}")
             recommend_items = RecommendItemsGetter.get_recommend_items_by_ncode(ncode)
             if recommend_items:
                 return render_template('result.html', recommend_items=recommend_items)

@@ -15,8 +15,8 @@ model = FeatureExtractor()
 @app.route('/')
 @app.route('/index')
 def index():
-    app.logger.info('index is called.')
-    response_body = {"text": "Here is BERTServer!"}
+    app.logger.info('BERTServer: index called.')
+    response_body = {"message": "Here is BERTServer!"}
     response = Response(
         response=json.dumps(response_body), 
         mimetype='application/json',
@@ -27,9 +27,8 @@ def index():
 
 @app.route('/predict', methods=['GET'])
 def predict():
-    app.logger.info('predict is called.')
+    app.logger.info('BERTServer: predict called.')
     response_body = {"success": False,}
-    status_code = 500
     if texts := request.get_json().get('texts'):
         if (flag:=isinstance(texts, str)) or (isinstance(texts, list) and isinstance(texts[0], str)):
             texts = [texts] if flag else texts
@@ -37,29 +36,34 @@ def predict():
             response_body['prediction'] = outputs
             response_body['success'] = True
             status_code = 200
+            app.logger.info('Prediction succeeded!')
         else:
-            app.logger.info('Key texts should be str or List[str].')
             status_code = 500
-
+            app.logger.info('Key texts should be str or List[str].')
+            
     response = Response(
         response=json.dumps(response_body), 
         mimetype='application/json',
         status= status_code
     )
-    app.logger.info(f'Response body: {response_body}')
     return response
 
 
 @app.route('/train', methods=['GET'])
 def train():
-    app.logger.info('train is called.')
+    app.logger.info('BERTServer: train called.')
     success = Trainer.train()
     if success:
         status_code = 200
-        response_body = {"message": "Training completed!"}
+        message = "Training completed!"
+        response_body = {"message": message}
+        app.logger.info(message)
     else:
         status_code = 500
-        response_body = {"message": "Training Failed."}
+        message = "Training Failed."
+        response_body = {"message": message}
+        app.logger.info(message)
+
     response = Response(
         response=json.dumps(response_body), 
         mimetype='application/json',

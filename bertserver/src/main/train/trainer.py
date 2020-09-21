@@ -1,4 +1,5 @@
 import datetime
+import os
 import sys
 sys.path.append('..')
 
@@ -31,10 +32,11 @@ class Trainer(object):
             train_dataloader = DataLoaderCreater.create_dataloader(train=True)
 
             c = 0
+            app.logger.info('Training start!')
             for epoch in range(NUM_EPOCHS):
                 for ids, mask, label in train_dataloader:
                     c += 1
-                    app.logger.info(c)
+                    app.logger.info(f"Training progress: {c}")
 
                     ids.to(device)
                     mask.to(device)
@@ -44,12 +46,9 @@ class Trainer(object):
                     feature = bert(ids, mask)
                     output = metric_fc(feature, label)
                     loss = criterion(output, label)
-                    loss_list.append(loss.item())
                     
                     loss.backward()
                     optimizer.step()
-                    
-                    clear_output()
 
             app.logger.info('Training completed!')
             torch.save(bert.state_dict(), os.path.join(cls.parameter_dir, f'bert-{datetime.date.today()}.pth'))

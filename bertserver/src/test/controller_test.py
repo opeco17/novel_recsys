@@ -15,39 +15,58 @@ class ControllerTestCase(TestCase):
 
     def test_index1(self):
         response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertTrue(text:=json_data.get('text'))
-        self.assertIsInstance(text, str)
+        self.assertIsInstance(text:=json_data.get('message'), str)
 
     def test_index2(self):
         response = self.client.get('/index')
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertTrue(text:=json_data.get('text'))
-        self.assertIsInstance(text, str)
+        self.assertIsInstance(text:=json_data.get('message'), str)
 
-    def test_predict_single_str_good(self):
+    def test_predict_good1(self):
         data = {'texts': 'これはテストのためのテキストです。'}
-        response = self.__make_response(data)
+        response = self.__make_predict_response(data)
         self.__test_predict_good(response)
 
-    def test_predict_single_list_good(self):
+    def test_predict_good2(self):
         data = {'texts': ['これはテストのためのテキストです。']}
-        response = self.__make_response(data)
+        response = self.__make_predict_response(data)
         self.__test_predict_good(response)
 
-    def test_predict_multiple_list_good(self):
+    def test_predict_good3(self):
         data = {'texts': ['これはテストのためのテキストです。', 'これもテストのためのテキストです。']}
-        response = self.__make_response(data)
+        response = self.__make_predict_response(data)
         self.__test_predict_good(response)
 
-    def test_predict_bad(self):
+    def test_predict_bad1(self):
         data = {'texts': 10}
-        response = self.__make_response(data)
+        response = self.__make_predict_response(data)
+        self.__test_predict_bad(response)
 
+    def test_predict_bad2(self):
+        data = {'texts': [10]}
+        response = self.__make_predict_response(data)
+        self.__test_predict_bad(response)
+
+    def test_train(self):
+        response = self.client.get('/train')
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(json_data:=response.json, dict)
-        self.assertFalse(success:=json_data.get('success'))
+        self.assertIsInstance(text:=json_data.get('message'), str)
+        
+    def __make_predict_response(self, data):
+        response = self.client.get(
+            '/predict',
+            data=json.dumps(data),
+            content_type='application/json',
+        )
+        return response
 
     def __test_predict_good(self, response):
+        self.assertEqual(response.status_code, 200)
+        
         self.assertIsInstance(json_data:=response.json, dict)
         self.assertTrue(success:=json_data.get('success'))
         self.assertIsInstance(success, bool)
@@ -58,13 +77,11 @@ class ControllerTestCase(TestCase):
         self.assertIsInstance(prediction[0], float)
         self.assertEqual(len(prediction), app.config.get('H_DIM'))
 
-    def __make_response(self, data):
-        response = self.client.get(
-            '/predict',
-            data=json.dumps(data),
-            content_type='application/json',
-        )
-        return response
+    def __test_predict_bad(self, response):
+        self.assertEqual(response.status_code, 500)
+        self.assertIsInstance(json_data:=response.json, dict)
+        self.assertFalse(success:=json_data.get('success'))
+        
 
 if __name__ == '__main__':
     main()

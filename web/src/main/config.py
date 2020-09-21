@@ -12,7 +12,7 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
 
     # Mail
-    with open('mail_info.json', 'r') as f:
+    with open(abs_path_of('mail_info.json'), 'r') as f:
         mail_info = json.load(f)
     MAIL_SERVER = mail_info['mail_server']
     MAIL_PORT = 465
