@@ -142,7 +142,7 @@ services:
     environment:
       TZ: "Asia/Tokyo"
       MYSQL_ROOT_PASSWORD: "root"
-      BIND-ADDRESS: "0.0.0.0
+      BIND-ADDRESS: "0.0.0.0"
     ports:
       - "3306:3306"
     links:
