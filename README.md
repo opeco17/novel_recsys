@@ -10,3 +10,10 @@
 # Logging Architecture
 
 <img width="500" alt="スクリーンショット 2020-09-20 18 11 36" src="https://user-images.githubusercontent.com/46510874/93707843-ca761f00-fb6c-11ea-9c66-651a944dac6b.png">
+
+# Technical Environment
+ - Web Framework: Flask (Python)
+ - ML Framework: PyTorch, LightGBM
+ - Infrastructure: Amazon EC2, Docker Compose
+ - Middleware: MySQL, Nginx, Elasticsearch
+ - Other: Fluentd, Kibana
