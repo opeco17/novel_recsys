@@ -137,12 +137,63 @@ services:
   database:
     build: ./database
     hostname: database
-    # env_file:
-    #   - ./env_file.env
+    env_file:
+      - ./env_file.env
     environment:
       TZ: "Asia/Tokyo"
       MYSQL_ROOT_PASSWORD: "root"
-      BIND-ADDRESS: "0.0.0.0"
+      BIND-ADDRESS: "0.0.0.0
+    ports:
+      - "3306:3306"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: docker.{{.Name}}
+    volumes:
+      - ./database/mysql_init:/docker-entrypoint-initdb.d
+      - ./database/mysql_data:/var/lib/mysql
+      - ./database/conf.d:/etc/mysql/conf.d
+    tty: true
+    networks:
+      - narou_network
+
+  fluentd:
+    build: ./fluentd
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+      - ./fluentd/log:/fluentd/log/docker_app
+    links:
+      - "elasticsearch"
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - narou_network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    # volumes:
+    #   - ./elasticsearch/es_data:/usr/share/elasticsearch/data
+    environment:
+      - "discovery.type=single-node"
+    expose:
+      - "9200"
+    ports:
+      - "9200:9200"
+    networks:
+      - narou_network
+
+  kibana:
+    image: kibana:7.3.0
+    links:
+      - "elasticsearch"
+    ports:
+      - "5601:5601"
+    networks:
+      - narou_network
 
 networks:
     narou_network:
