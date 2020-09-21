@@ -13,7 +13,7 @@
 
 # Technical Environment
  - Web Framework: Flask (Python)
- - ML Framework: PyTorch, LightGBM
+ - ML Framework: PyTorch (BERT+ArcFace), LightGBM
  - Infrastructure: Amazon EC2, Docker Compose
  - Middleware: Elasticsearch, MySQL, Nginx
  - Logging: Fluentd, Kibana
