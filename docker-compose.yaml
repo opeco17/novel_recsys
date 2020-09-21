@@ -137,8 +137,8 @@ services:
   database:
     build: ./database
     hostname: database
-    env_file:
-      - ./env_file.env
+    # env_file:
+    #   - ./env_file.env
     environment:
       TZ: "Asia/Tokyo"
       MYSQL_ROOT_PASSWORD: "root"
