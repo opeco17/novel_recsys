@@ -16,4 +16,4 @@
  - ML Framework: PyTorch, LightGBM
  - Infrastructure: Amazon EC2, Docker Compose
  - Middleware: MySQL, Nginx, Elasticsearch
- - Other: Fluentd, Kibana
+ - Logging: Fluentd, Kibana
