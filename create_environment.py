@@ -9,16 +9,20 @@ import sys
 def main(args):
 
     # Elasticsearchのデータディレクトリ処理
-    if os.path.exists(es_data_old_dir:='elasticsearch/es_data_old'):
+    es_data_old_dir = 'elasticsearch/es_data_old'
+    es_data_dir = 'elasticsearch/es_data'
+    if os.path.exists(es_data_old_dir):
         shutil.rmtree(es_data_old_dir)
-    if os.path.exists(es_data_dir:='elasticsearch/es_data'):
+    if os.path.exists(es_data_dir):
         os.rename(es_data_dir, es_data_old_dir)
     os.mkdir(es_data_dir)
 
     # Databaseのデータディレクトリ処理
-    if os.path.exists(mysql_data_old_dir:='database/mysql_data_old'):
+    mysql_data_old_dir = 'database/mysql_data_old'
+    mysql_data_dir = 'database/mysql_data'
+    if os.path.exists(mysql_data_old_dir):
         shutil.rmtree(mysql_data_old_dir)
-    if os.path.exists(mysql_data_dir:='database/mysql_data'):
+    if os.path.exists(mysql_data_dir):
         os.rename(mysql_data_dir, mysql_data_old_dir)
     os.mkdir(mysql_data_dir)
 
