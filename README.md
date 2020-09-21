@@ -15,5 +15,5 @@
  - Web Framework: Flask (Python)
  - ML Framework: PyTorch, LightGBM
  - Infrastructure: Amazon EC2, Docker Compose
- - Middleware: MySQL, Nginx, Elasticsearch
+ - Middleware: Elasticsearch, MySQL, Nginx
  - Logging: Fluentd, Kibana
