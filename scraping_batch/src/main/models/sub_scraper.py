@@ -5,6 +5,7 @@ import sys
 import time
 from typing import List, Tuple, Any
 from urllib.request import urlopen
+from urllib3.util import Retry
 sys.path.append('..')
 
 from bs4 import BeautifulSoup
@@ -13,6 +14,7 @@ from MySQLdb.cursors import Cursor
 import pandas as pd
 from pandas.core.frame import DataFrame
 import requests
+from requests.adapters import HTTPAdapter
 
 from run import app
 from config import Config
@@ -46,7 +48,7 @@ class DetailsScraper(object):
 
         lastup = now
         allcount = cls.__get_scraping_item_number(latest_registered_datetime, now)
-        all_queue_cnt = (allcount // cls.batch_size)
+        all_queue_cnt = allcount // cls.batch_size
 
         for i in range(all_queue_cnt):
             payload = {
@@ -54,21 +56,15 @@ class DetailsScraper(object):
                 'gzip': 5, 
                 'opt': 'weekly',
                 'lim': cls.batch_size,
-                'lastup': latest_registered_datetime+"-"+str(lastup)
+                'lastup': f"{latest_registered_datetime}-{lastup}"
             }
+            session = cls.__get_retry_session()
+            try:
+                response = session.get(url=cls.narou_api_url, params=payload, timeout=30)
+            except requests.exceptions.ConnectTimeout:
+                app.logger.error(f"Timeout: {latest_registered_datetime}-{lastup}")
 
-            c = 0 # Avoid infinite loop
-            while c < 5:
-                try:
-                    res = requests.get(cls.narou_api_url, params=payload, timeout=30).content
-                    break
-                except Exception as e:
-                    app.logger.error(e)
-                    c += 1       
-
-            r = gzip.decompress(res).decode('utf-8')
-
-            details_df = pd.read_json(r).drop(0)
+            details_df = pd.read_json(gzip.decompress(response.content).decode('utf-8')).drop(0)
   
             lastup = details_df.iloc[-1]["general_lastup"]
             lastup = int(datetime.datetime.strptime(lastup, "%Y-%m-%d %H:%M:%S").timestamp())
@@ -99,9 +95,12 @@ class DetailsScraper(object):
             'lim': 1, 
             'lastup': latest_registered_datetime+"-"+now
         }
-        res = requests.get(cls.narou_api_url, params=payload).content
-        r =  gzip.decompress(res).decode("utf-8") 
-        allcount = json.loads(r)[0]['allcount']
+        session = cls.__get_retry_session()
+        try:
+            response = session.get(url=cls.narou_api_url, params=payload, timeout=30)
+        except requests.exceptions.ConnectTimeout:
+            app.logger.error('Timeout: Unable to get scraping_item_number')
+        allcount = json.loads(gzip.decompress(response.content).decode("utf-8") )[0]['allcount']
         return allcount
 
     @classmethod
@@ -123,7 +122,14 @@ class DetailsScraper(object):
         details_df['text'] = 'Nan'
 
         return details_df
-
+    
+    @classmethod
+    def __get_retry_session(cls):
+        session = requests.Session()
+        retries = Retry(total=5, backoff_factor=5, status_forcelist=[500, 502, 503, 504])
+        session.mount('http://', HTTPAdapter(max_retries=retries))
+        session.mount('https://', HTTPAdapter(max_retries=retries))
+        return session
 
 
 class TextScraper(object):
@@ -152,7 +158,7 @@ class TextScraper(object):
                 try:
                     bs_obj = cls.__make_bs_obj(url)
                     if bs_obj.findAll("dl", {"class": "novel_sublist2"}): # 連載作品の場合
-                        url = cls.narou_url + ncode + '/1/'
+                        url = f"{cls.narou_url}{ncode}/1/"
                         bs_obj = cls.__make_bs_obj(url)
                     text = cls.__get_main_text(bs_obj)  
                     break
@@ -171,8 +177,8 @@ class TextScraper(object):
 
     @classmethod
     def __get_main_text(cls, bs_obj: BeautifulSoup) -> str:
-        text = ""
-        text_htmls = bs_obj.findAll('div', {'id': 'novel_honbun'})[0].findAll("p")
+        text = ''
+        text_htmls = bs_obj.findAll('div', {'id': 'novel_honbun'})[0].findAll('p')
         for text_html in text_htmls:
-            text = text + text_html.get_text() + "\n"
+            text = text + text_html.get_text() + '\n'
         return text
