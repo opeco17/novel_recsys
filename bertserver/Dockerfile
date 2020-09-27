@@ -15,6 +15,8 @@ RUN apt-get update && \
   apt-get install -y mecab-ipadic-utf8 && \
   pip install -r requirements.txt
 
+COPY . /var/www
+
 WORKDIR /var/www/src/main/
 
 CMD ["uwsgi","--ini","/var/www/uwsgi.ini"]
