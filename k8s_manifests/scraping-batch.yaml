@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scraping-batch
+spec:
+  selector:
+    app: scraping-batch
+  ports:
+  - protocol: "TCP"
+    port: 3034
+    targetPort: 3034
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scraping-batch
+spec:
+  selector:
+    matchLabels:
+      app: scraping-batch
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: scraping-batch
+    spec:
+      containers:
+      - name: scraping-batch
+        image: opeco17/scraping-batch:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3034
+        env:
+        - name: HOST
+          value: "container"

@@ -12,3 +12,5 @@ RUN apt-get update && \
   apt-get install -y libmecab-dev && \
   apt-get install -y mecab-ipadic-utf8 && \
   pip install -r requirements.txt
+
+COPY . ./
