@@ -9,6 +9,7 @@ spec:
   - protocol: "TCP"
     port: 3032
     targetPort: 3032
+    nodePort: 30002
   type: NodePort
 
 ---
@@ -29,7 +30,7 @@ spec:
       containers:
       - name: bertserver
         image: opeco17/bertserver:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3032
         env:

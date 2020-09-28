@@ -36,10 +36,11 @@ class Config(object):
 
 
     # External server
-    DB_PORT = 3306
     host = os.environ.get('HOST', 'local')
     if host == 'local':
+        DB_PORT = 30100
         DB_HOST_NAME = '0.0.0.0'
 
     elif host == 'container':
+        DB_PORT = 3306
         DB_HOST_NAME = 'database'

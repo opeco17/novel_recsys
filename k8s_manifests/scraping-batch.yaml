@@ -9,6 +9,7 @@ spec:
   - protocol: "TCP"
     port: 3034
     targetPort: 3034
+    nodePort: 30004
   type: NodePort
 
 ---
@@ -29,7 +30,7 @@ spec:
       containers:
       - name: scraping-batch
         image: opeco17/scraping-batch:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3034
         env:

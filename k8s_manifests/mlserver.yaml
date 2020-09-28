@@ -9,6 +9,7 @@ spec:
   - protocol: "TCP"
     port: 3033
     targetPort: 3033
+    nodePort: 30003
   type: NodePort
 
 ---
@@ -29,7 +30,7 @@ spec:
       containers:
       - name: mlserver
         image: opeco17/mlserver:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3033
         env:

@@ -3,11 +3,14 @@ kind: Service
 metadata:
   name: database
 spec:
-  ports:
-  - port: 3306
   selector:
     app: database
-  clusterIP: None
+  ports:
+  - protocol: "TCP"
+    port: 3306
+    targetPort: 3306
+    nodePort: 30100
+  type: NodePort
 
 ---
 apiVersion: apps/v1
@@ -26,7 +29,7 @@ spec:
       containers:
       - name: database
         image: opeco17/database:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "root"

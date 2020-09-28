@@ -11,6 +11,7 @@ spec:
   ports:
     - port: 9200
       targetPort: 9200
+      nodePort: 30101
 
 ---
 apiVersion: apps/v1
@@ -29,7 +30,7 @@ spec:
       containers:
       - name: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         env:
         - name: discovery.type
           value: single-node

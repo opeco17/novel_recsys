@@ -9,6 +9,7 @@ spec:
   - protocol: "TCP"
     port: 80
     targetPort: 80
+    nodePort: 30000
   type: NodePort
 
 ---
@@ -29,7 +30,7 @@ spec:
       containers:
       - name: web
         image: opeco17/web:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3030
         env:

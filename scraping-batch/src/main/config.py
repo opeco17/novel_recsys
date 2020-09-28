@@ -30,18 +30,18 @@ class Config(object):
     NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
 
     # External server
-    DB_PORT = 3306
-    
     host = os.environ.get('HOST', 'local')
     if host == 'local':
-        ELASTICSEARCH_HOST_NAME = 'localhost:9200'
-        FEATURE_EXTRACTION_URL = 'http://localhost:3032/predict'
-        POINT_PREDICTION_URL = 'http://localhost:3033/predict'
+        DB_PORT = 30100
+        ELASTICSEARCH_HOST_NAME = 'localhost:30101'
+        FEATURE_EXTRACTION_URL = 'http://localhost:30002/predict'
+        POINT_PREDICTION_URL = 'http://localhost:30003/predict'
         DB_HOST_NAME = '0.0.0.0'
 
     elif host == 'container':
+        DB_PORT = 3306
         NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
-        ELASTICSEARCH_HOST_NAME = 'elasticsearch'
+        ELASTICSEARCH_HOST_NAME = 'elasticsearch:9200'
         FEATURE_EXTRACTION_URL = 'http://bertserver:3032/predict'
         POINT_PREDICTION_URL = 'http://mlserver:3033/predict'
         DB_HOST_NAME = 'database'

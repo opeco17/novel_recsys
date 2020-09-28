@@ -25,8 +25,8 @@ class Config(object):
     host = os.environ.get('HOST', 'local')
     if host == 'local':
         print('Host is set to local.')
-        ELASTICSEARCH_HOST_NAME = 'localhost:9200'
-        FEATURE_EXTRACTION_URL = 'http://localhost:3032/predict'
+        ELASTICSEARCH_HOST_NAME = 'localhost:30101'
+        FEATURE_EXTRACTION_URL = 'http://localhost:30002/predict'
 
     elif host == 'container':
         print('Host is set to container.')

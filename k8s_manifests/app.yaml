@@ -9,6 +9,7 @@ spec:
   - protocol: "TCP"
     port: 3031
     targetPort: 3031
+    nodePort: 30001
   type: NodePort
 
 ---
@@ -29,7 +30,7 @@ spec:
       containers:
       - name: app
         image: opeco17/app:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3031
         env:

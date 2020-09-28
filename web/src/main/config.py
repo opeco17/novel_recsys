@@ -28,8 +28,8 @@ class Config(object):
     host = os.environ.get('HOST', 'local')
     if host == 'local':
         print('Host is set to local.')
-        NCODE_SEARCH_URL = 'http://localhost:3031/search_by_ncode'
-        TEXT_SEARCH_URL = 'http://localhost:3031/search_by_text'
+        NCODE_SEARCH_URL = 'http://localhost:30001/search_by_ncode'
+        TEXT_SEARCH_URL = 'http://localhost:30001/search_by_text'
 
     elif host == 'container':
         print('Host is set to container.')
