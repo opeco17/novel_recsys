@@ -5,7 +5,7 @@
 
 # Recommener System Architecture
 
-<img width="700" alt="スクリーンショット 2020-09-19 9 28 56" src="https://user-images.githubusercontent.com/46510874/93654809-96aad480-fa5a-11ea-9605-d58fcb8ec687.png">
+<img width="750" alt="スクリーンショット 2020-09-29 10 49 35" src="https://user-images.githubusercontent.com/46510874/94503468-84424f00-0241-11eb-8898-b3ad2c667de5.png">
 
 # Logging Architecture
 
