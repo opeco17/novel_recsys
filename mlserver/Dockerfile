@@ -12,6 +12,8 @@ RUN apt-get update && \
   apt-get install -y vim && \
   pip install -r requirements.txt
 
+COPY . /var/www
+
 WORKDIR /var/www/src/main/
 
 CMD ["uwsgi","--ini","/var/www/uwsgi.ini"]

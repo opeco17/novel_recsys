@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bertserver
+spec:
+  selector:
+    app: bertserver
+  ports:
+  - protocol: "TCP"
+    port: 3032
+    targetPort: 3032
+    nodePort: 30002
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bertserver
+spec:
+  selector:
+    matchLabels:
+      app: bertserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bertserver
+    spec:
+      containers:
+      - name: bertserver
+        image: opeco17/bertserver:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3032
+        env:
+        - name: HOST
+          value: "container"

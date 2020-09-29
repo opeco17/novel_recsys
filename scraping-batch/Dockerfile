@@ -1,6 +1,8 @@
-FROM jupyter/scipy-notebook
+FROM python:3.8.0
 
-USER root
+RUN mkdir /var/www
+
+WORKDIR /var/www
 
 COPY requirements.txt ./
 
@@ -12,3 +14,9 @@ RUN apt-get update && \
   apt-get install -y libmecab-dev && \
   apt-get install -y mecab-ipadic-utf8 && \
   pip install -r requirements.txt
+
+COPY . /var/www
+
+WORKDIR /var/www/src/main
+
+CMD ["uwsgi","--ini","/var/www/uwsgi.ini"]
