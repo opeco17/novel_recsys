@@ -7,8 +7,8 @@ spec:
     app: scraping-batch
   ports:
   - protocol: "TCP"
-    port: 3034
-    targetPort: 3034
+    port: 84
+    targetPort: 84
     nodePort: 30004
   type: NodePort
 
@@ -36,3 +36,13 @@ spec:
         env:
         - name: HOST
           value: "container"
+      - name: scraping-batch-nginx
+        image: opeco17/nginx:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 84
+        env:
+        - name: BACKEND_HOST
+          value: "localhost:3034"
+        - name: SERVER_PORT
+          value: "84"

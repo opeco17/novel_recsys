@@ -42,6 +42,6 @@ class Config(object):
         DB_PORT = 3306
         NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
         ELASTICSEARCH_HOST_NAME = 'elasticsearch:9200'
-        FEATURE_EXTRACTION_URL = 'http://bertserver:3032/predict'
-        POINT_PREDICTION_URL = 'http://mlserver:3033/predict'
+        FEATURE_EXTRACTION_URL = 'http://bertserver:82/predict'
+        POINT_PREDICTION_URL = 'http://mlserver:83/predict'
         DB_HOST_NAME = 'database'

@@ -7,8 +7,8 @@ spec:
     app: mlserver
   ports:
   - protocol: "TCP"
-    port: 3033
-    targetPort: 3033
+    port: 83
+    targetPort: 83
     nodePort: 30003
   type: NodePort
 
@@ -36,3 +36,13 @@ spec:
         env:
         - name: HOST
           value: "container"
+      - name: mlserver-nginx
+        image: opeco17/nginx:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 83
+        env:
+        - name: BACKEND_HOST
+          value: "localhost:3033"
+        - name: SERVER_PORT
+          value: "83"

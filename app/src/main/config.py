@@ -31,4 +31,4 @@ class Config(object):
     elif host == 'container':
         print('Host is set to container.')
         ELASTICSEARCH_HOST_NAME = 'elasticsearch'
-        FEATURE_EXTRACTION_URL = 'http://bertserver:3032/predict'
+        FEATURE_EXTRACTION_URL = 'http://bertserver:82/predict'

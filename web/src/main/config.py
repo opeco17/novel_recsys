@@ -33,6 +33,6 @@ class Config(object):
 
     elif host == 'container':
         print('Host is set to container.')
-        NCODE_SEARCH_URL = 'http://app:3031/search_by_ncode'
-        TEXT_SEARCH_URL = 'http://app:3031/search_by_text'
+        NCODE_SEARCH_URL = 'http://app:81/search_by_ncode'
+        TEXT_SEARCH_URL = 'http://app:81/search_by_text'
         

@@ -1,13 +1,13 @@
 user nginx;
 
-worker_processes 1;
+worker_processes {{ var "WORKER_PROCESSES" | default "1" }};
 
 error_log /var/log/nginx/error.log warn;
 
 pid /var/run/nginx.pid;
 
 events {
-    worker_connections  1024;
+    worker_connections  {{ var "WORKER_CONNECTIONS" | default "1024" }};
 }
 
 http {
@@ -38,11 +38,11 @@ http {
     keepalive_timeout 65;
 
     upstream backend {
-        server localhost:3030;
+        server {{ var "BACKEND_HOST" }};
     }
 
     server {
-        listen 80;
+        listen {{ var "SERVER_PORT" | default "80" }};
         charset utf-8;
 
         location /health_check {

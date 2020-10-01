@@ -11,7 +11,7 @@ def main(args):
     
     dir_paths = [args.dir] if args.dir else [dockerfile_path.replace('/Dockerfile', '') for dockerfile_path in glob.glob('*/Dockerfile')]
     for dir_path in dir_paths:
-        if dir_path == 'data-analysis':
+        if dir_path == 'data-analysis' or dir_path == 'database':
             continue
         print(f"{dir_path} build start!")
         os.chdir(dir_path)

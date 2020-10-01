@@ -1,43 +1,48 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: app
 spec:
   selector:
-    app: web
+    app: app
   ports:
   - protocol: "TCP"
-    port: 80
-    targetPort: 80
-    nodePort: 30000
+    port: 81
+    targetPort: 81
+    nodePort: 30001
   type: NodePort
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
+  name: app
 spec:
   selector:
     matchLabels:
-      app: web
+      app: app
   replicas: 1
   template:
     metadata:
       labels:
-        app: web
+        app: app
     spec:
       containers:
-      - name: web
-        image: opeco17/web:latest
+      - name: app
+        image: opeco17/app:latest
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 3030
+        - containerPort: 3031
         env:
         - name: HOST
           value: "container"
-      - name: nginx
+      - name: app-nginx
         image: opeco17/nginx:latest
         imagePullPolicy: Never
         ports:
-        - containerPort: 80
+        - containerPort: 81
+        env:
+        - name: BACKEND_HOST
+          value: "localhost:3031"
+        - name: SERVER_PORT
+          value: "81"
