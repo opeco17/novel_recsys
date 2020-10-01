@@ -5,11 +5,11 @@
 
 # Recommener System Architecture
 
-<img width="750" alt="スクリーンショット 2020-09-29 10 49 35" src="https://user-images.githubusercontent.com/46510874/94503468-84424f00-0241-11eb-8898-b3ad2c667de5.png">
+<img width="750" alt="スクリーンショット 2020-09-29 10 49 35" src="https://user-images.githubusercontent.com/46510874/94773131-23a84300-03f6-11eb-9f75-86793cd974a4.png">
 
-# Logging Architecture
+# Logging and Monitoring
 
-<img width="500" alt="スクリーンショット 2020-09-20 18 11 36" src="https://user-images.githubusercontent.com/46510874/93707843-ca761f00-fb6c-11ea-9c66-651a944dac6b.png">
+<img width="500" alt="スクリーンショット 2020-09-20 18 11 36" src="https://user-images.githubusercontent.com/46510874/94773134-25720680-03f6-11eb-9a2f-7c6e3b1c7142.png">
 
 # Technical Environment
  - Web Framework: Flask (Python)
@@ -17,3 +17,4 @@
  - Infrastructure: Kubernetes
  - Middleware: Elasticsearch, MySQL, Nginx
  - Logging: Fluentd, Kibana
+ - Monitoring: Prometheus, Grafana
