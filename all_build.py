@@ -11,7 +11,7 @@ def main(args):
     
     dir_paths = [args.dir] if args.dir else [dockerfile_path.replace('/Dockerfile', '') for dockerfile_path in glob.glob('*/Dockerfile')]
     for dir_path in dir_paths:
-        if dir_path == 'data-analysis' or dir_path == 'database':
+        if dir_path == 'data-analysis' or (args.database == False and dir_path == 'database'):
             continue
         print(f"{dir_path} build start!")
         os.chdir(dir_path)
@@ -23,5 +23,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, default=None)
+    parser.add_argument('--database', action='store_true')
     args = parser.parse_args()
     main(args)

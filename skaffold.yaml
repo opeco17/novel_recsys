@@ -1,0 +1,29 @@
+apiVersion: skaffold/v1beta2
+kind: Config
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+  - image: opeco17/web
+    context: web
+  - image: opeco17/app
+    context: app
+  - image: opeco17/bertserver
+    context: bertserver
+  - image: opeco17/mlserver
+    context: mlserver
+  - image: opeco17/scraping-batch
+    context: scraping-batch
+  - image: opeco17/data-analysis
+    context: data-analysis
+  - image: opeco17/nginx
+    context: nginx
+  - image: opeco17/database
+    context: database
+  local:
+    push: false
+    useBuildkit: true
+deploy:
+  kubectl:
+    manifests:
+    - ./kubernetes-manifests/**.yaml
