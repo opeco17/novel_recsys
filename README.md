@@ -16,5 +16,5 @@
  - ML Framework: PyTorch (BERT+ArcFace), LightGBM
  - Infrastructure: Kubernetes
  - Middleware: Elasticsearch, MySQL, Nginx
- - Logging: Fluentd, Kibana
+ - Logging: Fluentd, Elasticsearch, Kibana
  - Monitoring: Prometheus, Grafana
