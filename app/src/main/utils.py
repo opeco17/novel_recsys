@@ -3,9 +3,10 @@ import sys
 from typing import Dict, Tuple
 sys.path.append('..')
 
-from models.similar_search import SimilarItemSearch
+from flask import Response
 from werkzeug.local import LocalProxy
 
+from models.similar_search import SimilarItemSearch
 from run import app
 
 
@@ -23,7 +24,7 @@ class ResponseMakerForNcodeAndText(object):
         self.query_is = query_is
         self.similar_item_search = SimilarItemSearch()
 
-    def make_response_body(self, request: LocalProxy) -> Tuple[Dict, int]:
+    def make_response_body(self, request: LocalProxy) -> Tuple[Dict, int, str]:
 
         response_body = {
             'success': False,
@@ -34,31 +35,25 @@ class ResponseMakerForNcodeAndText(object):
         
         if not request.get_json():
             message = f"Parameter should be {self.query_is} but you throw none."
-            self.__set_message_to_response_body(response_body, message)
-            return response_body, status_code
+            return response_body, status_code, message
         
         if not (query := request.get_json().get(self.query_is)):
             message = f"Parameter should be {self.query_is} but you throw {list(request.get_json().keys())}."
-            self.__set_message_to_response_body(response_body, message)
-            return response_body, status_code
+            return response_body, status_code, message
         
         if not isinstance(query, str):
             message = f"Parameter {self.query_is} should be str but you throw {type(query)}."
-            self.__set_message_to_response_body(response_body, message)
-            return response_body, status_code
+            return response_body, status_code, message
         
         self.__main_process(query, response_body)
         if not response_body['success']:
             message = "Failed similar item search."
-            self.__set_message_to_response_body(response_body, message)
-            return response_body, status_code
+            return response_body, status_code, message
             
         status_code = 200
         message = f"search_by_{self.query_is} succeeded!"
-        self.__set_message_to_response_body(response_body, message)
-        return response_body, status_code
+        return response_body, status_code, message
         
-
     def __main_process(self, query: str, response_body: Dict):
         try:
             if self.query_is == 'ncode':
@@ -75,7 +70,15 @@ class ResponseMakerForNcodeAndText(object):
             response_body['recommend_items'] = []
             response_body['success'] = False
 
-
-    def __set_message_to_response_body(self, response_body, message):
+        
+def make_response(response_body: dict, status_code: int, message: str=None) -> Response:
+    if message:
         response_body['message'] = message
         app.logger.info(message)
+    
+    response = Response(
+        response=json.dumps(response_body), 
+        mimetype='application/json',
+        status=status_code
+    )
+    return response
