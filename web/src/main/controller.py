@@ -1,7 +1,7 @@
 import json
 import re
 
-from flask import flash, request, render_template
+from flask import flash, redirect, request, render_template
 from flask_mail import Message
 import requests
 
@@ -18,7 +18,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/about')
+@app.route('/about', methods=['GET'])
 def about():
     app.logger.info('Web: about called.')
     return render_template('about.html')
@@ -79,3 +79,10 @@ def contact():
 			return render_template('contact.html', success=True)
 	elif request.method == 'GET':
 		return render_template('contact.html', form=contact_form, success=False)
+
+
+@app.route('/narou_redirect/<ncode>/<int:rank>', methods=['GET'])
+def narou_redirect(ncode, rank):
+    url = f"https://ncode.syosetu.com/{ncode}/"
+    app.logger.info(f"Rank: {rank}")
+    return redirect(url, code=302)

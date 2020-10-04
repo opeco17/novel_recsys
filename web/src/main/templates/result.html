@@ -5,7 +5,7 @@
 <br>
 {% for recommend_item in recommend_items %}
 <div class="card card-body bg-light" style="clear:both;">
-    <h5><a href={{ recommend_item.url }}>{{ recommend_item.title }}</a></h5>
+    <a href="{{ url_for('narou_redirect', ncode=recommend_item.ncode, rank=recommend_item.rank) }}">{{ recommend_item.title }}</a>
     <br>
     <p align="right">作者: {{ recommend_item.writer }}</p>
     <p>{{ recommend_item.keyword }}</p>

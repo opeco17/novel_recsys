@@ -12,9 +12,10 @@ class RecommendItemsGetter(object):
         response = requests.get(Config.NCODE_SEARCH_URL, headers=headers, json=data)
         if response.json().get('success'):
             recommend_items = response.json().get('recommend_items')
-            for recommend_item in recommend_items:
+            for i, recommend_item in enumerate(recommend_items):
                 recommend_item['url'] = f"https://ncode.syosetu.com/{recommend_item['ncode']}/"
                 recommend_item['keyword'] = '#' + recommend_item['keyword'].replace(' ', ' #')
+                recommend_item['rank'] = i
             return recommend_items
 
     
@@ -25,7 +26,8 @@ class RecommendItemsGetter(object):
         response = requests.get(Config.TEXT_SEARCH_URL, headers=headers, json=data)
         if response.json().get('success'):
             recommend_items = response.json().get('recommend_items')
-            for recommend_item in recommend_items:
+            for i, recommend_item in enumerate(recommend_items):
                 recommend_item['url'] = f"https://ncode.syosetu.com/{recommend_item['ncode']}/"
                 recommend_item['keyword'] = '#' + recommend_item['keyword'].replace(' ', ' #')
+                recommend_item['rank'] = i
             return recommend_items
