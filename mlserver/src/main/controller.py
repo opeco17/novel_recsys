@@ -1,22 +1,20 @@
 import json
 
-from flask import request, Response
+from flask import request
 import requests
 import pandas as pd
 
 from run import app, feature_names, model
+from utils import make_response
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
 def index():
     app.logger.info('MLServer: index called.')
     response_body = {"message": "Here is MLServer!"}
-    response = Response(
-        response=json.dumps(response_body), 
-        mimetype='application/json',
-        status= 200
-    )
+    status_code = 200
+    response = make_response(response_body, status_code)
     return response
 
 
@@ -30,33 +28,29 @@ def predict():
         predicted_point: 作品のポイント予測結果 (0: 評価されない 1: 評価される)
     """
     app.logger.info('MLServer: predict called.')
-    response_body = {}
-    if all_features:=request.get_json():
-        if not isinstance(all_features, dict):
-            all_features = json.loads(all_features)
-        all_features_df = pd.DataFrame(all_features)
-        flag = True
-        for feature_name in feature_names:
-            if feature_name not in list(all_features_df.columns):
-                flag = False
-                response_body['message'] = f"Lack of necessary feature: {feature_name}."
-                app.logger.info(f"Lack of necessary feature: {feature_name}.")
-                break
-        if flag:
-            features_df = all_features_df[feature_names]
-            predicted_point = model.predict(features_df)
-            response_body['prediction'] = predicted_point.tolist()
-            response_body['success'] = True
-            status_code = 200
-            app.logger.info('Prediction succeeded!')
-        else:
-            response_body['success'] = False
-            status_code = 500
-            app.logger.info('Prediction failed.')
+    response_body = {'success': False}
+    status_code = 500
+    
+    if not (all_features:=request.get_json()):
+        message = "Features is empty."
+        response = make_response(response_body, status_code, message)
+        return response
+        
+    if not isinstance(all_features, dict):
+        all_features = json.loads(all_features)
+    all_features_df = pd.DataFrame(all_features)
+    
+    for feature_name in feature_names:
+        if feature_name not in list(all_features_df.columns):
+            message = f"Lack of necessary feature: {feature_name}."
+            response = make_response(response_body, status_code, message)
+            return response
 
-    response = Response(
-        response=json.dumps(response_body), 
-        mimetype='application/json',
-        status= status_code
-    )
+    features_df = all_features_df[feature_names]
+    predicted_point = model.predict(features_df)
+    response_body['prediction'] = predicted_point.tolist()
+    response_body['success'] = True
+    status_code = 200
+    message = 'Prediction succeeded!'
+    response = make_response(response_body, status_code, message)
     return response

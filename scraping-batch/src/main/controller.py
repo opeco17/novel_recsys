@@ -1,22 +1,19 @@
-import json
 import os
 import requests
 
-from flask import jsonify, request, Response
+from flask import request
 
 from run import app
 from models.scraper import Scraper
+from utils import make_response
 
 
 @app.route('/')
 def index():
     app.logger.info('Scraping Batch: index called.')
-    response_body = {"message": "ScrapingApi!"}
-    response = Response(
-        response=json.dumps(response_body), 
-        mimetype='application/json',
-        status= 200
-    )
+    response_body = {'message': 'ScrapingApi!'}
+    status_code = 200
+    response = make_response(response_body, status_code)
     return response
 
 
@@ -26,35 +23,52 @@ def scraping_and_add():
     app.logger.info('Scraping Batch: scraping_and_add called.')
     response_body = {"success": False}
     status_code = 500
-
-    if (host := os.environ.get('HOST')) == None:
-        host = 'local'
-
-    if isinstance(test:=request.get_json().get('test'), bool) and (mode:=request.get_json().get('mode')) in ['first', 'middle']:
-        if test == False or (test == True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
-            if test == False:
-                epoch = None
-            app.logger.info(f'test: {test}  mode: {mode}  epoch: {epoch}')
-            scraper = Scraper()
-            scraper.scraping_and_add(test=test, mode=mode, epoch=epoch)
-            response_body['success'] = True
-            message = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
-            status_code = 200
-        else:
-            message = "When test is True, epoch should be a natural number."
-    else:
-        message = "Please specify test(bool) and mode(first or middle)."
+    
+    host = os.environ.get('HOST', 'local')
+    
+    if not (test:=request.get_json().get('test')):
+        message = "Please specify test as bool."
+        response = make_response(response_body, status_code, message)
+        return response
         
-    app.logger.info(message)
-    response_body["message"] = message
+    if not (mode:=request.get_json().get('mode')):
+        message = "Please specify mode as str (first or middle)."
+        response = make_response(response_body, status_code, message)
+        return response
 
-    response = Response(
-        response=json.dumps(response_body),
-        mimetype='application/json',
-        status=status_code
-    )
-    return response
+    if not isinstance(test, bool):
+        message = f"Parameter test should be bool but you throw {type(test)}."
+        response = make_response(response_body, status_code, message)
+        return response
+
+    if not (mode in ['first', 'middle']):
+        message = f"Parameter mode should be first or middle but you throw {mode}."
+        response = make_response(response_body, status_code, message)
+        return response
+
+    if not (test == True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
+        message = "When test is True, epoch should be a natural number."
+        response = make_response(response_body, status_code, message)
+        return response
+    
+    if test == False:
+        epoch = None
         
+    app.logger.info(f"Start scraping (test: {test}  mode: {mode}  epoch: {epoch})")
+    scraper = Scraper()
+    try:
+        scraper.scraping_and_add(test=test, mode=mode, epoch=epoch)
+        response_body['success'] = True
+        message = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
+        status_code = 200
+        response = make_response(response_body, status_code, message)
+        return response
+    
+    except Exception as e:
+        message = f"Failed: {e}."
+        response = make_response(response_body, status_code, message)
+        return response
+    
 
 @app.route('/add_existing_data', methods=['POST'])
 def add_existing_data():
@@ -63,32 +77,39 @@ def add_existing_data():
     response_body = {"success": False}
     status_code = 500
 
-    if (host := os.environ.get('HOST')) == None:
-        host = 'local'
+    host = os.environ.get('HOST', 'local')
     
-    if isinstance(test:=request.get_json().get('test'), bool):
-        if test == False or (test == True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
-            if test == False:
-                epoch = None
-            app.logger.info(f'test: {test}  epoch: {epoch}')
-            scraper = Scraper()
-            scraper.add_existing_data(test=test, epoch=epoch)
-            response_body['success'] = True
-            message = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
-            status_code = 200
-        else:
-            message = "When test is True, epoch should be a natural number."
-    else:
-        message = "Please specify test(bool)."
-
-    app.logger.info(message)
-    response_body["message"] = message
-
-    response = Response(
-        response=json.dumps(response_body),
-        mimetype='application/json',
-        status=status_code
-    )
-    return response
+    if not (test:=request.get_json().get('test')):
+        message = "Please specify test as bool."
+        response = make_response(response_body, status_code, message)
+        return response
+        
+    if not isinstance(test, bool):
+        message = f"Parameter test should be bool but you throw {type(test)}."
+        response = make_response(response_body, status_code, message)
+        return response
+    
+    if not (test == True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
+        message = "When test is True, epoch should be a natural number."
+        response = make_response(response_body, status_code, message)
+        return response
+    
+    if test == False:
+        epoch = None
+        
+    app.logger.info(f"Start scraping (test: {test}  epoch: {epoch})")
+    scraper = Scraper()
+    try:
+        scraper.add_existing_data(test=test, epoch=epoch)
+        response_body['success'] = True
+        message = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
+        status_code = 200
+        response = make_response(response_body, status_code, message)
+        return response
+        
+    except Exception as e:
+        message = f"Failed: {e}."
+        response = make_response(response_body, status_code, message)
+        return response
 
 

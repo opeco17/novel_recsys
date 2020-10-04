@@ -1,51 +1,50 @@
-import json
 import os
 import requests
 
-from flask import request, Response
+from flask import request
 
 from models.bert import FeatureExtractor
 from train.trainer import Trainer
 from run import app
+from utils import make_response
 
 
 model = FeatureExtractor()
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
 def index():
     app.logger.info('BERTServer: index called.')
     response_body = {"message": "Here is BERTServer!"}
-    response = Response(
-        response=json.dumps(response_body), 
-        mimetype='application/json',
-        status= 200
-    )
+    status_code = 200
+    response = make_response(response_body, status_code)
     return response
 
 
 @app.route('/predict', methods=['GET'])
 def predict():
     app.logger.info('BERTServer: predict called.')
-    response_body = {"success": False,}
-    if texts := request.get_json().get('texts'):
-        if (flag:=isinstance(texts, str)) or (isinstance(texts, list) and isinstance(texts[0], str)):
-            texts = [texts] if flag else texts
-            outputs = model.extract(texts)
-            response_body['prediction'] = outputs
-            response_body['success'] = True
-            status_code = 200
-            app.logger.info('Prediction succeeded!')
-        else:
-            status_code = 500
-            app.logger.info('Key texts should be str or List[str].')
-            
-    response = Response(
-        response=json.dumps(response_body), 
-        mimetype='application/json',
-        status= status_code
-    )
+    status_code = 500
+    response_body = {"success": False}
+    
+    if not (texts := request.get_json().get('texts')):
+        response = make_response(response_body, status_code)
+        return response
+    
+    if not ((isinstance(texts, str)) or (isinstance(texts, list) and isinstance(texts[0], str))):
+        status_code = 500
+        app.logger.info('Key texts should be str or List[str].')
+        response = make_response(response_body, status_code)
+        return response
+
+    texts = [texts] if isinstance(texts, str) else texts
+    outputs = model.extract(texts)
+    response_body['prediction'] = outputs
+    response_body['success'] = True
+    status_code = 200
+    app.logger.info('Prediction succeeded!')
+    response = make_response(response_body, status_code)
     return response
 
 
@@ -64,9 +63,5 @@ def train():
         response_body = {"message": message}
         app.logger.info(message)
 
-    response = Response(
-        response=json.dumps(response_body), 
-        mimetype='application/json',
-        status= status_code
-    )
+    response = make_response(response_body, status_code)
     return response
