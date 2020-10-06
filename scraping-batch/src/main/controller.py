@@ -56,8 +56,9 @@ def scraping_and_add():
         
     app.logger.info(f"Start scraping (test: {test}  mode: {mode}  epoch: {epoch})")
     scraper = Scraper()
+    result = {}
     try:
-        scraper.scraping_and_add(test=test, mode=mode, epoch=epoch)
+        scraper.scraping_and_add(test=test, mode=mode, epoch=epoch, result=result)
         response_body['success'] = True
         message = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
         status_code = 200
@@ -99,8 +100,9 @@ def add_existing_data():
         
     app.logger.info(f"Start scraping (test: {test}  epoch: {epoch})")
     scraper = Scraper()
+    result = {}
     try:
-        scraper.add_existing_data(test=test, epoch=epoch)
+        scraper.add_existing_data(test=test, epoch=epoch, result=result)
         response_body['success'] = True
         message = f"{scraper.db_count} and {scraper.es_count} data were registeres to DB and ES respectively."
         status_code = 200

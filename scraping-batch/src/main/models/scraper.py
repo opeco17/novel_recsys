@@ -20,7 +20,7 @@ class Scraper(object):
         self.es_count = 0
         app.logger.info('Scraper constructed!')
         
-    def scraping_and_add(self, test: bool, mode: str, epoch: int):
+    def scraping_and_add(self, test: bool, mode: str, epoch: int, result: dict):
         """スクレイピングを行いポイント予測とDatabaseへの追加とElasticsearchへの追加を行う"""
         scraped_details_iterator = DetailsScraper.get_scraped_df_iterator(mode, self.conn, self.cursor)
         for i, sub_details_df in enumerate(scraped_details_iterator):
@@ -43,7 +43,7 @@ class Scraper(object):
         self.conn.close()
         self.client.close()
 
-    def add_existing_data(self, test: bool, epoch: int):
+    def add_existing_data(self, test: bool, epoch: int, result: dict):
         """Database内の既存データに対してポイント予測とElasticsearchへの追加を行う"""
         details_df_iterator = DBConnector.get_details_df_iterator(self.conn, test, epoch)
         for i, sub_details_df in enumerate(details_df_iterator):
