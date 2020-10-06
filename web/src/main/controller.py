@@ -11,7 +11,7 @@ from model import RecommendItemsGetter
 from run import app, mail
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
     app.logger.info('Web: index called.')

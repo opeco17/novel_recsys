@@ -24,20 +24,25 @@ spec:
         image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
         imagePullPolicy: IfNotPresent
         env:
-          - name:  FLUENT_ELASTICSEARCH_HOST
-            value: "elasticsearch"
-          - name:  FLUENT_ELASTICSEARCH_PORT
-            value: "9200"
-          - name: FLUENT_ELASTICSEARCH_SCHEME
-            value: "http"
-          - name: FLUENT_ELASTICSEARCH_USER
-            value: "elastic"
-          - name: FLUENT_ELASTICSEARCH_PASSWORD
-            value: "changeme"
-          - name: LOGZIO_TOKEN
-            value: "ThisIsASuperLongToken"
-          - name: LOGZIO_LOGTYPE
-            value: "kubernetes"
+        - name:  FLUENT_ELASTICSEARCH_HOST
+          value: "elasticsearch"
+        - name:  FLUENT_ELASTICSEARCH_PORT
+          value: "9200"
+        - name: FLUENT_ELASTICSEARCH_SCHEME
+          value: "http"
+        - name: FLUENT_ELASTICSEARCH_USER
+          value: "elastic"
+        - name: FLUENT_ELASTICSEARCH_PASSWORD
+          value: "changeme"
+        - name: LOGZIO_TOKEN
+          value: "ThisIsASuperLongToken"
+        - name: LOGZIO_LOGTYPE
+          value: "kubernetes"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
         volumeMounts:
         - name: varlog
           mountPath: /var/log

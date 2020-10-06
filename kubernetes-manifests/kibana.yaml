@@ -32,10 +32,15 @@ spec:
         image: docker.elastic.co/kibana/kibana:7.8.0
         imagePullPolicy: IfNotPresent
         env:
-          - name: ELASTICSEARCH_URL
-            value: http://elasticsearch:9200
-          - name: XPACK_SECURITY_ENABLED
-            value: "true"
+        - name: ELASTICSEARCH_URL
+          value: http://elasticsearch:9200
+        - name: XPACK_SECURITY_ENABLED
+          value: "true"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
         ports:
         - containerPort: 5601
           name: http

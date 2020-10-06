@@ -5,7 +5,7 @@ from flask import Response
 from run import app
 
 
-def make_response(response_body: dict, status_code: int, message: str=None):
+def make_response(response_body: dict, status_code: int, message: str=None) -> Response:
     if message:
         response_body['message'] = message
         app.logger.info(message)

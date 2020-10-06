@@ -34,7 +34,19 @@ spec:
         env:
         - name: discovery.type
           value: single-node
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
         ports:
         - containerPort: 9200
           name: http
           protocol: TCP
+      #   volumeMounts:
+      #   - name: elasticsearch-persistent-storage
+      #     mountPath: /usr/share/elasticsearch/data
+      # volumes:
+      # - name: elasticsearch-persistent-storage
+      #   persistentVolumeClaim:
+      #     claimName: elasticsearch-pvc

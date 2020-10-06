@@ -1,7 +1,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: database-pv
+  name: elasticsearch-pv
   labels:
     type: local
 spec:
@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: database-pvc
+  name: elasticsearch-pvc
 spec:
   storageClassName: standard
   accessModes:

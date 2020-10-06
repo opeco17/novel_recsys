@@ -36,6 +36,11 @@ spec:
         env:
         - name: HOST
           value: "container"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
       - name: mlserver-nginx
         image: opeco17/nginx:latest
         imagePullPolicy: Never
@@ -46,3 +51,8 @@ spec:
           value: "localhost:3033"
         - name: SERVER_PORT
           value: "83"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
