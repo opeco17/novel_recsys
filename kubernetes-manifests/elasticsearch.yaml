@@ -34,11 +34,11 @@ spec:
         env:
         - name: discovery.type
           value: single-node
-        - name: TZ
-          valueFrom:
-            configMapKeyRef:
-                name: general-config
-                key: tz
+        # - name: TZ
+        #   valueFrom:
+        #     configMapKeyRef:
+        #         name: general-config
+        #         key: tz
         ports:
         - containerPort: 9200
           name: http

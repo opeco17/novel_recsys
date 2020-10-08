@@ -5,6 +5,7 @@ Flask-HTTPAuth==4.1.0
 Flask-Mail==0.9.1
 Flask-Testing==0.8.0 
 Flask-WTF==0.14.3
+JSON-log-formatter==0.3.0
 WTForms==2.2.1 
 requests==2.24.0
 numpy==1.18.4

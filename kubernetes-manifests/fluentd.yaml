@@ -38,18 +38,22 @@ spec:
           value: "ThisIsASuperLongToken"
         - name: LOGZIO_LOGTYPE
           value: "kubernetes"
-        - name: TZ
-          valueFrom:
-            configMapKeyRef:
-                name: general-config
-                key: tz
+        - name: FLUENTD_SYSTEMD_CONF
+          value: "disable"
+        # - name: TZ
+        #   valueFrom:
+        #     configMapKeyRef:
+        #         name: general-config
+        #         key: tz
         volumeMounts:
         - name: varlog
           mountPath: /var/log
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
-      terminationGracePeriodSeconds: 10
+        - name: config-volume
+          mountPath: /fluentd/etc
+      terminationGracePeriodSeconds: 0
       volumes:
       - name: varlog
         hostPath:
@@ -57,3 +61,6 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
+      - name: config-volume
+        configMap:
+          name: fluentd-config

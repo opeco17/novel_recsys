@@ -36,11 +36,11 @@ spec:
           value: http://elasticsearch:9200
         - name: XPACK_SECURITY_ENABLED
           value: "true"
-        - name: TZ
-          valueFrom:
-            configMapKeyRef:
-                name: general-config
-                key: tz
+        # - name: TZ
+        #   valueFrom:
+        #     configMapKeyRef:
+        #         name: general-config
+        #         key: tz
         ports:
         - containerPort: 5601
           name: http

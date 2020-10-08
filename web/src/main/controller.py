@@ -38,7 +38,7 @@ def search_by_text():
     if not recommend_items:
         return render_template('error.html')
     
-    app.logger.info(f"Resul is called by text search.")
+    app.logger.info(f"Reccomend result", extra={'search_method': 'text'})
     return render_template('result.html', recommend_items=recommend_items)
 
     
@@ -63,7 +63,7 @@ def search_by_url():
     if not recommend_items:
         return render_template('error.html')
     
-    app.logger.info(f"Resul is called by url search.")
+    app.logger.info(f"Reccomend result", extra={'search_method': 'url'})
     return render_template('result.html', recommend_items=recommend_items)
 
 
@@ -71,7 +71,7 @@ def search_by_url():
 def narou_redirect(ncode, rank):
     app.logger.info('Web: narou_redirect called.')
     url = f"https://ncode.syosetu.com/{ncode}/"
-    app.logger.info(f"Rank: {rank}")
+    app.logger.info(f"Reccomend item result", extra={'rank': rank})
     return redirect(url, code=302)
             
             
