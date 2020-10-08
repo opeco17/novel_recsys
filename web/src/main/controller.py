@@ -8,7 +8,7 @@ import requests
 from config import Config
 from forms import ContactForm, TextUploadForm, URLUploadForm
 from model import RecommendItemsGetter
-from run import app, mail
+from run import app, auth, mail
 
 
 @app.route('/', methods=['GET'])
@@ -16,12 +16,6 @@ from run import app, mail
 def index():
     app.logger.info('Web: index called.')
     return render_template('index.html')
-
-
-@app.route('/about', methods=['GET'])
-def about():
-    app.logger.info('Web: about called.')
-    return render_template('about.html')
 
 
 @app.route('/search_by_text', methods=['GET', 'POST'])
@@ -71,7 +65,21 @@ def search_by_url():
     
     app.logger.info(f"Resul is called by url search.")
     return render_template('result.html', recommend_items=recommend_items)
+
+
+@app.route('/narou_redirect/<ncode>/<int:rank>', methods=['GET'])
+def narou_redirect(ncode, rank):
+    app.logger.info('Web: narou_redirect called.')
+    url = f"https://ncode.syosetu.com/{ncode}/"
+    app.logger.info(f"Rank: {rank}")
+    return redirect(url, code=302)
             
+            
+@app.route('/about', methods=['GET'])
+def about():
+    app.logger.info('Web: about called.')
+    return render_template('about.html')
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -92,9 +100,14 @@ def contact():
     return render_template('contact.html', success=True)
 
 
-@app.route('/narou_redirect/<ncode>/<int:rank>', methods=['GET'])
-def narou_redirect(ncode, rank):
-    app.logger.info('Web: narou_redirect called.')
-    url = f"https://ncode.syosetu.com/{ncode}/"
-    app.logger.info(f"Rank: {rank}")
-    return redirect(url, code=302)
+@auth.get_password
+def get_password(username):
+    if username in Config.ADMIN_INFO:
+        return Config.ADMIN_INFO.get(username)
+    return None
+
+
+@app.route('/admin', methods=['GET'])
+@auth.login_required
+def admin():
+    return render_template('admin.html', kibana_url=Config.KIBANA_URL, grafana_url=Config.GRAFANA_URL)

@@ -7,8 +7,8 @@ spec:
     app: app
   ports:
   - protocol: "TCP"
-    port: 81
-    targetPort: 81
+    port: 80
+    targetPort: 80
     nodePort: 30001
   type: NodePort
 
@@ -45,12 +45,12 @@ spec:
         image: opeco17/nginx:latest
         imagePullPolicy: Never
         ports:
-        - containerPort: 81
+        - containerPort: 80
         env:
         - name: BACKEND_HOST
           value: "localhost:3031"
         - name: SERVER_PORT
-          value: "81"
+          value: "80"
         - name: TZ
           valueFrom:
             configMapKeyRef:

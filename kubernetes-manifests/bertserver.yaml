@@ -7,8 +7,8 @@ spec:
     app: bertserver
   ports:
   - protocol: "TCP"
-    port: 82
-    targetPort: 82
+    port: 80
+    targetPort: 80
     nodePort: 30002
   type: NodePort
 
@@ -45,12 +45,12 @@ spec:
         image: opeco17/nginx:latest
         imagePullPolicy: Never
         ports:
-        - containerPort: 82
+        - containerPort: 80
         env:
         - name: BACKEND_HOST
           value: "localhost:3032"
         - name: SERVER_PORT
-          value: "82"
+          value: "80"
         - name: TZ
           valueFrom:
             configMapKeyRef:

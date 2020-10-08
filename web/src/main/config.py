@@ -12,19 +12,26 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
 
     # Mail
-    with open(abs_path_of('mail_info.json'), 'r') as f:
-        mail_info = json.load(f)
-    MAIL_SERVER = mail_info['mail_server']
+    with open(abs_path_of('mail_info.json'), 'r') as mail_file:
+        MAIL_INFO = json.load(mail_file)
+    MAIL_SERVER = MAIL_INFO['mail_server']
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = mail_info['mail_username']
-    MAIL_PASSWORD = mail_info['mail_password']
-
+    MAIL_USERNAME = MAIL_INFO['mail_username']
+    MAIL_PASSWORD = MAIL_INFO['mail_password']
+    
+    # Admin
+    with open(abs_path_of('admin_info.json'), 'r') as admin_file:
+        ADMIN_INFO = json.load(admin_file)
+        
     # Log
     LOG_FILE = abs_path_of('log/batch.log')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # External server
+    KIBANA_URL = 'http://localhost:30102'
+    GRAFANA_URL = 'http://localhost:30103'
+    
     host = os.environ.get('HOST', 'local')
     if host == 'local':
         print('Host is set to local.')
@@ -33,6 +40,5 @@ class Config(object):
 
     elif host == 'container':
         print('Host is set to container.')
-        NCODE_SEARCH_URL = 'http://app:81/search_by_ncode'
-        TEXT_SEARCH_URL = 'http://app:81/search_by_text'
-        
+        NCODE_SEARCH_URL = 'http://app/search_by_ncode'
+        TEXT_SEARCH_URL = 'http://app/search_by_text'
