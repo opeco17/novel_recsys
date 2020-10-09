@@ -10,6 +10,7 @@ from flask_mail import Mail
 import json_log_formatter
 
 from config import Config
+from logger import get_json_stream_handler
 
 
 # Application
@@ -19,10 +20,7 @@ bootstrap = Bootstrap(app)
 
 # Logging
 app.logger.removeHandler(default_handler)
-formatter = json_log_formatter.JSONFormatter()
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-app.logger.addHandler(stream_handler)
+app.logger.addHandler(get_json_stream_handler())
 app.logger.setLevel(app.config['LOG_LEVEL'])
 
 # Mail
