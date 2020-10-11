@@ -1,11 +1,12 @@
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: Job
 metadata:
   name: bert-training-batch
 spec:
   completions: 1
   parallelism: 1
-  backoffLimit: 10
+  backoffLimit: 1
+  activeDeadlineSeconds: 3600
   template:
     spec: 
       containers:
@@ -14,6 +15,8 @@ spec:
         imagePullPolicy: Never
         command: ["python3", "trainer.py"]
         env:
+        - name: HOST
+          value: "container"
         - name: TZ
           valueFrom:
             configMapKeyRef:
