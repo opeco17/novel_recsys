@@ -37,11 +37,11 @@ class DBConnector(object):
 
     
     @classmethod
-    def get_db_df(cls, conn: Connection, latest_datetime: int, train: bool) -> DataFrame:
-        train = int(train)
+    def get_db_df(cls, conn: Connection, latest_datetime: int, is_train: bool) -> DataFrame:
+        is_train = int(is_train)
         query = f"SELECT ncode, title, text, genre, general_lastup \
                     FROM details \
-                    WHERE general_lastup > {latest_datetime} AND bert_train = {train}"
+                    WHERE general_lastup > {latest_datetime} AND bert_train = {is_train}"
         db_df_iterator = pd.read_sql_query(query, conn, chunksize=cls.chunksize)
         if db_df_list := list(db_df_iterator):
             db_df = pd.concat(db_df_list)

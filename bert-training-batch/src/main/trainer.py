@@ -30,7 +30,7 @@ class Trainer(object):
             metric_fc = ArcFace(device=device).to(device).train()
             criterion = torch.nn.CrossEntropyLoss()
             optimizer = OptimizerCreater.create_optimizer(bert, metric_fc)
-            train_dataloader = DataLoaderCreater.create_dataloader(train=True)
+            train_dataloader = DataLoaderCreater.create_dataloader(is_train=True)
 
             c = 0
             logger.info('Training start!')
@@ -63,6 +63,7 @@ class Trainer(object):
     
 def main():
     success = Trainer.train()
+    logger.info(f"success: {success}")
     
     
 if __name__ == '__main__':

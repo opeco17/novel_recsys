@@ -11,8 +11,7 @@ class Config(object):
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess')
 
-    # Log
-    LOG_FILE = abs_path_of('log/batch.log')
+    # Logging
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # Parameter
@@ -26,12 +25,11 @@ class Config(object):
 
     # Path
     DATASET_DIR = abs_path_of('dataset')
-    PARAMETER_DIR = abs_path_of('mparameters')
+    PARAMETER_DIR = abs_path_of('parameters')
     PARAMETER_PATH = abs_path_of('parameters/bert40000.pth')
     PRETRAINED_BERT_PATH = abs_path_of('parameters/pretrained_bert')
     PRETRAINED_TOKENIZER_PATH = abs_path_of('parameters/pretrained_tokenizer')
     TRAINED_MODEL_DIR = abs_path_of('trained_model')
-
 
     # External server
     host = os.environ.get('HOST', 'local')

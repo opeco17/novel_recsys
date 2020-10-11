@@ -25,7 +25,6 @@ def get_json_stream_handler():
 
 def get_logger():
     json_stream_handler = get_json_stream_handler()
-    
     logger = logging.getLogger(__name__)
     logger.addHandler(json_stream_handler)
     logger.setLevel(Config.LOG_LEVEL)
