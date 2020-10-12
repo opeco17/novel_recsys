@@ -44,9 +44,15 @@ class Scraper(object):
         self.client.close()
 
     def add_existing_data(self, test: bool, epoch: int, result: dict):
-        """Database内の既存データに対してポイント予測とElasticsearchへの追加を行う"""
+        """Database内の既存データに対してポイント予測とElasticsearchへの追加を行う
+
+        predict_pointがNanのデータが処理の対象
+        Databaseに対してはポイント予測を行った結果をアップデートする
+        Elasticsearchに対してはpredict_pointが1かつglobal_pointが0のものを格納する
+        """
         details_df_iterator = DBConnector.get_details_df_iterator(self.conn, test, epoch)
         for i, sub_details_df in enumerate(details_df_iterator):
+            app.logger.info(f"index of sub details df: {i}")
             sub_details_df = Preprocesser.preprocess_ml_details(sub_details_df)
             predicted_point = MLServerConnector.predict_point(sub_details_df)
             sub_details_df['predict_point'] = predicted_point

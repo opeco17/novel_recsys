@@ -26,7 +26,7 @@ def scraping_and_add():
     
     host = os.environ.get('HOST', 'local')
     
-    if not (test:=request.get_json().get('test')):
+    if (test:=request.get_json().get('test')) == None:
         message = "Please specify test as bool."
         response = make_response(response_body, status_code, message)
         return response
@@ -80,7 +80,7 @@ def add_existing_data():
 
     host = os.environ.get('HOST', 'local')
     
-    if not (test:=request.get_json().get('test')):
+    if (test:=request.get_json().get('test')) == None:
         message = "Please specify test as bool."
         response = make_response(response_body, status_code, message)
         return response
@@ -90,7 +90,7 @@ def add_existing_data():
         response = make_response(response_body, status_code, message)
         return response
     
-    if not (test == True and isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
+    if test == True and not (isinstance(epoch:=request.get_json().get('epoch'), int) and epoch > 0):
         message = "When test is True, epoch should be a natural number."
         response = make_response(response_body, status_code, message)
         return response
