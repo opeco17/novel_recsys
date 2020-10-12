@@ -4,7 +4,6 @@ import requests
 from flask import request
 
 from models.bert import FeatureExtractor
-from train.trainer import Trainer
 from run import app
 from utils import make_response
 
@@ -44,24 +43,5 @@ def predict():
     response_body['success'] = True
     status_code = 200
     app.logger.info('Prediction succeeded!')
-    response = make_response(response_body, status_code)
-    return response
-
-
-@app.route('/train', methods=['GET'])
-def train():
-    app.logger.info('BERTServer: train called.')
-    success = Trainer.train()
-    if success:
-        status_code = 200
-        message = "Training completed!"
-        response_body = {"message": message}
-        app.logger.info(message)
-    else:
-        status_code = 500
-        message = "Training Failed."
-        response_body = {"message": message}
-        app.logger.info(message)
-
     response = make_response(response_body, status_code)
     return response

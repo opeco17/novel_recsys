@@ -1,0 +1,25 @@
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: bert-training-batch
+# spec:
+#   completions: 1
+#   parallelism: 1
+#   backoffLimit: 1
+#   activeDeadlineSeconds: 3600
+#   template:
+#     spec:
+#       containers:
+#       - name: bert-training-batch
+#         image: opeco17/bert-training-batch:latest
+#         imagePullPolicy: Never
+#         command: ["python3", "trainer.py"]
+#         env:
+#         - name: HOST
+#           value: "container"
+#         - name: TZ
+#           valueFrom:
+#             configMapKeyRef:
+#                 name: general-config
+#                 key: tz
+#       restartPolicy: Never

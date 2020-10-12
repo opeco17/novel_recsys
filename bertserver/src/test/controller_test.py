@@ -49,12 +49,6 @@ class ControllerTestCase(TestCase):
         data = {'texts': [10]}
         response = self.__make_predict_response(data)
         self.__test_predict_bad(response)
-
-    def test_train(self):
-        response = self.client.get('/train')
-        self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(json_data:=response.json, dict)
-        self.assertIsInstance(text:=json_data.get('message'), str)
         
     def __make_predict_response(self, data):
         response = self.client.get(

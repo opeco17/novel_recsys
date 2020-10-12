@@ -1,18 +1,18 @@
 import datetime
 import os
-import sys
-sys.path.append('..')
 
 import torch
 
 from config import Config
-from run import app
-from train.model import ArcFace, BERT, OptimizerCreater
-from train.dataloader import DataLoaderCreater
+from logger import get_logger
+from model import ArcFace, BERT, OptimizerCreater
+from dataloader import DataLoaderCreater
 
 
 NUM_EPOCHS = Config.NUM_EPOCHS
 PARAMITER_DIR = Config.PARAMETER_DIR
+
+logger = get_logger()
 
 
 class Trainer(object):
@@ -22,6 +22,7 @@ class Trainer(object):
 
     @classmethod
     def train(cls) -> bool:
+        
         try:
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -29,14 +30,14 @@ class Trainer(object):
             metric_fc = ArcFace(device=device).to(device).train()
             criterion = torch.nn.CrossEntropyLoss()
             optimizer = OptimizerCreater.create_optimizer(bert, metric_fc)
-            train_dataloader = DataLoaderCreater.create_dataloader(train=True)
+            train_dataloader = DataLoaderCreater.create_dataloader(is_train=True)
 
             c = 0
-            app.logger.info('Training start!')
+            logger.info('Training start!')
             for epoch in range(NUM_EPOCHS):
                 for ids, mask, label in train_dataloader:
                     c += 1
-                    app.logger.info(f"Training progress: {c}")
+                    logger.info(f"Training progress: {c}")
 
                     ids.to(device)
                     mask.to(device)
@@ -50,12 +51,20 @@ class Trainer(object):
                     loss.backward()
                     optimizer.step()
 
-            app.logger.info('Training completed!')
+            logger.info('Training completed!')
             torch.save(bert.state_dict(), os.path.join(cls.parameter_dir, f'bert-{datetime.date.today()}.pth'))
             torch.save(metric_fc.state_dict(), os.path.join(cls.parameter_dir, f'metric_fc-{datetime.date.today()}.pth'))
             return True
             
         except Exception as e:
-            app.logger.error(f"Error: {e}")
+            logger.error(f"Error: {e}")
             return False
     
+    
+def main():
+    success = Trainer.train()
+    logger.info(f"success: {success}")
+    
+    
+if __name__ == '__main__':
+    main()

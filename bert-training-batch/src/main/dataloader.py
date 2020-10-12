@@ -2,8 +2,6 @@ import json
 import os
 import re
 from typing import Tuple
-import sys
-sys.path.append('..')
 
 import numpy as np
 import pandas as pd
@@ -14,7 +12,7 @@ from torch.utils.data import DataLoader
 from transformers import BertJapaneseTokenizer
 
 from config import Config
-from train.connector import DBConnector
+from connector import DBConnector
 
 
 TRAIN_BATCH_SIZE =Config.TRAIN_BATCH_SIZE
@@ -58,23 +56,23 @@ class DataLoaderCreater(object):
     dataset_dir = DATASET_DIR
     
     @classmethod
-    def create_dataloader(cls, train: bool=True) -> DataLoader:
-        df = cls.__get_df(train)
+    def create_dataloader(cls, is_train: bool=True) -> DataLoader:
+        df = cls.__get_df(is_train)
         dataset = MyDataset(df)
         dataloader = DataLoader(dataset, cls.batch_size, shuffle=True)
         return dataloader
 
     @classmethod
-    def __get_df(cls, train: bool) -> DataFrame:
+    def __get_df(cls, is_train: bool) -> DataFrame:
         conn, _ = DBConnector.get_conn_and_cursor()
-        csv_file_name = 'train.csv' if train else 'test.csv'
+        csv_file_name = 'train.csv' if is_train else 'test.csv'
         if os.path.exists(path:=os.path.join(cls.dataset_dir, csv_file_name)):
             df = pd.read_csv(path)
             latest_datetime = max(df['general_lastup'])
         else:
             df = pd.DataFrame()
             latest_datetime = 1073779200
-        db_df = DBConnector.get_db_df(conn, latest_datetime, train)
+        db_df = DBConnector.get_db_df(conn, latest_datetime, is_train)
         df = pd.concat([df, db_df]).reset_index(drop=True)
         conn.close()
         df = cls.__preprocess_df(df)

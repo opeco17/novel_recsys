@@ -1,0 +1,1 @@
+{"do_lower_case": false, "word_tokenizer_type": "mecab", "subword_tokenizer_type": "wordpiece", "model_max_length": 512}
