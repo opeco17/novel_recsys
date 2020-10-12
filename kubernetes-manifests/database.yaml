@@ -14,10 +14,12 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: database
 spec:
+  serviceName: elasticsearch
+  replicas: 1
   selector:
     matchLabels:
       app: database
@@ -45,9 +47,14 @@ spec:
         - containerPort: 3306
           name: database
         volumeMounts:
-        - name: database-persistent-storage
+        - name: database-volume
           mountPath: /var/lib/mysql
-      volumes:
-      - name: database-persistent-storage
-        persistentVolumeClaim:
-          claimName: database-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: database-volume
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5G
