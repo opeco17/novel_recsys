@@ -1,1 +1,1 @@
-docker build -t opeco17/scraping-batch .
+  docker build -t opeco17/scraping-batch .
