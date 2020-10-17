@@ -16,18 +16,6 @@ class Config(object):
     # Log
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
-    # Parameter
-    ITERATION_OF_TEST = 2
-    SCRAPING_INTERVAL = 0.1
-    SCRAPING_DETAILS_BATCH_SIZE = 32
-    
-    # Webhook
-    WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
-
-    # Narou
-    NAROU_URL = 'https://ncode.syosetu.com/'
-    NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
-
     # External server
     DB_NAME = os.environ.get('DB_NAME')
     DB_USER_NAME = os.environ.get('DB_USER_NAME')
@@ -37,7 +25,11 @@ class Config(object):
     if host == 'local':
         DB_PORT = 30100
         DB_HOST_NAME = '0.0.0.0'
+        POP_DATA_URL = 'http://localhost:30004/pop_data'
+        DELETE_DATA_URL = 'http://localhost:30004/delete_data'
 
     elif host == 'container':
         DB_PORT = 3306
         DB_HOST_NAME = 'database'
+        POP_DATA_URL = 'http://:ml-batch-manager:3034/pop_data'
+        DELETE_DATA_URL = 'http://:ml-batch-manager:3034/delete_data'

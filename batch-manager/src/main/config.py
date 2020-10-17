@@ -12,3 +12,6 @@ class Config(object):
     
     # Pararell
     COMPLETIONS = int(os.environ.get('COMPLETIONS', 2))
+    
+    # Webhook
+    WEBHOOK_URL = os.environ.get('WEBHOOK_URL')

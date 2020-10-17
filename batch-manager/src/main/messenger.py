@@ -3,7 +3,7 @@ import json
 import requests
 
 from config import Config
-from logger import logger
+from run import app
 
 
 class Messenger(object):
@@ -15,9 +15,9 @@ class Messenger(object):
             data = json.dumps({'text': text, 'username': username})
             try:
                 requests.post(webhook_url, data=data)
-                logger.info('Send message succeeded.')
+                app.logger.info('Send message succeeded.')
             except Exception as e:
                 extra = {'Error': e}
-                logger.info('Send message failed.', extra=extra)
+                app.logger.info('Send message failed.', extra=extra)
         else:
-            logger.info('No webhook url.')
+            app.logger.info('No webhook url.')

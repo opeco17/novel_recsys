@@ -1,6 +1,7 @@
 import os
 
 from config import Config
+from messenger import Messenger
 from run import app
 
 
@@ -29,5 +30,7 @@ class QueueManager(object):
         app.logger.info(f"Number of queue data is {len(self.queue_data_list)}")
         # 全てのバッチ処理が完了した際に正常終了する
         if len(self.queue_data_list) == 0:
-            app.logger.info('Batch processes completed!')
+            message = 'Batch processes completed!'
+            app.logger.info(message)
+            Messenger.send_message(username = 'Batch Manager', message=message)
             os._exit(0)

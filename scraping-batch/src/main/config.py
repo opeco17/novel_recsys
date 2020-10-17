@@ -18,7 +18,7 @@ class Config(object):
 
     # Parameter
     ITERATION_OF_TEST = 2
-    SCRAPING_INTERVAL = 0.1
+    SCRAPING_INTERVAL = 0.5
     SCRAPING_DETAILS_BATCH_SIZE = 32
     
     # Webhook

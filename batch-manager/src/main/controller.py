@@ -25,7 +25,7 @@ def index():
 
 
 @app.route('/pop_data', methods=['POST'])
-def get_data():
+def pop_data():
     app.logger.info('Batch Manager: pop_data called.')
     data = queue_manager.pop_queue_data()
     response_body = {'data': data, 'completions': Config.COMPLETIONS}
