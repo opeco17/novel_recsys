@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-batch-manager
+spec:
+  selector:
+    app: ml-batch-manager
+  ports:
+  - protocol: "TCP"
+    port: 3034
+    targetPort: 3034
+    nodePort: 30004
+  type: NodePort
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ml-batch-manager
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: ml-batch-manager
+    spec:
+      containers:
+      - name: ml-batch-manager
+        image: opeco17/batch-manager:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3034
+        env:
+        - name: COMPLETIONS
+          value: "3"
+        - name: UWSGI_PORT
+          value: "3034"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
+      restartPolicy: Never
