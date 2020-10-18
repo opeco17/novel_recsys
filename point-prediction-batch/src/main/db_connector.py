@@ -31,7 +31,7 @@ class DBConnector(object):
             return conn, cursor
         
         except Exception as e:
-            extra = {'Class': 'DBConnector', 'Method': 'get_conn_and_cursor', 'Error': str(e)}
+            extra = {'Class': 'DBConnector', 'Method': 'get_conn_and_cursor', 'ErrorType': type(e), 'Error': str(e)}
             logger.error('Unable to get DB connector and cursor.')
             raise
         
@@ -41,12 +41,12 @@ class DBConnector(object):
         try:
             # test==Trueの際はpredicted_pointがNULL以外のレコードも対象とする。
             if test:
-                query = f"SELECT title, story, text, keyword, \
+                query = f"SELECT ncode, title, story, text, keyword, \
                             novel_type, end, general_all_no, isr15, isbl, isgl, iszankoku, istensei, istenni, pc_or_k \
                             FROM details \
                             WHERE MOD(general_firstup, {completions})={queue_data}"
             else:
-                query = f"SELECT title, story, text, keyword, \
+                query = f"SELECT ncode, title, story, text, keyword, \
                             novel_type, end, general_all_no, isr15, isbl, isgl, iszankoku, istensei, istenni, pc_or_k \
                             FROM details \
                             WHERE predicted_point is NULL AND MOD(general_firstup, {completions})={queue_data}"         
@@ -60,13 +60,19 @@ class DBConnector(object):
             return details_df_iterator
         
         except Exception as e:
-            extra = {'Class': 'DBConnector', 'Method': 'get_details_df_iterator', 'Error': str(e)}
+            extra = {'Class': 'DBConnector', 'Method': 'get_details_df_iterator', 'ErrorType': type(e), 'Error': str(e)}
             logger.error('Unable to get details df iterator.')
             raise
         
     @classmethod
-    def update_predicted_point(cls, conn: Connection, cursor: Cursor, ncodes: List[str], predict_points: List[int]) -> None:
+    def update_predicted_point(cls, conn: Connection, cursor: Cursor, ncodes: List[str], predicted_points: List[int]) -> None:
         """DB内の作品の予測ポイントを更新"""
-        data = [(ncode, predict_point) for ncode, predict_point in zip(ncodes, predict_points)]
-        cursor.executemany("UPDATE details SET predicted_point=%s WHERE ncode=%s", data)
-        conn.commit()
+        data = [(predicted_point, ncode) for ncode, predicted_point in zip(ncodes, predicted_points)]
+        try:
+            cursor.executemany("UPDATE details SET predicted_point=%s WHERE ncode=%s", data)
+            conn.commit()
+            logger.info(f"{len(ncodes)} data were updated with predicted point.")
+        except Exception as e:
+            extra = {'Class': 'DBConnector', 'Method': 'update_predicted_point', 'ErrorType': type(e), 'Error': str(e)}
+            logger.error('Unable to update table.')
+            raise

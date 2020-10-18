@@ -22,7 +22,7 @@ def execute(args: argparse.Namespace) -> None:
         for i, details_df in enumerate(details_df_iterator):
             details_df = Preprocesser.preprocess_ml_details(details_df)
             predicted_points = MLServerConnector.predict_point(details_df)
-            details_df['predicted_point'] = predicted_points
+            DBConnector.update_predicted_point(conn, cursor, details_df.ncode, predicted_points)
             if test and i==1:
                 logger.info('Broke due to test mode.')
                 break
