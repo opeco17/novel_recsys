@@ -77,7 +77,7 @@ class ElasticsearchConnector(object):
                 }
             }
         }
-        response = client.search(index='features', body=query)['hits']['hits']
+        response = client.search(index='details', body=query)['hits']['hits']
         if len(response) != 0:
             query_feature = response[0]['_source']['feature']    
         else:
@@ -104,7 +104,7 @@ class ElasticsearchConnector(object):
                 }
             }
         }
-        response = client.search(index='features', body=query_for_similar_search)['hits']['hits']
+        response = client.search(index='details', body=query_for_similar_search)['hits']['hits']
         recommend_list = []
         for i in range(min(cls.recommend_num, len(response))):
             recommend_data = response[i]['_source']

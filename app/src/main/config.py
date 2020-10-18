@@ -14,7 +14,6 @@ class Config(object):
     RECOMMEND_NUM = 10
 
     # Log
-    LOG_FILE = abs_path_of('log/batch.log')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # Narou

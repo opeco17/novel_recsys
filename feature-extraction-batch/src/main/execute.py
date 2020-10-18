@@ -19,6 +19,7 @@ def execute(args: argparse.Namespace) -> None:
         conn, cursor = DBConnector.get_conn_and_cursor()
         client = ElasticsearchConnector.get_client()
         queue_data, completions = BatchManagerConnector.get_queue_data()
+        ElasticsearchConnector.create_details_index_if_not_exist(client)
         details_df_iterator = DBConnector.get_details_df_iterator(conn, queue_data, completions, test)
         for i, details_df in enumerate(details_df_iterator):
             features = BERTServerConnector.extract_features(list(details_df.text))
@@ -51,7 +52,6 @@ def execute(args: argparse.Namespace) -> None:
         client.close()
         logger.info('Elasticsearch client closed.')
         
-    
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

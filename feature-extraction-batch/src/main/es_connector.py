@@ -23,15 +23,18 @@ class ElasticsearchConnector(object):
             raise
 
     @classmethod
-    def create_details_index(cls, client: Elasticsearch):
+    def create_details_index_if_not_exist(cls, client: Elasticsearch) -> None:
         """indexの新規作成"""
+        if client.indices.exists(index='details'):
+            return None
+        
         mappings = {'properties': Config.ES_DETAILS_SCHEMA}
         try:
             client.indices.create(index='details', body={'mappings': mappings})
         except Exception as e:
+            # Podが同時にindexを作成しようとするとエラーが発生するのでここで止める
             extra = {'Class': 'ElasticsearchConnector', 'Method': 'create_details_index', 'ErrorType': type(e), 'Error': str(e)}
             logger.error('Unable to create details index.')
-            raise
 
     @classmethod
     def insert_details(cls, client: Elasticsearch, details_df: DataFrame) -> Dict:
