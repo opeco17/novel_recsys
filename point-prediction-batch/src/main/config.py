@@ -12,24 +12,15 @@ load_dotenv(abs_path_of('config.env'))
 class Config(object):
     # Basic
     JSON_AS_ASCII = False
-
-    # Log
-    LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
     
-    # DB Schema
-    DEFAULT_NULL_COLUMNS = ['predicted_point']
-
     # Parameter
-    ITERATION_OF_TEST = 2
-    SCRAPING_INTERVAL = 0.5
-    SCRAPING_DETAILS_BATCH_SIZE = 32
-    
+    DETAILS_BATCH_SIZE = 16
+
     # Webhook
     WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
-
-    # Narou
-    NAROU_URL = 'https://ncode.syosetu.com/'
-    NAROU_API_URL = 'https://api.syosetu.com/novelapi/api/'
+    
+    # Log
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # External server
     DB_NAME = os.environ.get('DB_NAME')
@@ -40,7 +31,15 @@ class Config(object):
     if host == 'local':
         DB_PORT = 30100
         DB_HOST_NAME = '0.0.0.0'
-
+        POINT_PREDICTION_URL = 'http://localhost:30003/predict'
+        POP_DATA_URL = 'http://localhost:30004/pop_data'
+        FAIL_DATA_URL = 'http://localhost:30004/fail_data'
+        SUCCESS_DATA_URL = 'http://localhost:30004/success_data'
+        
     elif host == 'container':
         DB_PORT = 3306
         DB_HOST_NAME = 'database'
+        POINT_PREDICTION_URL = 'http://mlserver/predict'
+        POP_DATA_URL = 'http://point-prediction-manager:3034/pop_data'
+        FAIL_DATA_URL = 'http://point-prediction-manager:3034/fail_data'
+        SUCCESS_DATA_URL = 'http://point-prediction-manager:3034/success_data'

@@ -14,3 +14,5 @@ RUN apt-get update && \
 COPY . /var/www
 
 WORKDIR /var/www/src/main
+
+CMD ["uwsgi","--ini","/var/www/uwsgi.ini"]

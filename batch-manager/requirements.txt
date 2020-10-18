@@ -1,0 +1,6 @@
+uwsgi==2.0.17
+Flask==1.0.3
+Flask-Testing==0.8.0 
+JSON-log-formatter==0.3.0
+python-dotenv==0.14.0
+requests==2.24.0

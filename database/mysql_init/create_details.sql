@@ -1,8 +1,8 @@
-CREATE DATABASE maindb;
+CREATE DATABASE IF NOT EXISTS maindb;
 
 USE maindb;
 
-CREATE TABLE details(
+CREATE TABLE IF NOT EXISTS details(
 	ncode TEXT not null,
     title TEXT,
 	userid TEXT,
@@ -43,9 +43,10 @@ CREATE TABLE details(
 	updated_at INTEGER,
 	weekly_unique INTEGER,
 	text TEXT,
-	predict_point TEXT,
+	predicted_point BOOLEAN,
     bert_train BOOLEAN,
-    ml_train BOOLEAN
+    ml_train BOOLEAN,
+	added_to_es BOOLEAN DEFAULT 0
 ) ENGINE=INNODB;
 
 CREATE INDEX ncodeindex ON details(ncode(10));
