@@ -1,0 +1,10 @@
+{
+    "ncode": {"type": "keyword"},
+    "title": {"type": "text"},
+    "writer": {"type": "text"},
+    "keyword": {"type": "text"}, 
+    "story": {"type": "text"},
+    "genre": {"type": "integer"},
+    "biggenre": {"type": "integer"},
+    "feature": {"type": "dense_vector", "dims": 64}
+}

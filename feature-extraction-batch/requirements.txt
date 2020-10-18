@@ -1,0 +1,7 @@
+elasticsearch==7.8.0
+JSON-log-formatter==0.3.0
+mysqlclient==1.4.6
+numpy==1.18.4
+requests==2.24.0
+pandas==1.0.4
+python-dotenv==0.14.0

@@ -3,12 +3,12 @@ import argparse
 import requests
 
 from batch_manager_connector import BatchManagerConnector
-from db_connector import DBConnector
+from bertserver_connector import BERTServerConnector
 from config import Config
+from db_connector import DBConnector
+from es_connector import ElasticsearchConnector
 from logger import logger
 from messenger import Messenger
-from mlserver_connector import MLServerConnector
-from preprocesser import Preprocesser
 
 
 def execute(args: argparse.Namespace) -> None:
@@ -17,17 +17,18 @@ def execute(args: argparse.Namespace) -> None:
         logger.info(f"This is test mode.")
     try:
         conn, cursor = DBConnector.get_conn_and_cursor()
+        client = ElasticsearchConnector.get_client()
         queue_data, completions = BatchManagerConnector.get_queue_data()
         details_df_iterator = DBConnector.get_details_df_iterator(conn, queue_data, completions, test)
         for i, details_df in enumerate(details_df_iterator):
-            details_df = Preprocesser.preprocess_ml_details(details_df)
-            predicted_points = MLServerConnector.predict_point(details_df)
-            DBConnector.update_predicted_point(conn, cursor, details_df.ncode, predicted_points)
+            features = BERTServerConnector.extract_features(list(details_df.text))
+            details_df['feature'] = features
+            ElasticsearchConnector.insert_details(client, details_df)
             if test and i==1:
                 logger.info('Broke due to test mode.')
                 break
         BatchManagerConnector.success_queue_data(queue_data)
-        logger.info(f"Point Prediction Batch of {queue_data} queue data finished!")
+        logger.info(f"Feature Extraction Batch of {queue_data} queue data finished!")
     
     except requests.exceptions.ConnectionError as e:
         extra = {'Error Type': type(e), 'Error': str(e)}
@@ -35,8 +36,8 @@ def execute(args: argparse.Namespace) -> None:
 
     except Exception as e:
         logger.error(type(e))
-        username = 'Point Prediction Batch'
-        message = 'Error occurred in point prediction batch.'
+        username = 'Feature Extraction Batch'
+        message = 'Error occurred in feature extraction batch.'
         extra = {'Error Type': type(e), 'Error': str(e)}
         logger.error(message, extra=extra)
         Messenger.send_message(username, message)
@@ -46,6 +47,10 @@ def execute(args: argparse.Namespace) -> None:
         cursor.close()
         conn.close()
         logger.info('DB connection and cursor closed.')
+        
+        client.close()
+        logger.info('Elasticsearch client closed.')
+        
     
     
 if __name__ == '__main__':
