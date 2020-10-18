@@ -15,6 +15,9 @@ class Config(object):
 
     # Log
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
+    
+    # DB Schema
+    DEFAULT_NULL_COLUMNS = ['predicted_point']
 
     # Parameter
     ITERATION_OF_TEST = 2

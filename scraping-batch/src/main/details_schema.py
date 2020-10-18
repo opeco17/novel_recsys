@@ -39,7 +39,7 @@ details_schema = {
 	'updated_at': int,
 	'weekly_unique': int,
 	'text': str,
-	'predict_point': str,
+	'predicted_point': bool,
     'bert_train': bool,
     'ml_train': bool,
     'added_to_es': bool,

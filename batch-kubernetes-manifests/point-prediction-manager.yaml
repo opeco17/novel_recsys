@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ml-batch-manager
+  name: point-prediction-manager
 spec:
   selector:
-    app: ml-batch-manager
+    app: point-prediction-manager
   ports:
   - protocol: "TCP"
     port: 3034
@@ -16,25 +16,26 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ml-batch-manager
+  name: point-prediction-manager
 spec:
-  completions: 1
+  ttlSecondsAfterFinished: 120
+  completions: 5
   parallelism: 1
-  backoffLimit: 0
+  backoffLimit: 5
   template:
     metadata:
       labels:
-        app: ml-batch-manager
+        app: point-prediction-manager
     spec:
       containers:
-      - name: ml-batch-manager
+      - name: point-prediction-manager
         image: opeco17/batch-manager:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 3034
         env:
         - name: COMPLETIONS
-          value: "3"
+          value: "5"
         - name: UWSGI_PORT
           value: "3034"
         - name: TZ

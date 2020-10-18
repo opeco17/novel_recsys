@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bert-batch-manager
+  name: feature-extraction-manager
 spec:
   selector:
-    app: bert-batch-manager
+    app: feature-extraction-manager
   ports:
   - protocol: "TCP"
     port: 3035
@@ -16,25 +16,26 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: bert-batch-manager
+  name: feature-extraction-manager
 spec:
+  ttlSecondsAfterFinished: 120
   completions: 1
   parallelism: 1
-  backoffLimit: 0
+  backoffLimit: 1
   template:
     metadata:
       labels:
-        app: bert-batch-manager
+        app: feature-extraction-manager
     spec:
       containers:
-      - name: bert-batch-manager
+      - name: feature-extraction-manager
         image: opeco17/batch-manager:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 3035
         env:
         - name: COMPLETIONS
-          value: "3"
+          value: "5"
         - name: UWSGI_PORT
           value: "3035"
         - name: TZ

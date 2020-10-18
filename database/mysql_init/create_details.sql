@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS details(
 	updated_at INTEGER,
 	weekly_unique INTEGER,
 	text TEXT,
-	predict_point TEXT,
+	predicted_point BOOLEAN,
     bert_train BOOLEAN,
     ml_train BOOLEAN,
 	added_to_es BOOLEAN DEFAULT 0
