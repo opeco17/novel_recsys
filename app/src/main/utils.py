@@ -66,7 +66,7 @@ class ResponseMakerForNcodeAndText(object):
             response_body['success'] = True
             
         except Exception as e:
-            app.logger.error(f"Error in similar item search: {e}")
+            app.logger.error(f"Error in similar item search: {str(e)}")
             response_body['recommend_items'] = []
             response_body['success'] = False
 

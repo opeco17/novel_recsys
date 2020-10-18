@@ -1,5 +1,6 @@
 beautifulsoup4==4.9.1
 JSON-log-formatter==0.3.0
+mecab==0.996.2 
 mysqlclient==1.4.6
 numpy==1.18.4
 requests==2.24.0

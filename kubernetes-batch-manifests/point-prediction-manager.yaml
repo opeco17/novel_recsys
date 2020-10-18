@@ -19,9 +19,9 @@ metadata:
   name: point-prediction-manager
 spec:
   ttlSecondsAfterFinished: 120
-  completions: 5
+  completions: 1
   parallelism: 1
-  backoffLimit: 5
+  backoffLimit: 1
   template:
     metadata:
       labels:
@@ -34,6 +34,8 @@ spec:
         ports:
         - containerPort: 3034
         env:
+        - name: TARGET
+          value: "Point Prediction Batch"
         - name: COMPLETIONS
           value: "5"
         - name: UWSGI_PORT

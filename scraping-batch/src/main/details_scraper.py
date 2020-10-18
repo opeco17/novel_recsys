@@ -59,7 +59,7 @@ class DetailsScraper(object):
                 result = cursor.fetchone()
                 latest_registered_datetime = str(result[0]) if result is not None else '1073779200'
             except Exception as e:
-                extra = {'Class': 'DetailsScraper', 'Method': '__get_latest_registered_datetime', 'Error': e}
+                extra = {'Class': 'DetailsScraper', 'Method': '__get_latest_registered_datetime', 'Error': str(e)}
                 logger.error('Exception occured.', extra=extra)
                 raise
         
@@ -77,7 +77,7 @@ class DetailsScraper(object):
             extra = {'Class': 'DetailsScraper', 'Method': '__get_scraping_item_number'}
             logger.error('Unable to get scraping_item_number')
         except Exception as e:
-            extra = {'Class': 'DetailsScraper', 'Method': '__get_scraping_item_number', 'Error': e}
+            extra = {'Class': 'DetailsScraper', 'Method': '__get_scraping_item_number', 'Error': str(e)}
             logger.error('Unable to get scraping_item_number')
             raise
             
@@ -98,7 +98,7 @@ class DetailsScraper(object):
             extra = {'Class': 'DetailsScraper', 'Method': '__scrape_sub_details'}
             logger.error('Unable to get details.')
         except Exception as e:
-            extra = {'Class': 'DetailsScraper', 'Method': '__scrape_sub_details', 'Error': e}
+            extra = {'Class': 'DetailsScraper', 'Method': '__scrape_sub_details', 'Error': str(e)}
             logger.error('Unable to get details.')
             raise
             

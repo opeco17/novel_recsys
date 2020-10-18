@@ -10,13 +10,6 @@ from config import Config
 from logger import logger
 
 
-DB_NAME = Config.DB_NAME
-DB_USER_NAME = Config.DB_USER_NAME
-DB_PASSWORD = Config.DB_PASSWORD
-DB_HOST_NAME = Config.DB_HOST_NAME
-DB_PORT = Config.DB_PORT
-
-
 class DBConnector(object):
     """DBとの接続を担う"""
     
@@ -25,18 +18,18 @@ class DBConnector(object):
         """DBのConnectorとCursorを提供"""
         try:
             conn = MySQLdb.connect(
-                host = DB_HOST_NAME,
-                port = DB_PORT,
-                user = DB_USER_NAME,
-                password = DB_PASSWORD,
-                database = DB_NAME,
+                host = Config.DB_HOST_NAME,
+                port = Config.DB_PORT,
+                user = Config.DB_USER_NAME,
+                password = Config.DB_PASSWORD,
+                database = Config.DB_NAME,
                 use_unicode=True,
                 charset="utf8"
             )
             cursor = conn.cursor()
             logger.info('Get DB connector and cursor.')
         except Exception as e:
-            extra = {'Class': 'DBConnector', 'Method': 'get_conn_and_cursor', 'Error': e}
+            extra = {'Class': 'DBConnector', 'Method': 'get_conn_and_cursor', 'Error': str(e)}
             logger.error('Unable to get DB connector and cursor.')
             raise
         return conn, cursor

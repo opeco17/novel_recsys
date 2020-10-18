@@ -25,15 +25,17 @@ def execute(args: argparse.Namespace) -> None:
             sub_details_df = Preprocesser.preprocess_details(sub_details_df)
             DBConnector.insert_details(conn, cursor, sub_details_df)
         
+        username = 'Scraping batch'
         message = 'Scraping batch completed!'
         logger.info(message)
-        Messenger.send_message(message)
+        Messenger.send_message(username, message)
         
     except Exception as e:
+        username = 'Scraping batch'
         message = 'Error occurred in scraping batch.'
-        extra = {'Error': e}
+        extra = {'Error': str(e)}
         logger.error(message, extra=extra)
-        Messenger.send_message(message)
+        Messenger.send_message(username, message)
         
     finally:
         cursor.close()

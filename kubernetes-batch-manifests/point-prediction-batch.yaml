@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: point-prediction-batch
+spec:
+  ttlSecondsAfterFinished: 120
+  completions: 5
+  parallelism: 2
+  backoffLimit: 5
+  template:
+    spec:
+      containers:
+      - name: point-prediction-batch
+        image: opeco17/point-prediction-batch:latest
+        imagePullPolicy: Never
+        command: ["python3", "execute.py", "--test"]
+        env:
+        - name: HOST
+          value: "container"
+        - name: COMPLETIONS
+          value: "5"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
+      restartPolicy: Never

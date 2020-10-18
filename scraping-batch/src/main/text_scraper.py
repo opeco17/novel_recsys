@@ -36,7 +36,7 @@ class TextScraper(object):
                     text = cls.__scrape_main_text(bs_obj) 
                     break
                 except Exception as e:
-                    extra = {'Class': 'TextScraper', 'Method': 'scrape_texts', 'Error': e}
+                    extra = {'Class': 'TextScraper', 'Method': 'scrape_texts', 'Error': str(e)}
                     logger.error('Unable to scrape main text.', extra=extra)
                     c += 1
                     if c == 5:

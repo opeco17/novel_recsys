@@ -16,12 +16,12 @@ class BatchManagerConnector(object):
     def get_queue_data(cls) -> Tuple[int, int]:
         session = cls.__get_retry_session()
         try:
-            response = session.post(url=Config.POP_DATA_URL, timeout=10)
+            response = session.post(url=Config.POP_DATA_URL, timeout=30)
         except requests.exceptions.ConnectTimeout:
             extra = {'Class': 'BatchManagerConnector', 'Method': 'get_queue_data'}
-            logger.error('Unable to get scraping_item_number')
+            logger.error('Unable to get queue data.')
         except Exception as e:
-            extra = {'Class': 'BatchManagerConnector', 'Method': 'get_queue_data', 'Error': e}
+            extra = {'Class': 'BatchManagerConnector', 'Method': 'get_queue_data', 'Error': str(e)}
             logger.error('Unable to get queue data.')
             raise
 
@@ -30,18 +30,26 @@ class BatchManagerConnector(object):
         return queue_data, completions
     
     @classmethod
-    def delete_queue_data(cls, queue_data: int):
+    def fail_queue_data(cls, queue_data: int) -> None:
+        cls.send_queue_data(queue_data, Config.FAIL_DATA_URL, 'fail')
+        
+    @classmethod
+    def success_queue_data(cls, queue_data: int) -> None:
+        cls.send_queue_data(queue_data, Config.SUCCESS_DATA_URL, 'success')
+        
+    @classmethod
+    def send_queue_data(cls, queue_data: int, url: str, prefix: str) -> None:
         session = cls.__get_retry_session()
         headers = {'Content-Type': 'application/json'}
         data = {'data': queue_data}
         try:
-            response = session.post(url=Config.DELETE_DATA_URL, headers=headers, json=data, timeout=10)
+            response = session.post(url=url, headers=headers, json=data, timeout=30)
         except requests.exceptions.ConnectTimeout:
-            extra = {'Class': 'BatchManagerConnector', 'Method': 'delete_queue_data'}
-            logger.error('Unable to get scraping_item_number')
+            extra = {'Class': 'BatchManagerConnector', 'Method': f"{prefix}_queue_data"}
+            logger.error(f"Unable to send {prefix} queue data.")
         except Exception as e:
-            extra = {'Class': 'BatchManagerConnector', 'Method': 'delete_queue_data', 'Error': e}
-            logger.error('Unable to delete queue data.')
+            extra = {'Class': 'BatchManagerConnector', 'Method': f"{prefix}_queue_data", 'Error': str(e)}
+            logger.error(f"Unable to send {prefix} queue data.")
             raise 
         
     @classmethod
