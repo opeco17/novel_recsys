@@ -5,11 +5,7 @@
 
 # Recommener System Architecture
 
-<img width="750" alt="スクリーンショット 2020-09-29 10 49 35" src="https://user-images.githubusercontent.com/46510874/94773131-23a84300-03f6-11eb-9f75-86793cd974a4.png">
-
-# Logging and Monitoring
-
-<img width="500" alt="スクリーンショット 2020-09-20 18 11 36" src="https://user-images.githubusercontent.com/46510874/94773134-25720680-03f6-11eb-9a2f-7c6e3b1c7142.png">
+<img width="800" alt="Recommener System Architecture" src="https://user-images.githubusercontent.com/46510874/96469966-c5d68080-1268-11eb-8f8a-9f5979decb7f.png">
 
 # Technical Environment
  - Web Framework: Flask (Python)
