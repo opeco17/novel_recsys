@@ -7,6 +7,7 @@ import requests
 
 from config import Config
 from forms import ContactForm, TextUploadForm, URLUploadForm
+from logger import logger
 from model import RecommendItemsGetter
 from run import app, auth, mail
 
@@ -14,13 +15,13 @@ from run import app, auth, mail
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    app.logger.info('Web: index called.')
+    logger.info('Web: index called.')
     return render_template('index.html')
 
 
 @app.route('/search_by_text', methods=['GET', 'POST'])
 def search_by_text():
-    app.logger.info('Web: search_by_text called.')
+    logger.info('Web: search_by_text called.')
     text_upload_form = TextUploadForm()
     
     if request.method == 'GET':
@@ -32,19 +33,19 @@ def search_by_text():
         return render_template('search_by_text.html', form=text_upload_form, success=False)
 
     text = text_upload_form.text.data
-    app.logger.info(f"Uploaded text: {text}")
+    logger.info(f"Uploaded text: {text}")
     recommend_items = RecommendItemsGetter.get_recommend_items_by_text(text)
     
     if not recommend_items:
         return render_template('error.html')
     
-    app.logger.info(f"Reccomend result", extra={'search_method': 'text'})
+    logger.info(f"Reccomend result", extra={'search_method': 'text'})
     return render_template('result.html', recommend_items=recommend_items)
 
     
 @app.route('/search_by_url', methods=['GET', 'POST'])
 def search_by_url():
-    app.logger.info('Web: search_by_url called.')
+    logger.info('Web: search_by_url called.')
     url_upload_form = URLUploadForm()
     
     if request.method == 'GET':
@@ -57,33 +58,33 @@ def search_by_url():
         return render_template('search_by_url.html', form=url_upload_form, success=False)
     
     ncode = url[26:33].upper()
-    app.logger.info(f"Uploaded ncode: {ncode}")
+    logger.info(f"Uploaded ncode: {ncode}")
     recommend_items = RecommendItemsGetter.get_recommend_items_by_ncode(ncode)
     
     if not recommend_items:
         return render_template('error.html')
     
-    app.logger.info(f"Reccomend result", extra={'search_method': 'url'})
+    logger.info(f"Reccomend result", extra={'search_method': 'url'})
     return render_template('result.html', recommend_items=recommend_items)
 
 
 @app.route('/narou_redirect/<ncode>/<int:rank>', methods=['GET'])
 def narou_redirect(ncode, rank):
-    app.logger.info('Web: narou_redirect called.')
+    logger.info('Web: narou_redirect called.')
     url = f"https://ncode.syosetu.com/{ncode}/"
-    app.logger.info(f"Reccomend item result", extra={'rank': rank})
+    logger.info(f"Reccomend item result", extra={'rank': rank})
     return redirect(url, code=302)
             
             
 @app.route('/about', methods=['GET'])
 def about():
-    app.logger.info('Web: about called.')
+    logger.info('Web: about called.')
     return render_template('about.html')
 
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    app.logger.info('Web: contact called.')
+    logger.info('Web: contact called.')
     contact_form = ContactForm()
 
     if request.method == 'GET':

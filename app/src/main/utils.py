@@ -6,8 +6,8 @@ sys.path.append('..')
 from flask import Response
 from werkzeug.local import LocalProxy
 
+from logger import logger
 from models.similar_search import SimilarItemSearch
-from run import app
 
 
 class ResponseMakerForNcodeAndText(object):
@@ -66,7 +66,7 @@ class ResponseMakerForNcodeAndText(object):
             response_body['success'] = True
             
         except Exception as e:
-            app.logger.error(f"Error in similar item search: {str(e)}")
+            logger.error(f"Error in similar item search: {str(e)}")
             response_body['recommend_items'] = []
             response_body['success'] = False
 
@@ -74,7 +74,7 @@ class ResponseMakerForNcodeAndText(object):
 def make_response(response_body: dict, status_code: int, message: str=None) -> Response:
     if message:
         response_body['message'] = message
-        app.logger.info(message)
+        logger.info(message)
     
     response = Response(
         response=json.dumps(response_body), 

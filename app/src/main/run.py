@@ -1,8 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask.logging import default_handler
 
 from config import Config
-from logger import get_json_stream_handler
 
 
 # Application
@@ -11,7 +10,5 @@ app.config.from_object(Config)
 
 # Logging
 app.logger.removeHandler(default_handler)
-app.logger.addHandler(get_json_stream_handler())
-app.logger.setLevel(app.config['LOG_LEVEL'])
 
 from controller import *

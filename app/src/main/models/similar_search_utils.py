@@ -8,7 +8,7 @@ from elasticsearch import Elasticsearch
 import requests
 
 from config import Config
-from run import app
+from logger import logger
 
 
 ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
@@ -37,7 +37,7 @@ class TextScraper(object):
                 text = cls.__get_text(bs_obj)  
                 break
             except Exception as e:
-                app.logger.error(str(e))
+                logger.error(str(e))
                 c += 1 
         return text
 

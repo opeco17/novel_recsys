@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 base_path = os.path.dirname(os.path.abspath(__file__))
 abs_path_of = lambda path: os.path.normpath(os.path.join(base_path, path))
 

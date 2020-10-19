@@ -3,6 +3,7 @@ from typing import List, Dict
 
 from config import Config
 
+
 class RecommendItemsGetter(object):
 
     @classmethod

@@ -2,13 +2,13 @@ import json
 
 from flask import Response
 
-from run import app
+from logger import logger
 
 
 def make_response(response_body: dict, status_code: int, message: str=None) -> Response:
     if message:
         response_body['message'] = message
-        app.logger.info(message)
+        logger.info(message)
         
     response = Response(
         response=json.dumps(response_body), 

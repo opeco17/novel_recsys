@@ -7,13 +7,7 @@ import torch.nn as nn
 from transformers import BertJapaneseTokenizer, BertModel
 
 from config import Config
-from run import app
-
-H_DIM = Config.H_DIM
-MAX_LENGTH = Config.MAX_LENGTH
-PARAMETER_PATH = Config.PARAMETER_PATH
-PRETRAINED_BERT_PATH = Config.PRETRAINED_BERT_PATH
-PRETRAINED_TOKENIZER_PATH = Config.PRETRAINED_TOKENIZER_PATH
+from logger import logger
 
 
 class BERT(nn.Module):
@@ -21,8 +15,8 @@ class BERT(nn.Module):
     def __init__(self):
         """学習済みBERTモデルのアーキテクチャと特徴量抽出のための全結合層を定義"""
         super().__init__()
-        self.bert = BertModel.from_pretrained(PRETRAINED_BERT_PATH)
-        self.fc = nn.Linear(768, H_DIM)
+        self.bert = BertModel.from_pretrained(Config.PRETRAINED_BERT_PATH)
+        self.fc = nn.Linear(768, Config.H_DIM)
     
     def forward(self, ids: torch.LongTensor, mask: torch.LongTensor) -> torch.FloatTensor:
         """ネットワークの処理フローを定義
@@ -51,13 +45,11 @@ class FeatureExtractor(object):
             pretrained_tokenizer_path: 東北大学によって作成されたBERTを使用するためのTokenizerのパス
         """
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.max_length = MAX_LENGTH
         self.bert = BERT().to(self.device)
-        self.bert.load_state_dict(torch.load(PARAMETER_PATH, map_location=self.device))
-        self.tokenizer = BertJapaneseTokenizer.from_pretrained(PRETRAINED_TOKENIZER_PATH)
-        app.logger.info('FeatureExtractor constructed!')
+        self.bert.load_state_dict(torch.load(Config.PARAMETER_PATH, map_location=self.device))
+        self.tokenizer = BertJapaneseTokenizer.from_pretrained(Config.PRETRAINED_TOKENIZER_PATH)
+        logger.info('FeatureExtractor constructed!')
         
-    
     def extract(self, texts: List[str]) -> List[float]:
         """文書から特徴量の抽出を行うメソッド
 
@@ -69,7 +61,7 @@ class FeatureExtractor(object):
             input = self.tokenizer.encode_plus(
                 text,
                 add_special_tokens=True,
-                max_length=self.max_length,
+                max_length=Config.MAX_LENGTH,
                 pad_to_max_length=True,
                 truncation=True
             )

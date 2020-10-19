@@ -16,4 +16,4 @@ COPY . /var/www
 
 WORKDIR /var/www/src/main
 
-CMD ["uwsgi","--ini","/var/www/uwsgi.ini"]
+ENTRYPOINT ["uwsgi","--ini","/var/www/uwsgi.ini"]

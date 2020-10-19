@@ -15,7 +15,6 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
 
     # Log
-    LOG_FILE = abs_path_of('log/batch.log')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 
     # Path
