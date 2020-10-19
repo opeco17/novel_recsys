@@ -5,7 +5,7 @@
 
 # Recommener System Architecture
 
-<img width="800" alt="Recommener System Architecture" src="https://user-images.githubusercontent.com/46510874/96469966-c5d68080-1268-11eb-8f8a-9f5979decb7f.png">
+<img width="850" alt="Recommener System Architecture" src="https://user-images.githubusercontent.com/46510874/96469966-c5d68080-1268-11eb-8f8a-9f5979decb7f.png">
 
 # Technical Environment
  - Web Framework: Flask (Python)
