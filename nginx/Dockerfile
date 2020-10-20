@@ -14,5 +14,4 @@ COPY nginx.conf.tmpl /etc/nginx/
 
 ENTRYPOINT ["render", "/etc/nginx/nginx.conf", "--"]
 
-
 CMD ["nginx", "-g", "daemon off;","-c","/etc/nginx/nginx.conf"]
