@@ -8,6 +8,6 @@ metadata:
 nodeGroups:
   - name: eks-sample-node
     instanceType: m5.large
-    desiredCapacity: 3
+    desiredCapacity: 2
     minSize: 1
-    maxSize: 3
+    maxSize: 2
