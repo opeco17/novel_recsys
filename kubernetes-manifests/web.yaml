@@ -30,7 +30,7 @@ spec:
       containers:
       - name: web
         image: opeco17/web:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3030
         env:
@@ -43,7 +43,7 @@ spec:
                 key: tz
       - name: web-nginx
         image: opeco17/nginx:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         env:

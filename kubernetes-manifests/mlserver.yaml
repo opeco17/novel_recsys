@@ -43,7 +43,7 @@ spec:
                 key: tz
       - name: mlserver-nginx
         image: opeco17/nginx:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         env:
