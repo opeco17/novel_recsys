@@ -19,28 +19,34 @@
 		<h1>Contact</h1>
     </div>
     <div>
-        {% for message in get_flashed_messages() %}
-        <div class="flash" style="background-color: #FBB0B0; padding: 10px; width: 400px;">
-        {% endfor %}
-            {% for message in form.name.errors %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
-            
-            {% for message in form.email.errors %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-            
-            {% for message in form.subject.errors %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-            
-            {% for message in form.message.errors %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-        </div>
-        <div class="form">
-            {{ wtf.quick_form(form) }}
-        </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="flash" style="background-color: #FBB0B0; padding: 10px; width: 400px;">
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+
+                {% for message in form.name.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                
+                {% for message in form.email.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                
+                {% for message in form.subject.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                
+                {% for message in form.message.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <div class="form">
+        {{ wtf.quick_form(form) }}
     </div>
 </div>
 {% endif %}

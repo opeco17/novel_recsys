@@ -4,12 +4,16 @@
 {% block app_content %}
 <div class="container">
     <div>
-        {% for message in get_flashed_messages() %}
-        <div class="flash" style="background-color: #FBB0B0; padding: 10px; width: 400px;">
-        {% endfor %}
-            {% for message in form.text.errors %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
+        <div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="flash" style="background-color: #FBB0B0; padding: 10px; width: 400px;">
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
         </div>
         <form class="form form-horizontal" method="post" role="form">
             {{ form.hidden_tag() }}
@@ -17,7 +21,7 @@
           
             {{ wtf.form_field(form.text) }}
             {{ wtf.form_field(form.submit) }}
-          </form>
+        </form>
     </div>
 </div>
 {% endblock %}

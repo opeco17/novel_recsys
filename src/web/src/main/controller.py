@@ -54,7 +54,7 @@ def search_by_url():
     is_correct_input = url_upload_form.validate()
     is_correct_url = re.fullmatch(r'https://ncode.syosetu.com/[nN].{6}/?', url:=url_upload_form.url.data)
     if (not is_correct_input) or (not is_correct_url):
-        flash('小説家になろうの小説URLを入力して下さい。')
+        flash('小説URLを正しく入力して下さい。')
         return render_template('search_by_url.html', form=url_upload_form, success=False)
     
     ncode = url[26:33].upper()
@@ -92,7 +92,7 @@ def contact():
     
     is_correct_input = contact_form.validate()
     if not is_correct_input:
-        flash('全て入力して下さい。')
+        flash('正しく入力されていない項目があります。')
         return render_template('contact.html', form=contact_form, success=False)
     
     msg = Message(contact_form.subject.data, sender=Config.MAIL_USERNAME, recipients=[contact_form.email.data])
