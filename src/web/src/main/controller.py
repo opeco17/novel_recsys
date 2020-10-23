@@ -1,8 +1,9 @@
 import json
 import re
 
-from flask import flash, redirect, request, render_template
+from flask import flash, redirect, request, render_template, url_for
 from flask_mail import Message
+from flask_paginate import Pagination, get_page_parameter
 import requests
 
 from config import Config
@@ -34,13 +35,9 @@ def search_by_text():
 
     text = text_upload_form.text.data
     logger.info(f"Uploaded text: {text}")
-    recommend_items = RecommendItemsGetter.get_recommend_items_by_text(text)
-    
-    if not recommend_items:
-        return render_template('error.html')
     
     logger.info(f"Reccomend result", extra={'search_method': 'text'})
-    return render_template('result.html', recommend_items=recommend_items)
+    return redirect(url_for('result_by_text', text=text))
 
     
 @app.route('/search_by_url', methods=['GET', 'POST'])
@@ -59,13 +56,35 @@ def search_by_url():
     
     ncode = url[26:33].upper()
     logger.info(f"Uploaded ncode: {ncode}")
-    recommend_items = RecommendItemsGetter.get_recommend_items_by_ncode(ncode)
-    
+    return redirect(url_for('result_by_url', ncode=ncode))
+
+
+@app.route('/result_by_text', methods=['GET'])
+def result_by_text():
+    ncode = request.args.get('text')
+    recommend_items = RecommendItemsGetter.get_recommend_items_by_text(ncode)
     if not recommend_items:
         return render_template('error.html')
     
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    sub_recommend_items = recommend_items[(page - 1)*Config.PAGENATION_NUM: page*Config.PAGENATION_NUM]
+    pagination = Pagination(page=page, total=len(recommend_items),  per_page=Config.PAGENATION_NUM, css_framework='bootstrap4')
     logger.info(f"Reccomend result", extra={'search_method': 'url'})
-    return render_template('result.html', recommend_items=recommend_items)
+    return render_template('result.html', recommend_items=sub_recommend_items, pagination=pagination)
+
+
+@app.route('/result_by_url', methods=['GET'])
+def result_by_url():
+    ncode = request.args.get('ncode')
+    recommend_items = RecommendItemsGetter.get_recommend_items_by_ncode(ncode)
+    if not recommend_items:
+        return render_template('error.html')
+    
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    sub_recommend_items = recommend_items[(page - 1)*Config.PAGENATION_NUM: page*Config.PAGENATION_NUM]
+    pagination = Pagination(page=page, total=len(recommend_items),  per_page=Config.PAGENATION_NUM, css_framework='bootstrap4')
+    logger.info(f"Reccomend result", extra={'search_method': 'url'})
+    return render_template('result.html', recommend_items=sub_recommend_items, pagination=pagination)
 
 
 @app.route('/narou_redirect/<ncode>/<int:rank>', methods=['GET'])
