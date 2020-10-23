@@ -29,6 +29,14 @@ spec:
       labels:
         app: elasticsearch
     spec:
+      initContainers:
+      - name: volume-mount-hack
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "chown -R 1000:100 /usr/share/elasticsearch/data"]
+        volumeMounts:
+        - name: elasticsearch-volume
+          mountPath: /usr/share/elasticsearch/data
       containers:
       - name: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0

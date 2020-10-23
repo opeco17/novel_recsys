@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: novelrecsys.net
+spec:
+  selector:
+    app: web
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: 363401580753.dkr.ecr.ap-northeast-1.amazonaws.com/opeco17/web:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3030
+        env:
+        - name: HOST
+          value: "container"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
+      - name: web-nginx
+        image: opeco17/nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: BACKEND_HOST
+          value: "localhost:3030"
+        - name: SERVER_PORT
+          value: "80"
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+                name: general-config
+                key: tz
