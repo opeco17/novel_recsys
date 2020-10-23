@@ -1,2 +1,3 @@
 extension-functions.c linguist-detectable=false
 libsqlitefunctions.so linguist-detectable=false
+*.ipynb linguist-detectable=false
