@@ -25,6 +25,7 @@ class ResponseMakerForNcodeAndText(object):
         self.similar_item_search = SimilarItemSearch()
 
     def make_response_body(self, request: LocalProxy) -> Tuple[Dict, int, str]:
+        """パラメータのバリデーションと類似文書検索の実行"""
 
         response_body = {
             'success': False,
@@ -33,19 +34,35 @@ class ResponseMakerForNcodeAndText(object):
         }
         status_code = 500
         
+        # Validation
         if not request.get_json():
-            message = f"Parameter should be {self.query_is} but you throw none."
+            message = f"Parameter {self.query_is} is needed but you throw none."
             return response_body, status_code, message
         
+        # Parameter query_is validation
         if not (query := request.get_json().get(self.query_is)):
-            message = f"Parameter should be {self.query_is} but you throw {list(request.get_json().keys())}."
+            message = f"Parameter {self.query_is} must be needed."
             return response_body, status_code, message
         
         if not isinstance(query, str):
             message = f"Parameter {self.query_is} should be str but you throw {type(query)}."
             return response_body, status_code, message
         
-        self.__main_process(query, response_body)
+        # Parameter recommend_num validation
+        if not (recommend_num := request.get_json().get('recommend_num')):
+            message = f"Parameter recommend_num is needed."
+            return response_body, status_code, message
+        
+        if not (isinstance(recommend_num, int)):
+            message = f"Parameter recommend_num should be int but you throw {type(query)}."
+            return response_body, status_code, message
+        
+        if not (recommend_num > 0):
+            message = f"Parameter recommend_num should be natural number but you throw {recommend_num}."
+            return response_body, status_code, message
+        
+        # Similar search
+        self.__main_process(query, recommend_num, response_body)
         if not response_body['success']:
             message = "Failed similar item search."
             return response_body, status_code, message
@@ -54,13 +71,14 @@ class ResponseMakerForNcodeAndText(object):
         message = f"search_by_{self.query_is} succeeded!"
         return response_body, status_code, message
         
-    def __main_process(self, query: str, response_body: Dict):
+    def __main_process(self, query: str, recommend_num: int, response_body: Dict):
+        """類似文書検索を実行"""
         try:
             if self.query_is == 'ncode':
-                recommend_items = self.similar_item_search.similar_search_by_ncode(query)
+                recommend_items = self.similar_item_search.similar_search_by_ncode(query, recommend_num)
             elif self.query_is == 'text':
                 query = [query]
-                recommend_items = self.similar_item_search.similar_search_by_text(query)
+                recommend_items = self.similar_item_search.similar_search_by_text(query, recommend_num)
             
             response_body['recommend_items'] = recommend_items
             response_body['success'] = True
@@ -72,6 +90,7 @@ class ResponseMakerForNcodeAndText(object):
 
         
 def make_response(response_body: dict, status_code: int, message: str=None) -> Response:
+    """レスポンスの作成"""
     if message:
         response_body['message'] = message
         logger.info(message)

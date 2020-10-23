@@ -11,9 +11,6 @@ class Config(object):
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
 
-    # Parameter
-    RECOMMEND_NUM = 10
-
     # Log
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)
 

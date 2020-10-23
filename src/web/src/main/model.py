@@ -9,7 +9,7 @@ class RecommendItemsGetter(object):
     @classmethod
     def get_recommend_items_by_ncode(cls, ncode: str) -> List[Dict]:
         headers = {'Content-Type': 'application/json'}
-        data = {'ncode': ncode}
+        data = {'ncode': ncode, 'recommend_num': Config.RECOMMEND_NUM}
         response = requests.get(Config.NCODE_SEARCH_URL, headers=headers, json=data)
         if response.json().get('success'):
             recommend_items = response.json().get('recommend_items')
@@ -23,7 +23,7 @@ class RecommendItemsGetter(object):
     @classmethod
     def get_recommend_items_by_text(cls, text: str) -> List[Dict]:
         headers = {'Content-Type': 'application/json'}
-        data = {'text': text}
+        data = {'text': text, 'recommend_num': Config.RECOMMEND_NUM}
         response = requests.get(Config.TEXT_SEARCH_URL, headers=headers, json=data)
         if response.json().get('success'):
             recommend_items = response.json().get('recommend_items')

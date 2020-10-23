@@ -11,22 +11,14 @@ from config import Config
 from logger import logger
 
 
-ELASTICSEARCH_HOST_NAME = Config.ELASTICSEARCH_HOST_NAME
-FEATURE_EXTRACTION_URL = Config.FEATURE_EXTRACTION_URL
-NAROU_URL = Config.NAROU_URL
-RECOMMEND_NUM = Config.RECOMMEND_NUM
-
-
 class TextScraper(object):
     """小説家になろうAPIから本文をスクレイピングするためのクラス"""
-
-    narou_url = NAROU_URL
 
     @classmethod
     def scraping_text(cls, ncode: str) -> str:
         """ncodeをクエリとして本文のスクレイピングを実行する"""
 
-        base_url = cls.narou_url + ncode
+        base_url = Config.NAROU_URL + ncode
         text = None
         c = 0
         while c < 5:
@@ -59,12 +51,9 @@ class TextScraper(object):
 class ElasticsearchConnector(object):
     """Elasticsearchへの接続を行うためのクラス"""
 
-    host_name = ELASTICSEARCH_HOST_NAME
-    recommend_num = RECOMMEND_NUM
-
     @classmethod
     def get_client(cls):
-        client = Elasticsearch(cls.host_name)
+        client = Elasticsearch(Config.ELASTICSEARCH_HOST_NAME)
         return client
 
     @classmethod
@@ -84,12 +73,12 @@ class ElasticsearchConnector(object):
             query_feature = None
         return query_feature
 
-
     @classmethod
-    def get_recommends_by_feature(cls, client: Elasticsearch, feature: List[float]) -> List[Dict]:
+    def get_recommends_by_feature(cls, client: Elasticsearch, feature: List[float], recommend_num: int) -> List[Dict]:
         """特徴量をクエリとしてElasticsearchから類似作品のレコメンドリストを抽出"""
         
         query_for_similar_search = {
+            "size" : recommend_num,
             "query": {
                 "script_score": {
                     "query": {
@@ -105,10 +94,12 @@ class ElasticsearchConnector(object):
             }
         }
         response = client.search(index='details', body=query_for_similar_search)['hits']['hits']
+        logger.info(f"Get {len(response)} number items from elasticsearch.")
+        
         recommend_list = []
-        for i in range(min(cls.recommend_num, len(response))):
+        for i in range(recommend_num):
             recommend_data = response[i]['_source']
-            recommend_data.pop('feature')
+            recommend_data.get('feature')
             recommend_list.append(recommend_data)
         return recommend_list
 
@@ -116,12 +107,10 @@ class ElasticsearchConnector(object):
 class BERTServerConnector(object):
     """BERTServerへの接続を行うためのクラス"""
 
-    feature_extraction_url = FEATURE_EXTRACTION_URL
-
     @classmethod
     def extract_feature(cls, text: str) -> List[float]:
         headers = {'Content-Type': 'application/json'}
         data = {'texts': text}
-        response = requests.get(cls.feature_extraction_url, headers=headers, json=data)
+        response = requests.get(Config.FEATURE_EXTRACTION_URL, headers=headers, json=data)
         feature = response.json()['prediction'][0]
         return feature

@@ -5,7 +5,6 @@ sys.path.append('..')
 from elasticsearch import Elasticsearch
 import requests
 
-from config import Config
 from models.similar_search_utils import TextScraper, ElasticsearchConnector, BERTServerConnector
 
 
@@ -24,17 +23,17 @@ class SimilarItemSearch(object):
     def __init__(self):
         self.client = ElasticsearchConnector.get_client()
 
-    def similar_search_by_ncode(self, query_ncode: str) -> List[Dict]:
+    def similar_search_by_ncode(self, query_ncode: str, recommend_num: int) -> List[Dict]:
         query_feature = self.__get_feature_by_ncode(query_ncode)
         if query_feature == None:
             query_text = self.__scraping_text_by_ncode(query_ncode)
             query_feature = self.__extract_feature(query_text)
-        recommend_list = self.__similar_search_by_feature(query_feature)
+        recommend_list = self.__similar_search_by_feature(query_feature, recommend_num)
         return recommend_list
     
-    def similar_search_by_text(self, query_text: List[str]) -> List[Dict]:
+    def similar_search_by_text(self, query_text: List[str], recommend_num: int) -> List[Dict]:
         query_feature = self.__extract_feature(query_text)
-        recommend_list = self.__similar_search_by_feature(query_feature)
+        recommend_list = self.__similar_search_by_feature(query_feature, recommend_num)
         return recommend_list
 
     def __get_feature_by_ncode(self, query_ncode: str) -> List[float]:
@@ -45,8 +44,8 @@ class SimilarItemSearch(object):
         query_text = TextScraper.scraping_text(query_ncode)
         return query_text
         
-    def __similar_search_by_feature(self, query_feature: List[float]) -> List[Dict]:        
-        recommend_list = ElasticsearchConnector.get_recommends_by_feature(self.client, query_feature)
+    def __similar_search_by_feature(self, query_feature: List[float], recommend_num: int) -> List[Dict]:        
+        recommend_list = ElasticsearchConnector.get_recommends_by_feature(self.client, query_feature, recommend_num)
         return recommend_list
 
     def __extract_feature(self, text: str) -> List[float]:

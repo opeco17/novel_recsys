@@ -10,6 +10,13 @@ class Config(object):
     # Basic
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
+    
+    # Parameter
+    RECOMMEND_NUM = 25
+    
+    # Pagenation
+    PAGENATION_NUM = 5
+    PAGENATION_MESSAGE = '表示範囲 <b>{start}件 - {end}件 </b> 合計：<b>{total}</b>件'
 
     # Mail
     with open(abs_path_of('mail_info.json'), 'r') as mail_file:
