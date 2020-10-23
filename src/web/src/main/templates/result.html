@@ -4,21 +4,8 @@
 <h5>レコメンド結果がこちらになります。</h5>
 <br>
 
-<!-- {% for recommend_item in recommend_items %}
-<div class="card card-body bg-light" style="clear:both;">
-    <a href="{{ url_for('narou_redirect', ncode=recommend_item.ncode, rank=recommend_item.rank) }}">{{ recommend_item.title }}</a>
-    <br>
-    <p align="right">作者: {{ recommend_item.writer }}</p>
-    <p>{{ recommend_item.keyword }}</p>
-    <hr size="40" noshade>
-    <p>あらすじ: {{ recommend_item.story }}</p>
-</div>
-<br><br>
-{% endfor %} -->
-
-{{ pagination.info }}
 {{ pagination.links }}
-{% for sub_recommend_item in sub_recommend_items %}
+{% for recommend_item in recommend_items %}
 <div class="card card-body bg-light" style="clear:both;">
     <a href="{{ url_for('narou_redirect', ncode=recommend_item.ncode, rank=recommend_item.rank) }}">{{ recommend_item.title }}</a>
     <br>
