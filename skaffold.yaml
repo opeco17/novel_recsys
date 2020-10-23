@@ -5,25 +5,32 @@ build:
     sha256: {}
   artifacts:
   - image: opeco17/web
-    context: web
+    context: src/web
   - image: opeco17/app
-    context: app
+    context: src/app
   - image: opeco17/bertserver
-    context: bertserver
+    context: src/bertserver
   - image: opeco17/mlserver
-    context: mlserver
-  - image: opeco17/scraping-batch
-    context: scraping-batch
+    context: src/mlserver
   - image: opeco17/data-analysis
-    context: data-analysis
+    context: src/data-analysis
   - image: opeco17/nginx
-    context: nginx
+    context: src/nginx
   - image: opeco17/database
-    context: database
+    context: src/database
+  - image: opeco17/scraping-batch
+    context: src/scraping-batch
+  - image: opeco17/feature-extraction-batch
+    context: src/feature-extraction-batch
+  - image: opeco17/point-prediction-batch
+    context: src/point-prediction-batch
+  - image: opeco17/batch-manager
+    context: src/batch-manager
   local:
     push: false
     useBuildkit: true
 deploy:
   kubectl:
     manifests:
-    - ./kubernetes-manifests/**.yaml
+    - manifests/kubernetes-manifests/**.yaml
+    - manifests/kubernetes-batch-manifests/**.yaml

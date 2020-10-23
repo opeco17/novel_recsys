@@ -7,6 +7,7 @@ import sys
 
 
 def main(args):
+    """指定したディレクトリのDockerイメージをビルドする(引数が無い場合は全ディレクトリが対象)"""
     run_cmd = lambda cmd: subprocess.call(cmd, shell=True, stdout=sys.stdout, stderr=sys.stdout)
     
     dir_paths = [args.dir] if args.dir else [dockerfile_path.replace('/Dockerfile', '') for dockerfile_path in glob.glob('*/Dockerfile')]
