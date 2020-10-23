@@ -3,6 +3,8 @@
 {% block app_content %}
 <h5>レコメンド結果がこちらになります。</h5>
 <br>
+
+{{ pagination.links }}
 {% for recommend_item in recommend_items %}
 <div class="card card-body bg-light" style="clear:both;">
     <a href="{{ url_for('narou_redirect', ncode=recommend_item.ncode, rank=recommend_item.rank) }}">{{ recommend_item.title }}</a>
@@ -14,5 +16,7 @@
 </div>
 <br><br>
 {% endfor %}
+{{ pagination.links }}
+
 <a href="{{ url_for('index')}}">はじめのページへ戻る</a>
 {% endblock %}
