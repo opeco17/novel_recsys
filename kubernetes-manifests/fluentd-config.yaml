@@ -9,7 +9,6 @@ metadata:
 data:
   fluent.conf: |
     @include kubernetes.conf
-
     <match **>
       @type elasticsearch
       @id out_es
@@ -38,6 +37,7 @@ data:
       template_overwrite "#{ENV['FLUENT_ELASTICSEARCH_TEMPLATE_OVERWRITE'] || use_default}"
       sniffer_class_name "#{ENV['FLUENT_SNIFFER_CLASS_NAME'] || 'Fluent::Plugin::ElasticsearchSimpleSniffer'}"
       request_timeout "#{ENV['FLUENT_ELASTICSEARCH_REQUEST_TIMEOUT'] || '5s'}"
+      suppress_type_name true
       <buffer>
         flush_thread_count "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_FLUSH_THREAD_COUNT'] || '8'}"
         flush_interval "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_FLUSH_INTERVAL'] || '5s'}"
@@ -47,12 +47,10 @@ data:
         retry_forever true
       </buffer>
     </match>
-
   kubernetes.conf: |
     <match fluent.**>
       @type null
     </match>
-
     <source>
       @type tail
       path /var/log/containers/web*web*.log
@@ -64,7 +62,6 @@ data:
         time_format %Y-%m-%dT%H:%M:%S.%NZ
       </parse>
     </source>
-
     <source>
       @type tail
       @id in_tail_container_logs
@@ -78,7 +75,6 @@ data:
         time_format %Y-%m-%dT%H:%M:%S.%NZ
       </parse>
     </source>
-
     <filter web>
       @type record_transformer
       enable_ruby
@@ -86,7 +82,6 @@ data:
         log ${record["log"].strip}
       </record>
     </filter>
-
     <filter kubernetes.**>
       @type kubernetes_metadata
       @id filter_kube_metadata
