@@ -7,6 +7,46 @@ metadata:
     version: v1
     kubernetes.io/cluster-service: "true"
 data:
+  kubernetes.conf: |
+    <system>
+      log_level info
+      suppress_repeated_stacktrace true
+      emit_error_log_interval 30s
+    </system>
+    <source>
+      @type tail
+      @id in_tail_container_logs
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-containers.log.pos
+      tag "#{ENV['FLUENT_CONTAINER_TAIL_TAG'] || 'kubernetes.*'}"
+      exclude_path "#{ENV['FLUENT_CONTAINER_TAIL_EXCLUDE_PATH'] || use_default}"
+      # read_from_head true
+      # emit_unmatched_lines true
+      <parse>
+        @type json
+        time_format %Y-%m-%dT%H:%M:%S.%NZ
+      </parse>
+    </source>
+    <match **fluent**>
+      @type null
+    </match>
+    <match **kibana**>
+      @type null
+    </match>
+    <match **kube-system**>
+      @type null
+    </match>
+    <match **elasticsearch**>
+      @type null
+    </match>
+    <filter **>
+      @type parser
+      key_name log
+      <parse>
+        @type json
+      </parse>
+    </filter>
+
   fluent.conf: |
     @include kubernetes.conf
     <match **>
@@ -47,45 +87,3 @@ data:
         retry_forever true
       </buffer>
     </match>
-  kubernetes.conf: |
-    <match fluent.**>
-      @type null
-    </match>
-    <source>
-      @type tail
-      path /var/log/containers/web*web*.log
-      pos_file /var/log/web.log.pos
-      tag web
-      read_from_head true
-      <parse>
-        @type json
-        time_format %Y-%m-%dT%H:%M:%S.%NZ
-      </parse>
-    </source>
-    <source>
-      @type tail
-      @id in_tail_container_logs
-      path /var/log/containers/*.log
-      pos_file /var/log/fluentd-containers.log.pos
-      tag "#{ENV['FLUENT_CONTAINER_TAIL_TAG'] || 'kubernetes.*'}"
-      exclude_path "#{ENV['FLUENT_CONTAINER_TAIL_EXCLUDE_PATH'] || use_default}"
-      read_from_head true
-      <parse>
-        @type "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TYPE'] || 'json'}"
-        time_format %Y-%m-%dT%H:%M:%S.%NZ
-      </parse>
-    </source>
-    <filter web>
-      @type record_transformer
-      enable_ruby
-      <record>
-        log ${record["log"].strip}
-      </record>
-    </filter>
-    # <filter kubernetes.**>
-    #   @type kubernetes_metadata
-    #   @id filter_kube_metadata
-    #   kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
-    #   verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
-    #   ca_file "#{ENV['KUBERNETES_CA_FILE']}"
-    # </filter>
