@@ -19,13 +19,13 @@ recommend_items = []
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    logger.info('Web: index called.')
+    logger.info('index called.')
     return render_template('index.html')
 
 
 @app.route('/search_by_text', methods=['GET', 'POST'])
 def search_by_text():
-    logger.info('Web: search_by_text called.')
+    logger.info('search_by_text called.')
     text_upload_form = TextUploadForm()
     
     if request.method == 'GET':
@@ -52,7 +52,7 @@ def search_by_text():
     
 @app.route('/search_by_url', methods=['GET', 'POST'])
 def search_by_url():
-    logger.info('Web: search_by_url called.')
+    logger.info('search_by_url called.')
     url_upload_form = URLUploadForm()
     
     if request.method == 'GET':
@@ -86,7 +86,7 @@ def result():
 
 @app.route('/narou_redirect/<ncode>/<int:rank>', methods=['GET'])
 def narou_redirect(ncode, rank):
-    logger.info('Web: narou_redirect called.')
+    logger.info('narou_redirect called.')
     url = f"https://ncode.syosetu.com/{ncode}/"
     logger.info(f"Reccomend item result", extra={'rank': rank})
     return redirect(url, code=302)
@@ -94,13 +94,13 @@ def narou_redirect(ncode, rank):
             
 @app.route('/about', methods=['GET'])
 def about():
-    logger.info('Web: about called.')
+    logger.info('about called.')
     return render_template('about.html')
 
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    logger.info('Web: contact called.')
+    logger.info('contact called.')
     contact_form = ContactForm()
 
     if request.method == 'GET':

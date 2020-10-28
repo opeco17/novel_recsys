@@ -10,6 +10,7 @@ class Config(object):
     # Basic
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess')
+    APP_NAME = os.environ.get('APP_NAME', 'bert-training-batch')
 
     # Logging
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)

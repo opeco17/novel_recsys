@@ -12,7 +12,7 @@ from utils import make_response
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    logger.info('MLServer: index called.')
+    logger.info('index called.')
     response_body = {"message": "Here is MLServer!"}
     status_code = 200
     response = make_response(response_body, status_code)
@@ -28,7 +28,7 @@ def predict():
         features_df: ポイント予測に使用する特徴量を保持したDataFrame
         predicted_point: 作品のポイント予測結果 (0: 評価されない 1: 評価される)
     """
-    logger.info('MLServer: predict called.')
+    logger.info('predict called.')
     response_body = {'success': False}
     status_code = 500
     

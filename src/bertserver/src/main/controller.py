@@ -15,7 +15,7 @@ model = FeatureExtractor()
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    logger.info('BERTServer: index called.')
+    logger.info('index called.')
     response_body = {"message": "Here is BERTServer!"}
     status_code = 200
     response = make_response(response_body, status_code)
@@ -24,7 +24,7 @@ def index():
 
 @app.route('/predict', methods=['GET'])
 def predict():
-    logger.info('BERTServer: predict called.')
+    logger.info('predict called.')
     status_code = 500
     response_body = {"success": False}
     

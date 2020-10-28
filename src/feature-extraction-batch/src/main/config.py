@@ -13,6 +13,7 @@ load_dotenv(abs_path_of('config.env'))
 class Config(object):
     # Basic
     JSON_AS_ASCII = False
+    APP_NAME = os.environ.get('APP_NAME', 'feature-extraction-batch')
     
     # Parameter
     FEATURE_EXTRACTION_BATCH_SIZE = 16

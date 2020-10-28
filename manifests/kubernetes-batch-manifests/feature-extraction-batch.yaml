@@ -17,6 +17,8 @@ spec:
         env:
         - name: HOST
           value: "container"
+        - name: APP_NAME
+          value: "feature-extraction-batch"
         - name: COMPLETIONS
           value: "5"
         - name: TZ

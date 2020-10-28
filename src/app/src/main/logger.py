@@ -8,6 +8,7 @@ from config import Config
 
 class CustomisedJSONFormatter(json_log_formatter.JSONFormatter):
     def json_record(self, message: str, extra: dict, record: LogRecord) -> dict:
+        extra['app'] = Config.APP_NAME
         extra['message'] = message
         extra['severity'] = record.levelname
         extra['module'] = record.module

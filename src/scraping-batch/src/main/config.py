@@ -12,6 +12,7 @@ load_dotenv(abs_path_of('config.env'))
 class Config(object):
     # Basic
     JSON_AS_ASCII = False
+    APP_NAME = os.environ.get('APP_NAME', 'scraping-batch')
 
     # Log
     LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.DEBUG)

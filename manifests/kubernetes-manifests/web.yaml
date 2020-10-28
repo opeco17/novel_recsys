@@ -37,6 +37,8 @@ spec:
         env:
         - name: HOST
           value: "container"
+        - name: APP_NAME
+          value: "web"
         - name: TZ
           valueFrom:
             configMapKeyRef:

@@ -17,6 +17,8 @@ spec:
         env:
         - name: HOST
           value: "container"
+        - name: APP_NAME
+          value: "bert-training-batch"
         - name: TZ
           valueFrom:
             configMapKeyRef:

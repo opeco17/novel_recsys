@@ -40,6 +40,8 @@ spec:
           value: "5"
         - name: UWSGI_PORT
           value: "3034"
+        - name: APP_NAME
+          value: "point-prediction-manager"
         - name: TZ
           valueFrom:
             configMapKeyRef:

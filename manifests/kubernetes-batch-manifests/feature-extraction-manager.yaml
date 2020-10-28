@@ -38,6 +38,8 @@ spec:
           value: "5"
         - name: UWSGI_PORT
           value: "3035"
+        - name: APP_NAME
+          value: "feature-extraction-manager"
         - name: TZ
           valueFrom:
             configMapKeyRef:

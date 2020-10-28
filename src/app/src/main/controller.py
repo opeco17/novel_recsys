@@ -16,7 +16,7 @@ text_response_maker = ResponseMakerForNcodeAndText('text')
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    logger.info('App: index called.')
+    logger.info('index called.')
     response_body = {'message': 'This is application!'}
     status_code = 200
     response = make_response(response_body, status_code)
@@ -25,7 +25,7 @@ def index():
 
 @app.route('/search_by_ncode', methods=['GET'])
 def search_by_ncode():
-    logger.info('App: search_by_ncode called.')
+    logger.info('search_by_ncode called.')
     response_body, status_code, message = ncode_response_maker.make_response_body(request)
     response = make_response(response_body, status_code, message)
     return response
@@ -33,7 +33,7 @@ def search_by_ncode():
 
 @app.route('/search_by_text', methods=['GET'])
 def search_by_text():
-    logger.info('App: search_by_text called.')
+    logger.info('search_by_text called.')
     response_body, status_code, message = text_response_maker.make_response_body(request)
     response = make_response(response_body, status_code, message)
     return response

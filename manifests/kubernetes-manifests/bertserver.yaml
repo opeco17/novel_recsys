@@ -36,6 +36,8 @@ spec:
         env:
         - name: HOST
           value: "container"
+        - name: APP_NAME
+          value: "bertserver"
         - name: TZ
           valueFrom:
             configMapKeyRef:

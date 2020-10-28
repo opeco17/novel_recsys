@@ -13,6 +13,7 @@ class Config(object):
     # Basic
     JSON_AS_ASCII = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-will-never-guess') 
+    APP_NAME = os.environ.get('APP_NAME', 'batch-manager')
     
     # Target
     TARGET = os.environ.get('TARGET', 'Batch')
