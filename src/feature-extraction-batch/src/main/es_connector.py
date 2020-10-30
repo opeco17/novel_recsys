@@ -40,7 +40,7 @@ class ElasticsearchConnector(object):
     def insert_details(cls, client: Elasticsearch, details_df: DataFrame) -> Dict:
         """作品の詳細情報の一部と特徴量を追加"""
         try:
-            bulk(client, cls.__generate_es_data(details_df))
+            bulk(client, cls.__generate_es_data(details_df), stats_only=True)
             logger.info(f"{len(details_df)} data was inserted to elasticsearch.")
         except Exception as e:
             extra = {'Class': 'ElasticsearchConnector', 'Method': 'insert_details', 'ErrorType': type(e), 'Error': str(e)}

@@ -61,3 +61,16 @@ class DBConnector(object):
             extra = {'Class': 'DBConnector', 'Method': 'get_details_df_iterator', 'ErrorType': type(e), 'Error': str(e)}
             logger.error('Unable to get details df iterator.')
             raise
+        
+    @classmethod
+    def update_added_to_es(cls, conn: Connection, cursor: Cursor, ncodes: List[str]):
+        """Elasticsearchへレコードがインサートされたか否かを示すadded_to_esカラムを更新する"""
+        tupled_ncodes = [(ncode, ) for ncode in ncodes]
+        try:
+            cursor.executemany("UPDATE details SET added_to_es=True WHERE ncode=%s", tupled_ncodes)
+            conn.commit()
+            logger.info(f"{len(ncodes)} data were updated with added_to_es.")
+        except Exception as e:
+            extra = {'Class': 'DBConnector', 'Method': 'update_added_to_es', 'ErrorType': type(e), 'Error': str(e)}
+            logger.error('Unable to update added_to_es column.')
+            raise

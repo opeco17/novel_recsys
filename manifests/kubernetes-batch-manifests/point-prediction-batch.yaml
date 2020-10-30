@@ -13,7 +13,7 @@ spec:
       - name: point-prediction-batch
         image: opeco17/point-prediction-batch:latest
         imagePullPolicy: IfNotPresent
-        command: ["python3", "execute.py", "--test"]
+        command: ["python3", "execute.py"]
         env:
         - name: HOST
           value: "container"

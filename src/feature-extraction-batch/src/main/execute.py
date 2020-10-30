@@ -25,6 +25,7 @@ def execute(args: argparse.Namespace) -> None:
             features = BERTServerConnector.extract_features(list(details_df.text))
             details_df['feature'] = features
             ElasticsearchConnector.insert_details(client, details_df)
+            DBConnector.update_added_to_es(conn, cursor, details_df.ncode)
             if test and i==1:
                 logger.info('Broke due to test mode.')
                 break

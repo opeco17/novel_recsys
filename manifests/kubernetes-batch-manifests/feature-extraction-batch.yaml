@@ -5,7 +5,7 @@ metadata:
 spec:
   ttlSecondsAfterFinished: 120
   completions: 5
-  parallelism: 2
+  parallelism: 1
   backoffLimit: 5
   template:
     spec:
@@ -13,7 +13,7 @@ spec:
       - name: feature-extraction-batch
         image: opeco17/feature-extraction-batch:latest
         imagePullPolicy: IfNotPresent
-        command: ["python3", "execute.py", "--test"]
+        command: ["python3", "execute.py"]
         env:
         - name: HOST
           value: "container"
