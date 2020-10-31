@@ -47,7 +47,7 @@ class DBConnector(object):
             else:      
                 query = f"SELECT ncode, title, writer, keyword, story, genre, biggenre, text \
                             FROM details \
-                            WHERE global_point=0 AND predicted_point=1 AND MOD(general_firstup, {completions})={queue_data}"
+                            WHERE predicted_point=1 AND global_point=0 AND added_to_es=0 AND MOD(general_firstup, {completions})={queue_data}"
                             
             details_df_iterator = pd.read_sql_query(
                 sql=query,
