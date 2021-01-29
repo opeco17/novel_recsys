@@ -13,4 +13,3 @@
  - Infrastructure: Kubernetes, Amazon EKS
  - Middleware: Elasticsearch, MySQL, Nginx
  - Logging: Fluentd, Elasticsearch, Kibana
- - Monitoring: Prometheus, Grafana
