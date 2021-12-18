@@ -7,7 +7,7 @@
 
 <img width="850" src="https://user-images.githubusercontent.com/46510874/96997152-2bc64f00-156c-11eb-836b-1cf50d81d23a.png">
 
-# Technical Environment
+# Technical Stack
  - Web Framework: Flask (Python)
  - ML Framework: PyTorch (BERT+ArcFace), LightGBM
  - Infrastructure: Kubernetes, Amazon EKS
